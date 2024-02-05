@@ -4,23 +4,27 @@ import cats.syntax.either.*
 import cats.syntax.traverse.*
 import scala.annotation.tailrec
 
-sealed trait Stage2PetaformAST
-object Stage2PetaformAST {
+sealed trait PetaformAST
+object PetaformAST {
 
-  sealed trait Simple extends Stage2PetaformAST
-  sealed trait Complex extends Stage2PetaformAST
+  sealed trait Simple extends PetaformAST
+  sealed trait Complex extends PetaformAST
 
-  final case class RawValue(value: String) extends Stage2PetaformAST.Simple
+  final case class RawValue(value: String) extends PetaformAST.Simple
 
-  final case class Str(str: String) extends Stage2PetaformAST.Simple
+  final case class Str(str: String) extends PetaformAST.Simple
 
-  final case class Obj(elems: List[(String, Stage2PetaformAST)]) extends Stage2PetaformAST.Complex {
-    val map: Map[String, Stage2PetaformAST] = elems.toMap
+  final case class Obj(elems: List[(String, PetaformAST)]) extends PetaformAST.Complex {
+    val map: Map[String, PetaformAST] = elems.toMap
   }
 
-  final case class Arr(elems: List[Stage2PetaformAST]) extends Stage2PetaformAST.Complex
+  final case class Arr(elems: List[PetaformAST]) extends PetaformAST.Complex
 
-  case object Undef extends Stage2PetaformAST.Simple
+  case object Null extends PetaformAST.Simple
+
+  case object Empty extends PetaformAST.Simple
+
+  case object Undef extends PetaformAST.Simple
 
   // =====|  |=====
 
@@ -37,25 +41,27 @@ object Stage2PetaformAST {
 
   }
 
-  private def getInterpolations(scopePath: List[ASTScope], ast: Stage1PetaformAST): List[Dependency] =
+  private def getInterpolations(scopePath: List[ASTScope], ast: RawPetaformAST): List[Dependency] =
     ast match {
-      case Stage1PetaformAST.RawValue(_) => Nil
-      case Stage1PetaformAST.Str(str) =>
+      case RawPetaformAST.RawValue(_) => Nil
+      case RawPetaformAST.Str(str) =>
         val deps = str.pairs.map(_._1).collect { case Interpolation.Config(path) => path.toList }.toSet
         if (deps.isEmpty) Nil
         else Dependency(Dependency.Pair(scopePath, str.asRight), deps) :: Nil
-      case Stage1PetaformAST.Interp(interpolation) =>
+      case RawPetaformAST.Interp(interpolation) =>
         interpolation match {
           case Interpolation.Config(path) => Dependency(Dependency.Pair(scopePath, interpolation.asLeft), Set(path.toList)) :: Nil
           case Interpolation.EnvVar(_)    => Nil
         }
-      case Stage1PetaformAST.Undef => Nil
-      case Stage1PetaformAST.Obj(elems) =>
+      case RawPetaformAST.Undef => Nil
+      case RawPetaformAST.Null  => Nil
+      case RawPetaformAST.Empty => Nil
+      case RawPetaformAST.Obj(elems) =>
         elems.flatMap {
-          case (_, Stage1PetaformAST.Obj.Value.Required)             => Nil
-          case (key, Stage1PetaformAST.Obj.Value.Provided(_, value)) => getInterpolations(scopePath :+ ASTScope.Key(key), value)
+          case (_, RawPetaformAST.Obj.Value.Required)             => Nil
+          case (key, RawPetaformAST.Obj.Value.Provided(_, value)) => getInterpolations(scopePath :+ ASTScope.Key(key), value)
         }
-      case Stage1PetaformAST.Arr(elems) =>
+      case RawPetaformAST.Arr(elems) =>
         elems.zipWithIndex.flatMap { case (elem, idx) =>
           getInterpolations(scopePath :+ ASTScope.Idx(idx), elem)
         }
@@ -101,15 +107,15 @@ object Stage2PetaformAST {
       case None           => ScopedError(rScope, s"Missing env var '$varName'").asLeft
     }
 
-  private def initialStage2(rScope: List[ASTScope], ast: Stage1PetaformAST, envVars: Map[String, String]): Either[ScopedError, Stage2PetaformAST] =
+  private def initialStage2(rScope: List[ASTScope], ast: RawPetaformAST, envVars: Map[String, String]): Either[ScopedError, PetaformAST] =
     ast match {
-      case Stage1PetaformAST.RawValue(value) => Stage2PetaformAST.RawValue(value).asRight
-      case Stage1PetaformAST.Str(str) =>
+      case RawPetaformAST.RawValue(value) => PetaformAST.RawValue(value).asRight
+      case RawPetaformAST.Str(str) =>
         @tailrec
         def loop(
             toInterp: List[(Interpolation, String)],
             rStack: List[String],
-        ): Either[ScopedError, Stage2PetaformAST] =
+        ): Either[ScopedError, PetaformAST] =
           toInterp match {
             case (_: Interpolation.Config, _) :: _ => Undef.asRight
             case (Interpolation.EnvVar(varName), sH) :: tail =>
@@ -118,46 +124,48 @@ object Stage2PetaformAST {
                 case Left(error)     => error.asLeft
               }
             case Nil =>
-              Stage2PetaformAST.Str(rStack.reverse.mkString).asRight
+              PetaformAST.Str(rStack.reverse.mkString).asRight
           }
 
         loop(str.pairs, str.prefix :: Nil)
-      case Stage1PetaformAST.Interp(interpolation) =>
+      case RawPetaformAST.Interp(interpolation) =>
         interpolation match {
           case Interpolation.EnvVar(varName) =>
-            getEnvVar(rScope, varName, envVars).map(Stage2PetaformAST.Str(_))
+            getEnvVar(rScope, varName, envVars).map(PetaformAST.Str(_))
           case _: Interpolation.Config => Undef.asRight
         }
-      case Stage1PetaformAST.Undef => Stage2PetaformAST.Undef.asRight
-      case Stage1PetaformAST.Obj(elems) =>
+      case RawPetaformAST.Undef => PetaformAST.Undef.asRight
+      case RawPetaformAST.Null  => PetaformAST.Null.asRight
+      case RawPetaformAST.Empty => PetaformAST.Empty.asRight
+      case RawPetaformAST.Obj(elems) =>
         elems
           .traverse {
-            case (key, Stage1PetaformAST.Obj.Value.Required) =>
+            case (key, RawPetaformAST.Obj.Value.Required) =>
               ScopedError((ASTScope.Key(key) :: rScope).reverse, "Missing required value").asLeft
-            case (key, Stage1PetaformAST.Obj.Value.Provided(_, value)) =>
+            case (key, RawPetaformAST.Obj.Value.Provided(_, value)) =>
               initialStage2(ASTScope.Key(key) :: rScope, value, envVars).map((key, _))
           }
-          .map(Stage2PetaformAST.Obj(_))
-      case Stage1PetaformAST.Arr(elems) =>
+          .map(PetaformAST.Obj(_))
+      case RawPetaformAST.Arr(elems) =>
         elems.zipWithIndex
           .traverse { case (value, idx) =>
             initialStage2(ASTScope.Idx(idx) :: rScope, value, envVars)
           }
-          .map(Stage2PetaformAST.Arr(_))
+          .map(PetaformAST.Arr(_))
     }
 
   @tailrec
-  private def getFromAst2(fromScope: List[ASTScope], rLookupScope: List[ASTScope], lookupScope: List[ASTScope], ast: Stage2PetaformAST): Either[ScopedError, Stage2PetaformAST] =
+  private def getFromAst2(fromScope: List[ASTScope], rLookupScope: List[ASTScope], lookupScope: List[ASTScope], ast: PetaformAST): Either[ScopedError, PetaformAST] =
     lookupScope match {
       case head :: tail =>
         val newRScope = head :: rLookupScope
         (head, ast) match {
-          case (ASTScope.Key(key), Stage2PetaformAST.Obj(elems)) =>
+          case (ASTScope.Key(key), PetaformAST.Obj(elems)) =>
             elems.find(_._1 == key) match {
               case Some((_, value)) => getFromAst2(fromScope, newRScope, tail, value)
               case None             => ScopedError(fromScope, s"Missing key for interpolation: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
             }
-          case (ASTScope.Idx(idx), Stage2PetaformAST.Arr(elems)) =>
+          case (ASTScope.Idx(idx), PetaformAST.Arr(elems)) =>
             if (idx >= elems.size) ScopedError(fromScope, s"Idx out of bounds: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
             else getFromAst2(fromScope, newRScope, tail, elems(idx))
           case (_: ASTScope.Key, _) =>
@@ -168,13 +176,13 @@ object Stage2PetaformAST {
       case Nil => ast.asRight
     }
 
-  private def interpolate(fromScope: List[ASTScope], interp: Interpolation, ast: Stage2PetaformAST, envVars: Map[String, String]): Either[ScopedError, Stage2PetaformAST] =
+  private def interpolate(fromScope: List[ASTScope], interp: Interpolation, ast: PetaformAST, envVars: Map[String, String]): Either[ScopedError, PetaformAST] =
     interp match {
-      case Interpolation.EnvVar(varName)      => getEnvVar(fromScope, varName, envVars).map(Stage2PetaformAST.Str(_))
+      case Interpolation.EnvVar(varName)      => getEnvVar(fromScope, varName, envVars).map(PetaformAST.Str(_))
       case Interpolation.Config(__configPath) => getFromAst2(fromScope, Nil, __configPath.toList, ast)
     }
 
-  private def interpolate(pair: Dependency.Pair, ast: Stage2PetaformAST, envVars: Map[String, String]): Either[ScopedError, Stage2PetaformAST] =
+  private def interpolate(pair: Dependency.Pair, ast: PetaformAST, envVars: Map[String, String]): Either[ScopedError, PetaformAST] =
     pair.interp match {
       case Right(interpString) =>
         @tailrec
@@ -192,6 +200,8 @@ object Stage2PetaformAST {
                     case Obj(_)          => ScopedError(pair.path, s"Can not interpolate Object into String").asLeft
                     case Arr(_)          => ScopedError(pair.path, s"Can not interpolate Array into String").asLeft
                     case Undef           => ScopedError(pair.path, s"Can not interpolate Undef into String").asLeft
+                    case Null            => ScopedError(pair.path, s"Can not interpolate Null into String").asLeft
+                    case Empty           => ScopedError(pair.path, s"Can not interpolate Empty into String").asLeft
                   }
                 case Left(error) => error.asLeft
               }
@@ -199,7 +209,7 @@ object Stage2PetaformAST {
               rStack.reverse.mkString.asRight
           }
 
-        loop(interpString.pairs, interpString.prefix :: Nil).map(Stage2PetaformAST.Str(_))
+        loop(interpString.pairs, interpString.prefix :: Nil).map(PetaformAST.Str(_))
       case Left(interp) => interpolate(pair.path, interp, ast, envVars)
     }
 
@@ -207,26 +217,26 @@ object Stage2PetaformAST {
       fromScope: List[ASTScope],
       rLookupScope: List[ASTScope],
       lookupScope: List[ASTScope],
-      calculatedValue: Stage2PetaformAST,
-      ast: Stage2PetaformAST,
-  ): Either[ScopedError, Stage2PetaformAST] =
+      calculatedValue: PetaformAST,
+      ast: PetaformAST,
+  ): Either[ScopedError, PetaformAST] =
     lookupScope match {
       case head :: tail =>
         val newRScope = head :: rLookupScope
         (head, ast) match {
-          case (ASTScope.Key(key), Stage2PetaformAST.Obj(elems)) =>
+          case (ASTScope.Key(key), PetaformAST.Obj(elems)) =>
             elems.indexWhere(_._1 == key) match {
               case -1 => ScopedError(fromScope, s"Missing key for interpolation: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
               case idx =>
                 replaceValue(fromScope, newRScope, tail, calculatedValue, elems(idx)._2).map { replaced =>
-                  Stage2PetaformAST.Obj(elems.updated(idx, (key, replaced)))
+                  PetaformAST.Obj(elems.updated(idx, (key, replaced)))
                 }
             }
-          case (ASTScope.Idx(idx), Stage2PetaformAST.Arr(elems)) =>
+          case (ASTScope.Idx(idx), PetaformAST.Arr(elems)) =>
             if (idx >= elems.size) ScopedError(fromScope, s"Idx out of bounds: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
             else
               replaceValue(fromScope, newRScope, tail, calculatedValue, elems(idx)).map { replaced =>
-                Stage2PetaformAST.Arr(elems.updated(idx, replaced))
+                PetaformAST.Arr(elems.updated(idx, replaced))
               }
           case (_: ASTScope.Key, _) =>
             ScopedError(newRScope.reverse, s"Expected object, but got ${ast.getClass.getSimpleName}").asLeft
@@ -235,17 +245,17 @@ object Stage2PetaformAST {
         }
       case Nil =>
         ast match {
-          case Stage2PetaformAST.Undef => calculatedValue.asRight
-          case _                       => ScopedError(fromScope, s"(this should never happen) Expected to replace Undef, but got ${ast.getClass.getSimpleName}").asLeft
+          case PetaformAST.Undef => calculatedValue.asRight
+          case _                 => ScopedError(fromScope, s"(this should never happen) Expected to replace Undef, but got ${ast.getClass.getSimpleName}").asLeft
         }
     }
 
   @tailrec
   private def interpolateAll(
       ordering: List[Dependency.Pair],
-      ast: Stage2PetaformAST,
+      ast: PetaformAST,
       envVars: Map[String, String],
-  ): Either[ScopedError, Stage2PetaformAST] =
+  ): Either[ScopedError, PetaformAST] =
     ordering match {
       case head :: tail =>
         interpolate(head, ast, envVars).flatMap(replaceValue(head.path, Nil, head.path, _, ast)) match {
@@ -257,9 +267,9 @@ object Stage2PetaformAST {
     }
 
   def fromStage1(
-      ast: Stage1PetaformAST,
+      ast: RawPetaformAST,
       envVars: Map[String, String],
-  ): Either[ScopedError, Stage2PetaformAST] =
+  ): Either[ScopedError, PetaformAST] =
     for {
       ordering <- topologicalSort(getInterpolations(Nil, ast))
       init <- initialStage2(Nil, ast, envVars)

@@ -2,43 +2,46 @@ package petaform.core
 
 import cats.syntax.option.*
 import harness.core.*
+import java.util.regex.{Matcher, Pattern}
 
 object Formatting {
 
-  object ast1 {
+  object rawAST {
 
-    def apply(ast: Stage1PetaformAST): String = {
+    def apply(ast: RawPetaformAST): String = {
       val idtStr: IndentedString =
         ast match {
-          case ast: Stage1PetaformAST.Simple =>
+          case ast: RawPetaformAST.Simple =>
             simple(ast)
-          case ast: Stage1PetaformAST.Complex =>
+          case ast: RawPetaformAST.Complex =>
             complex(ast).map { case (header, children) => IndentedString.inline(header, children) }
         }
 
       idtStr.toString("  ")
     }
 
-    private def simple(ast: Stage1PetaformAST.Simple): String =
+    private def simple(ast: RawPetaformAST.Simple): String =
       ast match {
-        case Stage1PetaformAST.RawValue(value)       => value
-        case Stage1PetaformAST.Str(str)              => str.show
-        case Stage1PetaformAST.Interp(interpolation) => interpolation.show
-        case Stage1PetaformAST.Undef                 => "undef"
+        case RawPetaformAST.RawValue(value)       => value
+        case RawPetaformAST.Str(str)              => str.show
+        case RawPetaformAST.Interp(interpolation) => interpolation.show
+        case RawPetaformAST.Undef                 => "undef"
+        case RawPetaformAST.Null                  => "null"
+        case RawPetaformAST.Empty                 => ""
       }
 
-    private def complex(ast: Stage1PetaformAST.Complex): List[(String, Option[IndentedString])] =
+    private def complex(ast: RawPetaformAST.Complex): List[(String, Option[IndentedString])] =
       ast match {
-        case Stage1PetaformAST.Obj(elems) =>
+        case RawPetaformAST.Obj(elems) =>
           elems.map[(String, Option[IndentedString])] {
-            case (key, Stage1PetaformAST.Obj.Value.Required) =>
+            case (key, RawPetaformAST.Obj.Value.Required) =>
               (s"$key @required :", None)
-            case (key, Stage1PetaformAST.Obj.Value.Provided(const, value)) =>
+            case (key, RawPetaformAST.Obj.Value.Provided(const, value)) =>
               val constAnnotation: String = if (const) " @const " else ""
               value match {
-                case value: Stage1PetaformAST.Simple =>
+                case value: RawPetaformAST.Simple =>
                   (s"$key$constAnnotation: ${simple(value)}", None)
-                case value: Stage1PetaformAST.Complex =>
+                case value: RawPetaformAST.Complex =>
                   val children = complex(value)
 
                   (
@@ -49,11 +52,11 @@ object Formatting {
                   )
               }
           }
-        case Stage1PetaformAST.Arr(elems) =>
+        case RawPetaformAST.Arr(elems) =>
           elems.map[(String, Option[IndentedString])] {
-            case value: Stage1PetaformAST.Simple =>
+            case value: RawPetaformAST.Simple =>
               (s"- ${simple(value)}", None)
-            case value: Stage1PetaformAST.Complex =>
+            case value: RawPetaformAST.Complex =>
               complex(value) match {
                 case (line0Header, None) :: Nil =>
                   (
@@ -78,35 +81,37 @@ object Formatting {
 
   }
 
-  object ast2 {
+  object ast {
 
-    def apply(ast: Stage2PetaformAST): String = {
+    def apply(ast: PetaformAST): String = {
       val idtStr: IndentedString =
         ast match {
-          case ast: Stage2PetaformAST.Simple =>
+          case ast: PetaformAST.Simple =>
             simple(ast)
-          case ast: Stage2PetaformAST.Complex =>
+          case ast: PetaformAST.Complex =>
             complex(ast).map { case (header, children) => IndentedString.inline(header, children) }
         }
 
       idtStr.toString("  ")
     }
 
-    private def simple(ast: Stage2PetaformAST.Simple): String =
+    private def simple(ast: PetaformAST.Simple): String =
       ast match {
-        case Stage2PetaformAST.RawValue(value) => value
-        case Stage2PetaformAST.Str(str)        => str.unesc
-        case Stage2PetaformAST.Undef           => "undef"
+        case PetaformAST.RawValue(value) => value.replaceAll(Pattern.quote("$"), Matcher.quoteReplacement("$$"))
+        case PetaformAST.Str(str)        => str.unesc.replaceAll(Pattern.quote("$"), Matcher.quoteReplacement("$$"))
+        case PetaformAST.Undef           => "undef"
+        case PetaformAST.Null            => "null"
+        case PetaformAST.Empty           => ""
       }
 
-    private def complex(ast: Stage2PetaformAST.Complex): List[(String, Option[IndentedString])] =
+    private def complex(ast: PetaformAST.Complex): List[(String, Option[IndentedString])] =
       ast match {
-        case Stage2PetaformAST.Obj(elems) =>
+        case PetaformAST.Obj(elems) =>
           elems.map[(String, Option[IndentedString])] { case (key, value) =>
             value match {
-              case value: Stage2PetaformAST.Simple =>
+              case value: PetaformAST.Simple =>
                 (s"$key: ${simple(value)}", None)
-              case value: Stage2PetaformAST.Complex =>
+              case value: PetaformAST.Complex =>
                 val children = complex(value)
 
                 (
@@ -117,11 +122,11 @@ object Formatting {
                 )
             }
           }
-        case Stage2PetaformAST.Arr(elems) =>
+        case PetaformAST.Arr(elems) =>
           elems.map[(String, Option[IndentedString])] {
-            case value: Stage2PetaformAST.Simple =>
+            case value: PetaformAST.Simple =>
               (s"- ${simple(value)}", None)
-            case value: Stage2PetaformAST.Complex =>
+            case value: PetaformAST.Complex =>
               complex(value) match {
                 case (line0Header, None) :: Nil =>
                   (

@@ -70,6 +70,7 @@ lazy val `petaform-core` =
       testSettings,
       libraryDependencies ++= Seq(
         MyOrg %% "harness-zio" % HarnessVersion,
+        "org.typelevel" %% "shapeless3-deriving" % "3.4.1-3-4f382ff-SNAPSHOT",
       ),
       Test / fork := true,
     )
