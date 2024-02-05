@@ -7,17 +7,18 @@ trait ASTEncoder[A] { self =>
 
   def encode(a: A): PetaformAST
 
-  protected def omitKey(a: A): Boolean = false
+  def omitKey(a: A): Boolean = false
 
   final def contramap[B](f: B => A): ASTEncoder[B] =
     b => self.encode(f(b))
 
 }
-object ASTEncoder {
+object ASTEncoder extends ASTEncoderLowPriority {
 
   def apply[A](implicit enc: ASTEncoder[A]): ASTEncoder[A] = enc
 
-  implicit val id: ASTEncoder[PetaformAST] = identity(_)
+  implicit val ast: ASTEncoder[PetaformAST] = identity(_)
+  implicit val objAst: ASTEncoder[PetaformAST.Obj] = identity(_)
 
   implicit def map[K: StringEncoder, V: ASTEncoder]: ASTEncoder[Map[K, V]] =
     m => PetaformAST.Obj(m.toList.map { case (k, v) => StringEncoder[K].encode(k) -> ASTEncoder[V].encode(v) })
@@ -32,7 +33,7 @@ object ASTEncoder {
           case Some(a) => ASTEncoder[A].encode(a)
           case None    => PetaformAST.Null
         }
-      override protected def omitKey(a: Option[A]): Boolean = a.isEmpty
+      override def omitKey(a: Option[A]): Boolean = a.isEmpty
     }
 
   // TODO (KR) : number, boolean, ect -> raw
@@ -41,7 +42,15 @@ object ASTEncoder {
 
   // TODO (KR) : instances
 
-  // =====| Generic |=====
+}
+
+trait ASTEncoderLowPriority extends ASTEncoderLowPriority2 {
+
+  implicit def fromCodec[A: ASTCodec]: ASTEncoder[A] = ASTCodec[A].encoder
+
+}
+
+trait ASTEncoderLowPriority2 {
 
   given astProductEncoderGen[A](using inst: => K0.ProductInstances[ASTEncoder, A], labels: => Labelling[A]): ASTEncoder[A] =
     a =>

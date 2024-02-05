@@ -1,0 +1,28 @@
+
+@start: Lines
+@lookAhead: 2
+
+Lines : (Line . "\n" ^Line)+ "\n"?
+      ;
+
+Line  : space*
+      | space* dash? key "@required" ":"
+      | space* dash? key "@const"? ":" Value?
+      | space* dash Value?
+      ;
+
+Value ^ String
+      | Interpolation
+      ;
+
+String : "\"" StringPart* "\""
+       ;
+
+StringPart ^ chars
+           | escChar
+           | Interpolation
+           ;
+
+Interpolation : "${" "CFG" ("." ^key)+ "}"
+              | "${" "ENV" "." key "}"
+              ;

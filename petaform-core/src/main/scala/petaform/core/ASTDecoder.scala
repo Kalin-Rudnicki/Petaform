@@ -8,9 +8,9 @@ import shapeless3.deriving.*
 
 trait ASTDecoder[A] { self =>
 
-  protected def decodeInternal(rPath: List[ASTScope], ast: PetaformAST): Either[ScopedError, A]
+  def decodeInternal(rPath: List[ASTScope], ast: PetaformAST): Either[ScopedError, A]
 
-  protected def ifMissing: Option[A] = None
+  def ifMissing: Option[A] = None
 
   final def decode(ast: PetaformAST): Either[ScopedError, A] = self.decodeInternal(Nil, ast)
 
@@ -21,11 +21,15 @@ trait ASTDecoder[A] { self =>
     (rPath, ast) => self.decodeInternal(rPath, ast).flatMap(f(_).leftMap(ScopedError(rPath.reverse, _)))
 
 }
-object ASTDecoder {
+object ASTDecoder extends ASTDecoderLowPriority {
 
   def apply[A](implicit dec: ASTDecoder[A]): ASTDecoder[A] = dec
 
-  implicit val id: ASTDecoder[PetaformAST] = (_, ast) => ast.asRight
+  implicit val ast: ASTDecoder[PetaformAST] = (_, ast) => ast.asRight
+  implicit val objAst: ASTDecoder[PetaformAST.Obj] = {
+    case (_, obj: PetaformAST.Obj) => obj.asRight
+    case (rPath, ast)              => ScopedError(rPath.reverse, s"Expected Object, but got ${ast.getClass.getSimpleName}").asLeft
+  }
 
   implicit def map[K: StringDecoder, V: ASTDecoder]: ASTDecoder[Map[K, V]] = {
     case (rPath, PetaformAST.Obj(elems)) =>
@@ -56,12 +60,12 @@ object ASTDecoder {
 
   implicit def option[A: ASTDecoder]: ASTDecoder[Option[A]] =
     new ASTDecoder[Option[A]] {
-      override protected def decodeInternal(rPath: List[ASTScope], ast: PetaformAST): Either[ScopedError, Option[A]] =
+      override def decodeInternal(rPath: List[ASTScope], ast: PetaformAST): Either[ScopedError, Option[A]] =
         ast match {
           case PetaformAST.Null => None.asRight
           case _                => ASTDecoder[A].decodeInternal(rPath, ast).map(_.some)
         }
-      override protected def ifMissing: Option[Option[A]] = None.some
+      override def ifMissing: Option[Option[A]] = None.some
     }
 
   implicit def fromStringDecoder[A: StringDecoder]: ASTDecoder[A] = {
@@ -73,7 +77,15 @@ object ASTDecoder {
 
   // TODO (KR) : instances
 
-  // =====| Generic |=====
+}
+
+trait ASTDecoderLowPriority extends ASTDecoderLowPriority2 {
+
+  implicit def fromCodec[A: ASTCodec]: ASTDecoder[A] = ASTCodec[A].decoder
+
+}
+
+trait ASTDecoderLowPriority2 {
 
   given astProductDecoderGen[A](using inst: => K0.ProductInstances[ASTDecoder, A], labels: => Labelling[A]): ASTDecoder[A] = {
     case (rPath, PetaformAST.Obj(elems)) =>

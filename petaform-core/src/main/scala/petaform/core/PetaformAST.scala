@@ -17,8 +17,15 @@ object PetaformAST {
   final case class Obj(elems: List[(String, PetaformAST)]) extends PetaformAST.Complex {
     val map: Map[String, PetaformAST] = elems.toMap
   }
+  object Obj {
+    val empty: Obj = Obj(Nil)
+    def apply(elems: (String, PetaformAST)*): Obj = Obj(elems.toList)
+  }
 
   final case class Arr(elems: List[PetaformAST]) extends PetaformAST.Complex
+  object Arr {
+    def apply(elems: PetaformAST*): Arr = Arr(elems.toList)
+  }
 
   case object Null extends PetaformAST.Simple
 
@@ -210,7 +217,8 @@ object PetaformAST {
           }
 
         loop(interpString.pairs, interpString.prefix :: Nil).map(PetaformAST.Str(_))
-      case Left(interp) => interpolate(pair.path, interp, ast, envVars)
+      case Left(interp) =>
+        interpolate(pair.path, interp, ast, envVars)
     }
 
   private def replaceValue(
@@ -255,25 +263,27 @@ object PetaformAST {
       ordering: List[Dependency.Pair],
       ast: PetaformAST,
       envVars: Map[String, String],
+      config: Option[PetaformAST],
   ): Either[ScopedError, PetaformAST] =
     ordering match {
       case head :: tail =>
-        interpolate(head, ast, envVars).flatMap(replaceValue(head.path, Nil, head.path, _, ast)) match {
-          case Right(ast)  => interpolateAll(tail, ast, envVars)
+        interpolate(head, config.getOrElse(ast), envVars).flatMap(replaceValue(head.path, Nil, head.path, _, ast)) match {
+          case Right(ast)  => interpolateAll(tail, ast, envVars, config)
           case Left(error) => error.asLeft
         }
       case Nil =>
         ast.asRight
     }
 
-  def fromStage1(
+  def fromRaw(
       ast: RawPetaformAST,
       envVars: Map[String, String],
+      config: Option[PetaformAST],
   ): Either[ScopedError, PetaformAST] =
     for {
       ordering <- topologicalSort(getInterpolations(Nil, ast))
       init <- initialStage2(Nil, ast, envVars)
-      result <- interpolateAll(ordering, init, envVars)
+      result <- interpolateAll(ordering, init, envVars, config)
     } yield result
 
 }

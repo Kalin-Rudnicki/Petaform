@@ -1,0 +1,46 @@
+
+@start: NewLine
+
+@mode: NewLine
+[ ][ ]                                       ; space
+(- )                                         ; dash -> SeenDash
+(-\n)                                        ; dash, "\n"
+[A-Za-z][A-Za-z0-9_\-]*                      ; key -> SeenKey
+\n                                           ; @
+"                                            ; @ -> String
+
+@mode: SeenDash
+(- )                                         ; dash
+(-[ ]?\n)                                    ; dash[0,-2], "\n"[-1]
+[A-Za-z][A-Za-z0-9_\-]*                      ; key >> SeenKey
+"                                            ; @ -> String
+$\{                                          ; @ -> InterpolationStart
+\n                                           ; @ <-
+
+@mode: SeenKey
+[ \t]+                                       ;
+\@(required|const)                           ; @
+:                                            ; @ >> SeenColon
+
+@mode: SeenColon
+[ \t]                                        ;
+\n                                           ; @ <-
+"                                            ; @ -> String
+$\{                                          ; @ -> InterpolationStart
+
+@mode: String
+"                                            ; @ <-
+\\.                                          ; escChar
+[^\\"$]+                                     ; chars
+$\{                                          ; @ -> InterpolationStart
+
+@mode: InterpolationStart
+[ \t]                                        ;
+CFG|ENV                                      ; @ >> Interpolation
+
+@mode: Interpolation
+[ \t]                                        ;
+\}                                           ; @ <-
+\.                                           ; @
+[A-Za-z][A-Za-z0-9_\-]*                      ; key
+

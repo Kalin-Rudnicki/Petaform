@@ -1,106 +1,87 @@
 package petaform.core
 
 import cats.syntax.option.*
+import harness.cli.*
 import harness.core.*
 import harness.zio.*
-import scala.reflect.ClassTag
+import petaform.core.parser.ASTParser
+import slyce.parse.exe.ParseExe
 import zio.*
 
 object TmpMain extends ExecutableApp {
 
-  private val envVars: Map[String, String] =
-    Map(
-      "VAR_1" -> "var-1-value",
-    )
-
-  private val cases: List[RawPetaformAST] =
-    List(
-      RawPetaformAST.Obj.makeUnsafe(
-        "outer1" -> RawPetaformAST.Obj.makeUnsafe(
-          "key1" -> env.VAR_1,
-          "key2" -> is"value2",
-        ),
-        "outer2" -> is"value3",
-        "outer3" -> RawPetaformAST.Obj.makeUnsafe(
-          "key1" -> cfg.outer1,
-          "key2" -> cfg.outer1.key2,
-          "key3" -> cfg.outer3.key4,
-          "key4" -> is"[${cfg.outer1.key1}--${cfg.outer3.key2}]",
-          "key5" -> env.VAR_1,
-          "key6" -> is"<${env.VAR_1}>",
+  private val resourceGroups: Parts.ResourceGroups =
+    Parts.ResourceGroups(
+      "nginx" -> Parts.ResourceGroup(
+        "local" -> Parts.ResourceVariant(
+          "docker" -> Parts.Provider(
+            base = Parts.ProviderBase(
+              source = "kreuzwerker/docker",
+              version = "3.0.2",
+            ),
+            config = PetaformAST.Obj.empty,
+          ),
+        )(
+          Parts.Resource("docker_image", "nginx")(
+            "name" -> PetaformAST.Str("nginx:latest"),
+          ),
+          Parts.Resource("docker_container", "nginx")(
+            "name" -> PetaformAST.Str("nginx"),
+            "image" -> PetaformAST.RawValue("docker_image.nginx.image_id"),
+            "ports" -> PetaformAST.Arr(
+              PetaformAST.Obj(
+                "external" -> PetaformAST.RawValue("8080"),
+                "internal" -> PetaformAST.RawValue("80"),
+              ),
+            ),
+          ),
         ),
       ),
     )
 
-  private val showCases: URIO[HarnessEnv, Unit] =
-    ZIO.foreachDiscard(cases.zipWithIndex) { case (ast1, i) =>
-      (for {
-        _ <- Logger.log.info(s"=====| Case ${i + 1} |=====")
-        _ <- Logger.log.info(Formatting.rawAST(ast1))
-        ast2 <- PetaformAST.fromStage1(ast1, envVars) match {
-          case Right(value) => ZIO.succeed(value)
-          case Left(error)  => ZIO.fail(HError.UserError(error.toString))
-        }
-        _ <- Logger.log.info(Formatting.ast(ast2))
-      } yield ()).dumpErrorsAndContinue
-    }
-
-  private final case class Type1(
-      a: String,
-      b: Option[Int],
-  )
-  private object Type1 {
-    implicit val astEncoder: ASTEncoder[Type1] = ASTEncoder.derived
-    implicit val astDecoder: ASTDecoder[Type1] = ASTDecoder.derived
-  }
-
-  private final case class Type2(
-      bool: Boolean,
-      type1: Option[Type1],
-  )
-  private object Type2 {
-    implicit val astEncoder: ASTEncoder[Type2] = ASTEncoder.derived
-    implicit val astDecoder: ASTDecoder[Type2] = ASTDecoder.derived
-  }
-
-  private sealed trait Type3
-  private object Type3 {
-    final case class T1(t1: Type1) extends Type3
-    final case class T2(t2: Type2) extends Type3
-
-    implicit val astEncoder: ASTEncoder[Type3] = ASTEncoder.derived
-    implicit val astDecoder: ASTDecoder[Type3] = ASTDecoder.derived
-  }
-
-  private def showEncoded[A: ASTEncoder: ASTDecoder: ClassTag](values: A*): URIO[HarnessEnv, Unit] =
-    Logger.log.info(s"Showing cases for [${implicitly[ClassTag[A]].runtimeClass.getSimpleName}]") *>
-      ZIO.foreachDiscard(values) { value =>
-        val encoded = ASTEncoder[A].encode(value)
-        Logger.log.info(Formatting.ast(encoded)) *>
-          Logger.log.info(ASTDecoder[A].decode(encoded).merge)
-      }
-
   override val executable: Executable =
-    Executable.withEffect {
-      for {
-        _ <- Logger.log.info("Petaform Core TmpMain")
-        _ <- showCases.when(false)
-        _ <- showEncoded(
-          Type1("abc", 5.some),
-          Type1("def", None),
-        )
-        _ <- showEncoded(
-          Type2(true, Type1("abc$", 5.some).some),
-          Type2(true, Type1("def", None).some),
-          Type2(false, None),
-        )
-        _ <- showEncoded(
-          Type3.T1(Type1("abc$", 5.some)),
-          Type3.T2(Type2(true, Type1("abc$", 5.some).some)),
-          Type3.T2(Type2(true, Type1("def", None).some)),
-          Type3.T2(Type2(false, None)),
-        )
-      } yield ()
-    }
+    Executable.fromSubCommands(
+      "tmp" -> Executable.withEffect {
+        for {
+          _ <- Logger.log.info("Petaform Core TmpMain")
+          _ <- Logger.log.info(resourceGroups)
+          ast = ASTEncoder[Parts.ResourceGroups].encode(resourceGroups)
+          encoded = Formatting.ast(ast)
+          _ <- Logger.log.info(encoded)
+        } yield ()
+      },
+      "parse" -> ParseExe.fromParser(ASTParser)("cfg"),
+      "parse-2" ->
+        Executable
+          .withParser {
+            Parser.values.nel[String](LongName.unsafe("cfg-file")) &&
+            Parser.value[String](LongName.unsafe("files"))
+          }
+          .withEffect { case (cfgFiles, file) =>
+            for {
+              _ <- Logger.log.info("=====| parse-2 |=====")
+
+              envVars <- System.envs.mapError(HError.fromThrowable)
+
+              rawCfgAsts <- ZIO.foreach(cfgFiles.toList) { RawPetaformAST.fromPathString }
+              rawCfgAst <- RawPetaformAST.merge(rawCfgAsts) match {
+                case Right(value) => ZIO.succeed(value)
+                case Left(error)  => ZIO.fail(HError.UserError(error.toString))
+              }
+              cfgAst <- PetaformAST.fromRaw(rawCfgAst, envVars, None) match {
+                case Right(value) => ZIO.succeed(value)
+                case Left(error)  => ZIO.fail(HError.UserError(error.toString))
+              }
+
+              rawAst <- RawPetaformAST.fromPathString(file)
+              ast <- PetaformAST.fromRaw(rawAst, envVars, cfgAst.some) match {
+                case Right(value) => ZIO.succeed(value)
+                case Left(error)  => ZIO.fail(HError.UserError(error.toString))
+              }
+
+              _ <- Logger.log.info(Formatting.ast(ast))
+            } yield ()
+          },
+    )
 
 }
