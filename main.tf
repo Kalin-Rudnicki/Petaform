@@ -10,6 +10,8 @@ terraform {
 
 }
 
+provider "docker" {}
+
 resource "docker_volume" "db-data" {
   name = "db-data"
   driver = "local"

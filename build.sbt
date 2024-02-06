@@ -56,6 +56,9 @@ lazy val HarnessVersion = "3.1.14"
 lazy val `petaform-root` =
   project
     .in(file("."))
+    .settings(
+      publish / skip := true,
+    )
     .aggregate(
       `petaform-core`,
     )

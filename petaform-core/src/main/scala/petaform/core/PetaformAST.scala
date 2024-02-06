@@ -5,9 +5,11 @@ import cats.syntax.traverse.*
 import scala.annotation.tailrec
 
 sealed trait PetaformAST {
-  
+
   final def decodeTo[A: ASTDecoder]: Either[ScopedError, A] = ASTDecoder[A].decode(this)
-  
+
+  final def format: String = Formatting.ast(this)
+
 }
 object PetaformAST {
 

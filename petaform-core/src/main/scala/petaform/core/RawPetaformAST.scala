@@ -10,7 +10,9 @@ import scala.annotation.tailrec
 import slyce.core.*
 import zio.*
 
-sealed trait RawPetaformAST
+sealed trait RawPetaformAST {
+  final def format: String = Formatting.rawAST(this)
+}
 object RawPetaformAST {
 
   sealed trait Simple extends RawPetaformAST

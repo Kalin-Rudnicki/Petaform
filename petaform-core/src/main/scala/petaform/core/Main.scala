@@ -58,13 +58,7 @@ object Main extends ExecutableApp {
           .flatMap(RawPetaformAST.merge(_))
       }
 
-  private final case class Env(
-      name: String,
-      env: Parts.Environment,
-      resources: Parts.ResourceGroups,
-  )
-
-  private def getEnvs(petaformPathString: String): SHTask[List[Env]] =
+  private def getEnvs(petaformPathString: String): SHTask[List[Parts.Built]] =
     for {
       _ <- Logger.log.info("Calculating envs")
       _ <- Logger.log.detailed(s"petaform-dir: ${cfg.petaformDir}")
@@ -102,10 +96,11 @@ object Main extends ExecutableApp {
           configAst <- Errors.scopedToTask(PetaformAST.fromRaw(rawConfigAst, envVars, None))
           _ <- Logger.log.debug(s"[:  $envName  -  config  :]\n${Formatting.ast(configAst)}")
           rawResourceAst <- filterMapMap(envName, resourceMapMap, env.resources)
-          resourceAst <- Errors.scopedToTask(PetaformAST.fromRaw(rawResourceAst, envVars, configAst.some))
+          petaformEnvVars = Map("PETAFORM_ENV" -> envName)
+          resourceAst <- Errors.scopedToTask(PetaformAST.fromRaw(rawResourceAst, envVars ++ petaformEnvVars, configAst.some))
           _ <- Logger.log.debug(s"[:  $envName  -  resources  :]\n${Formatting.ast(resourceAst)}")
           resources <- Errors.scopedToTask(resourceAst.decodeTo[Parts.ResourceGroups])
-        } yield Env(envName, env, resources)
+        } yield Parts.Built(envName, env, resources)
       }
     } yield envs
 
@@ -116,7 +111,12 @@ object Main extends ExecutableApp {
         for {
           _ <- Logger.log.info("Running Petaform init")
           envs <- getEnvs(cfg.petaformDir)
-          _ = envs // TODO (KR) :
+          _ <- ZIO.foreachDiscard(envs) { env =>
+            for {
+              terraform <- TerraformAST.fromBuilt(env)
+              _ <- Logger.log.debug(s"[:  ${env.name}  -  terraform  :]\n${Formatting.terraformAST(terraform)}")
+            } yield ()
+          }
         } yield ()
       }
 

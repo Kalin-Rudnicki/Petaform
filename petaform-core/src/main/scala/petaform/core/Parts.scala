@@ -97,4 +97,12 @@ object Parts {
     implicit val astCodec: ASTCodec[ResourceBase] = ASTCodec.derived
   }
 
+  // =====|  |=====
+
+  final case class Built(
+      name: String,
+      env: Environment,
+      resources: ResourceGroups,
+  )
+
 }
