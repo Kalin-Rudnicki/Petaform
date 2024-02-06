@@ -8,37 +8,45 @@ terraform {
     }
   }
 
-  backend "remote" {
-    hostname = "localhost:3001/api"
-    organization = "harness"
+}
 
-    workspaces {
-      name = "my-workspace"
-    }
+resource "docker_volume" "db-data" {
+  name = "db-data"
+  driver = "local"
+  labels {
+    label = "application"
+    value = "postgres"
   }
-
 }
 
-provider "docker" {}
-
-resource "docker_image" "nginx" {
-  name = "nginx:latest"
+resource "docker_image" "db" {
+  name = "postgres:latest"
+  keep_locally = true
 }
 
-resource "docker_container" "nginx" {
-  image   = docker_image.nginx.image_id
-  name    = "nginx"
+resource "docker_container" "db2" {
+  image = docker_image.db.image_id
+  name  = "local-db2"
+
+  env = [
+    "POSTGRES_PASSWORD=psql-pass",
+    "POSTGRES_DB=example_db",
+  ]
+
+  labels {
+    label = "application"
+    value = "postgres"
+  }
 
   ports {
-    external = 8080
-    internal = 80
+    internal = 5432
+    external = 5000
   }
 
-}
-
-resource "docker_container" "postgres" {
-  image = ""
-  name  = ""
-
-  env = []
+  mounts {
+    target = "/var/lib/postgresql/data"
+    source = docker_volume.db-data.name
+    read_only = false
+    type = "volume"
+  }
 }

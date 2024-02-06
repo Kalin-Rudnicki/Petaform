@@ -13,6 +13,7 @@ Line  : space*
 
 Value ^ String
       | Interpolation
+      | raw
       ;
 
 String : "\"" StringPart* "\""

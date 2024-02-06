@@ -168,6 +168,8 @@ object RawPetaformAST {
           None,
           Nil,
         )
+      case raw: ASTParser.Terminal.raw =>
+        RawPetaformAST.RawValue(raw.text)
     }
 
   private sealed trait TmpLine {

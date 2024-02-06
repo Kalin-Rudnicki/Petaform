@@ -48,24 +48,12 @@ object Main extends ExecutableApp {
       Errors.scopedToTask {
         resources.toList
           .traverse { case (resourceName, variantName) =>
-            resourcesMap.get(resourceName) match {
-              case Some(resourceMap) =>
-                resourceMap.get(variantName) match {
-                  case Some(value) =>
-                    RawPetaformAST.Obj
-                      .makeUnsafe(
-                        resourceName -> RawPetaformAST.Obj.Value.Provided(
-                          true,
-                          RawPetaformAST.Obj.makeUnsafe(
-                            variantName -> RawPetaformAST.Obj.Value.Provided(true, value),
-                          ),
-                        ),
-                      )
-                      .asRight
-                  case None => ScopedError(List(ASTScope.Key(resourceName), ASTScope.Key(variantName)), "Missing variant").asLeft
-                }
-              case None => ScopedError(List(ASTScope.Key(resourceName)), "Missing resource").asLeft
-            }
+            for {
+              resourceMap <- resourcesMap.get(resourceName).toRight(ScopedError(List(ASTScope.Key(resourceName)), "Missing resource"))
+              value <- resourceMap.get(variantName).toRight(ScopedError(List(ASTScope.Key(resourceName), ASTScope.Key(variantName)), "Missing variant"))
+              obj1 = RawPetaformAST.Obj.makeUnsafe(variantName -> RawPetaformAST.Obj.Value.Provided(true, value))
+              obj2 = RawPetaformAST.Obj.makeUnsafe(resourceName -> RawPetaformAST.Obj.Value.Provided(true, obj1))
+            } yield obj2
           }
           .flatMap(RawPetaformAST.merge(_))
       }
@@ -89,6 +77,7 @@ object Main extends ExecutableApp {
 
       envVars <- System.envs.mapError(HError.fromThrowable)
 
+      // TODO (KR) : manually grab config paths, and allow interpolation from specified configs for rest of file
       environmentsRawAst <- RawPetaformAST.fromPath(environmentsPath)
       environmentsAst <- Errors.scopedToTask(PetaformAST.fromRaw(environmentsRawAst, envVars, PetaformAST.Obj().some))
       environments <- Errors.scopedToTask(environmentsAst.decodeTo[Parts.Environments])

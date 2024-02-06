@@ -23,23 +23,25 @@ $\{                                          ; @ -> InterpolationStart
 :                                            ; @ >> SeenColon
 
 @mode: SeenColon
-[ \t]                                        ;
+[ \t]+                                       ;
 \n                                           ; @ <-
 "                                            ; @ -> String
 $\{                                          ; @ -> InterpolationStart
+[^ \t\n$"][^ \t\n"]*([ \t]+[^ \t\n"]+)*      ; raw
 
 @mode: String
 "                                            ; @ <-
 \\.                                          ; escChar
+$$                                           ; escChar
 [^\\"$]+                                     ; chars
 $\{                                          ; @ -> InterpolationStart
 
 @mode: InterpolationStart
-[ \t]                                        ;
+[ \t]+                                       ;
 CFG|ENV                                      ; @ >> Interpolation
 
 @mode: Interpolation
-[ \t]                                        ;
+[ \t]+                                       ;
 \}                                           ; @ <-
 \.                                           ; @
 [A-Za-z][A-Za-z0-9_\-]*                      ; key
