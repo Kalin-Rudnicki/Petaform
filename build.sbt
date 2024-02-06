@@ -75,5 +75,6 @@ lazy val `petaform-core` =
         MyOrg %% "slyce-parse-exe" % "2.0.8" % Test,
         "org.typelevel" %% "shapeless3-deriving" % "3.4.1-3-4f382ff-SNAPSHOT",
       ),
+      Compile / fork := true,
       Test / fork := true,
     )

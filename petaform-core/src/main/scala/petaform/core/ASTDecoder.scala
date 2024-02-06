@@ -28,6 +28,7 @@ object ASTDecoder extends ASTDecoderLowPriority {
   implicit val ast: ASTDecoder[PetaformAST] = (_, ast) => ast.asRight
   implicit val objAst: ASTDecoder[PetaformAST.Obj] = {
     case (_, obj: PetaformAST.Obj) => obj.asRight
+    case (_, PetaformAST.Empty)    => PetaformAST.Obj(Nil).asRight
     case (rPath, ast)              => ScopedError(rPath.reverse, s"Expected Object, but got ${ast.getClass.getSimpleName}").asLeft
   }
 

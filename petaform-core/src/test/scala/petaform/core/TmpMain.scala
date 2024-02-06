@@ -10,44 +10,11 @@ import zio.*
 
 object TmpMain extends ExecutableApp {
 
-  private val resourceGroups: Parts.ResourceGroups =
-    Parts.ResourceGroups(
-      "nginx" -> Parts.ResourceGroup(
-        "local" -> Parts.ResourceVariant(
-          "docker" -> Parts.Provider(
-            base = Parts.ProviderBase(
-              source = "kreuzwerker/docker",
-              version = "3.0.2",
-            ),
-            config = PetaformAST.Obj.empty,
-          ),
-        )(
-          Parts.Resource("docker_image", "nginx")(
-            "name" -> PetaformAST.Str("nginx:latest"),
-          ),
-          Parts.Resource("docker_container", "nginx")(
-            "name" -> PetaformAST.Str("nginx"),
-            "image" -> PetaformAST.RawValue("docker_image.nginx.image_id"),
-            "ports" -> PetaformAST.Arr(
-              PetaformAST.Obj(
-                "external" -> PetaformAST.RawValue("8080"),
-                "internal" -> PetaformAST.RawValue("80"),
-              ),
-            ),
-          ),
-        ),
-      ),
-    )
-
   override val executable: Executable =
     Executable.fromSubCommands(
       "tmp" -> Executable.withEffect {
         for {
           _ <- Logger.log.info("Petaform Core TmpMain")
-          _ <- Logger.log.info(resourceGroups)
-          ast = ASTEncoder[Parts.ResourceGroups].encode(resourceGroups)
-          encoded = Formatting.ast(ast)
-          _ <- Logger.log.info(encoded)
         } yield ()
       },
       "parse" -> ParseExe.fromParser(ASTParser)("cfg"),

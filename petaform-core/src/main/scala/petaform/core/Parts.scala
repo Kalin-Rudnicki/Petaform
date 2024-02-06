@@ -1,46 +1,52 @@
 package petaform.core
 
+import cats.syntax.either.*
+
 object Parts {
 
   final case class Environments(
-      environments: Map[String, Environments.Environment],
+      environments: Map[String, Environment],
   )
   object Environments {
 
-    final case class Environment(
-        configs: List[String],
-        resources: Map[String, String],
-    )
-    object Environment {
-      implicit val astCodec: ASTCodec[Environment] = ASTCodec.derived
-    }
-
     implicit val astCodec: ASTCodec[Environments] =
-      ASTCodec.from[Map[String, Environments.Environment]].transform(Environments(_), _.environments)
+      ASTCodec.from[Map[String, Environment]].transform(Environments(_), _.environments)
 
+  }
+
+  final case class Environment(
+      configs: List[String],
+      resources: Map[String, String],
+  )
+  object Environment {
+    implicit val astCodec: ASTCodec[Environment] = ASTCodec.derived
   }
 
   final case class ResourceGroups(
-      resourceGroups: Map[String, ResourceGroup],
+      resourceGroups: Map[String, SingleKeyMap[ResourceVariant]],
   )
   object ResourceGroups {
 
-    def apply(resourceGroups: (String, ResourceGroup)*): ResourceGroups = ResourceGroups(resourceGroups.toMap)
-
     implicit val astCodec: ASTCodec[ResourceGroups] =
-      ASTCodec.from[Map[String, ResourceGroup]].transform(ResourceGroups(_), _.resourceGroups)
+      ASTCodec.from[Map[String, SingleKeyMap[ResourceVariant]]].transform(ResourceGroups(_), _.resourceGroups)
 
   }
 
-  final case class ResourceGroup(
-      variants: Map[String, ResourceVariant],
+  final case class SingleKeyMap[A](
+      key: String,
+      value: A,
   )
-  object ResourceGroup {
-
-    def apply(variants: (String, ResourceVariant)*): ResourceGroup = ResourceGroup(variants.toMap)
-
-    implicit val astCodec: ASTCodec[ResourceGroup] = ASTCodec.from[Map[String, ResourceVariant]].transform(ResourceGroup(_), _.variants)
-
+  object SingleKeyMap {
+    implicit def astCodec[A: ASTEncoder: ASTDecoder]: ASTCodec[SingleKeyMap[A]] =
+      ASTCodec
+        .from[Map[String, A]]
+        .transformOrFail(
+          _.toList match {
+            case (key, value) :: Nil => SingleKeyMap(key, value).asRight
+            case _                   => "Expected single key map".asLeft
+          },
+          skm => Map(skm.key -> skm.value),
+        )
   }
 
   final case class ResourceVariant(

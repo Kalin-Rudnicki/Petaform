@@ -170,18 +170,22 @@ object RawPetaformAST {
         )
     }
 
-  private sealed trait TmpLine
+  private sealed trait TmpLine {
+    val depth: Int
+    val span: Span.Highlight
+  }
   private object TmpLine {
-    final case class RequiredKey(numSpaces: Int, dash: Boolean, key: String) extends TmpLine
-    final case class Key(numSpaces: Int, dash: Boolean, key: String, const: Boolean, value: Option[RawPetaformAST]) extends TmpLine
-    final case class Arr(numSpaces: Int, value: Option[RawPetaformAST]) extends TmpLine
+    final case class RequiredKey(depth: Int, dash: Boolean, key: String, span: Span.Highlight) extends TmpLine
+    final case class Key(depth: Int, dash: Boolean, key: String, const: Boolean, value: Option[RawPetaformAST], span: Span.Highlight) extends TmpLine
+    final case class Arr(depth: Int, value: Option[RawPetaformAST], span: Span.Highlight) extends TmpLine
 
     def fromRaw(raw: ASTParser.NonTerminal.Line): Option[TmpLine] =
       raw match {
-        case ASTParser.NonTerminal.Line._1(_)                                  => None
-        case ASTParser.NonTerminal.Line._2(spaces, dash, key, _, _)            => RequiredKey(spaces.toList.size, dash.toOption.nonEmpty, key.text).some
-        case ASTParser.NonTerminal.Line._3(spaces, dash, key, const, _, value) => Key(spaces.toList.size, dash.toOption.nonEmpty, key.text, const.toOption.isDefined, value.toOption.map(toValue)).some
-        case ASTParser.NonTerminal.Line._4(spaces, _, value)                   => Arr(spaces.toList.size, value.toOption.map(toValue)).some
+        case ASTParser.NonTerminal.Line._1(_)                           => None
+        case ASTParser.NonTerminal.Line._2(spaces, dash, key, _, colon) => RequiredKey(spaces.toList.size, dash.toOption.nonEmpty, key.text, colon.span).some
+        case ASTParser.NonTerminal.Line._3(spaces, dash, key, const, colon, value) =>
+          Key(spaces.toList.size, dash.toOption.nonEmpty, key.text, const.toOption.isDefined, value.toOption.map(toValue), colon.span).some
+        case ASTParser.NonTerminal.Line._4(spaces, dash, value) => Arr(spaces.toList.size, value.toOption.map(toValue), dash.span).some
       }
   }
 
@@ -202,17 +206,17 @@ object RawPetaformAST {
 
   private def freshState(line: TmpLine): State =
     line match {
-      case TmpLine.RequiredKey(numSpaces, dash, key) =>
+      case TmpLine.RequiredKey(numSpaces, dash, key, _) =>
         val elems: List[(String, RawPetaformAST.Obj.Value)] =
           List(key -> RawPetaformAST.Obj.Value.Required)
         if (dash) State.Arr(numSpaces, RawPetaformAST.Obj(elems) :: Nil)
         else State.Obj(numSpaces, elems)
-      case TmpLine.Key(numSpaces, dash, key, const, value) =>
+      case TmpLine.Key(numSpaces, dash, key, const, value, _) =>
         val elems: List[(String, RawPetaformAST.Obj.Value)] =
           List(key -> RawPetaformAST.Obj.Value.Provided(const, value.getOrElse(RawPetaformAST.Empty)))
         if (dash) State.Arr(numSpaces, RawPetaformAST.Obj(elems) :: Nil)
         else State.Obj(numSpaces, elems)
-      case TmpLine.Arr(numSpaces, value) =>
+      case TmpLine.Arr(numSpaces, value, _) =>
         State.Arr(numSpaces, value.getOrElse(RawPetaformAST.Empty) :: Nil)
     }
 
@@ -223,20 +227,14 @@ object RawPetaformAST {
       case _                                                                  => stack
     }
 
-  @tailrec
-  private def assembleLines(
-      rLines: List[TmpLine],
-      inputStack: List[State],
-  ): Validated[RawPetaformAST] = {
-    val stack: List[State] = reduceStack(inputStack)
-
-    // TODO (KR) : Remove once confident all necessary cases are supported
-    /*
+  // TODO (KR) : Remove once confident all necessary cases are supported
+  @scala.annotation.unused
+  private def logAssembleLinesVars(rLines: List[TmpLine], stack: List[State]): Unit = {
     val showLines =
       rLines.reverse.map {
-        case TmpLine.RequiredKey(numSpaces, dash, key)       => s"\n  - ($numSpaces, $dash) <RequiredKey> @required '$key'"
-        case TmpLine.Key(numSpaces, dash, key, const, value) => s"\n  - ($numSpaces, $dash) <Key>${if (const) " @const" else ""} '$key'${value.fold("")(v => s" : $v")}"
-        case TmpLine.Arr(numSpaces, value)                   => s"\n  - ($numSpaces) <Arr> ${value.fold("")(_.toString)}"
+        case TmpLine.RequiredKey(numSpaces, dash, key, _)       => s"\n  - ($numSpaces, $dash) <RequiredKey> @required '$key'"
+        case TmpLine.Key(numSpaces, dash, key, const, value, _) => s"\n  - ($numSpaces, $dash) <Key>${if (const) " @const" else ""} '$key'${value.fold("")(v => s" : $v")}"
+        case TmpLine.Arr(numSpaces, value, _)                   => s"\n  - ($numSpaces) <Arr> ${value.fold("")(_.toString)}"
       }.mkString
 
     val showStack =
@@ -265,47 +263,87 @@ object RawPetaformAST {
     println(" ")
     println(s"rLines [${rLines.size}]:$showLines")
     println(showStack.toString("   "))
-     */
+  }
+
+  @tailrec
+  private def assembleLines(
+      rLines: List[TmpLine],
+      inputStack: List[State],
+  ): Validated[RawPetaformAST] = {
+    val stack: List[State] = reduceStack(inputStack)
+
+    // TODO (KR) : Remove once confident all necessary cases are supported
+    // logAssembleLinesVars(rLines, stack)
 
     rLines match {
       case lHead :: lTail =>
         stack match {
           case sHead :: sTail =>
             (lHead, sHead) match {
-              case (line: TmpLine.Key, state: State.Obj) if line.dash && line.numSpaces == sHead.depth - 1 =>
-                val elems = (line.key -> RawPetaformAST.Obj.Value.Provided(line.const, line.value.getOrElse(RawPetaformAST.Empty))) :: state.elems
-                val obj = RawPetaformAST.Obj.makeUnsafe(elems*) // TODO (KR) :
-                assembleLines(lTail, State.Arr(line.numSpaces, obj :: Nil) :: sTail)
-              case (line: TmpLine.Key, state) if line.dash && line.numSpaces == sHead.depth - 2 =>
-                val tmpState =
-                  State.Obj(line.numSpaces + 1, List(line.key -> RawPetaformAST.Obj.Value.Provided(line.const, state.toAst)))
+              // =====| Deeper |=====
+              case _ if lHead.depth > sHead.depth =>
+                assembleLines(
+                  lTail,
+                  freshState(lHead) :: stack,
+                )
 
-                assembleLines(
-                  lTail,
-                  reduceStack(tmpState :: sTail) match {
-                    case sHead :: sTail =>
-                      State.Arr(
-                        line.numSpaces,
-                        sHead.toAst :: Nil,
-                      ) :: sTail
-                    case Nil => ??? // TODO (KR) :
-                  },
-                )
-              case (line: TmpLine.Key, state) if !line.dash && line.numSpaces == state.depth - 1 =>
-                line.value match {
-                  case None =>
-                    val child = state.toAst
-                    assembleLines(lTail, State.Obj(line.numSpaces, List(line.key -> RawPetaformAST.Obj.Value.Provided(line.const, child))) :: sTail)
-                  case Some(_) => ??? // TODO (KR) :
+              // =====| Key |=====
+              case (line: TmpLine.Key, _) if !line.dash && line.value.isEmpty && line.depth + 1 == sHead.depth =>
+                val child = sHead.toAst
+                val elems = List(line.key -> RawPetaformAST.Obj.Value.Provided(line.const, child))
+                assembleLines(lTail, State.Obj(line.depth, elems) :: sTail)
+              case (line: TmpLine.Key, _) if line.dash && line.value.isEmpty && line.depth + 2 == sHead.depth =>
+                val child = sHead.toAst
+                val elems = List(line.key -> RawPetaformAST.Obj.Value.Provided(line.const, child))
+                reduceStack(State.Obj(line.depth + 1, elems) :: sTail) match {
+                  case sHead :: sTail =>
+                    assembleLines(lTail, State.Arr(line.depth, sHead.toAst :: Nil) :: sTail)
+                  case Nil =>
+                    Marked("reduceStack returned empty list", line.span).leftNel
                 }
-              case (line: TmpLine.Key, state: State.Obj) if !line.dash && line.numSpaces == state.depth =>
+              case (line: TmpLine.Key, head: State.Obj) if !line.dash && line.depth == head.depth =>
+                val elems = (line.key -> RawPetaformAST.Obj.Value.Provided(line.const, line.value.getOrElse(RawPetaformAST.Empty))) :: head.elems
                 assembleLines(
                   lTail,
-                  State.Obj(line.numSpaces, (line.key -> RawPetaformAST.Obj.Value.Provided(line.const, line.value.getOrElse(RawPetaformAST.Empty))) :: state.elems) :: sTail,
+                  State.Obj(line.depth, elems) :: sTail,
                 )
-              case (line: TmpLine.Key, state) if line.numSpaces > state.depth =>
-                assembleLines(lTail, freshState(line) :: stack)
-              case _ => throw new RuntimeException(s"Invalid combo\n  - $lHead\n  - $sHead)")
+              case (line: TmpLine.Key, head: State.Obj) if line.dash && line.depth + 1 == head.depth =>
+                val elems = (line.key -> RawPetaformAST.Obj.Value.Provided(line.const, line.value.getOrElse(RawPetaformAST.Empty))) :: head.elems
+                val obj = RawPetaformAST.Obj(elems) // TODO (KR) : use safe constructor
+                assembleLines(
+                  lTail,
+                  State.Arr(line.depth, obj :: Nil) :: sTail,
+                )
+
+              // =====| Arr |=====
+              case (line: TmpLine.Arr, state: State.Arr) if line.depth == state.depth =>
+                assembleLines(
+                  lTail,
+                  State.Arr(
+                    line.depth,
+                    line.value.getOrElse(RawPetaformAST.Empty) :: state.elems,
+                  ) :: sTail,
+                )
+
+              // =====| RequiredKey |=====
+              case (line: TmpLine.RequiredKey, head: State.Obj) if !line.dash && line.depth == head.depth =>
+                val elems = (line.key -> RawPetaformAST.Obj.Value.Required) :: head.elems
+                assembleLines(
+                  lTail,
+                  State.Obj(line.depth, elems) :: sTail,
+                )
+              case (line: TmpLine.RequiredKey, head: State.Obj) if line.dash && line.depth + 1 == head.depth =>
+                val elems = (line.key -> RawPetaformAST.Obj.Value.Required) :: head.elems
+                val obj = RawPetaformAST.Obj(elems) // TODO (KR) : use safe constructor
+                assembleLines(
+                  lTail,
+                  State.Arr(line.depth, obj :: Nil) :: sTail,
+                )
+
+              // =====| Specific Errors |=====
+
+              // =====| Fallback |=====
+              case _ => Marked(s"Invalid combo\n  - $lHead\n  - $sHead)", lHead.span).leftNel
             }
           case Nil =>
             assembleLines(
@@ -316,7 +354,7 @@ object RawPetaformAST {
       case Nil =>
         stack match {
           case head :: Nil if head.depth == 0 => head.toAst.asRight
-          case _                              => throw new RuntimeException("Unexpected start of file") // TODO (KR) :
+          case _                              => Marked("Unexpected start of file", Span.Unknown).leftNel
         }
     }
   }
@@ -328,10 +366,7 @@ object RawPetaformAST {
       assembled <- assembleLines(lines.reverse, Nil)
     } yield assembled
   def fromSource(source: Source): HTask[RawPetaformAST] =
-    fromSourceEither(source) match {
-      case Right(value) => ZIO.succeed(value)
-      case Left(errors) => ZIO.fail(HError.UserError(source.mark(errors.toList.map(marked => Marked(s"${marked.value} - ${marked.span}", Span.Unknown)))))
-    }
+    Errors.validatedToTask(fromSourceEither(source))
   def fromPath(path: Path): HTask[RawPetaformAST] =
     for {
       _ <- path.ensureExists

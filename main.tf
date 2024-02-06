@@ -26,12 +26,19 @@ resource "docker_image" "nginx" {
 }
 
 resource "docker_container" "nginx" {
-  name    = "nginx"
   image   = docker_image.nginx.image_id
+  name    = "nginx"
 
   ports {
     external = 8080
     internal = 80
   }
 
+}
+
+resource "docker_container" "postgres" {
+  image = ""
+  name  = ""
+
+  env = []
 }
