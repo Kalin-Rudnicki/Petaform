@@ -60,24 +60,73 @@ lazy val `petaform-root` =
       publish / skip := true,
     )
     .aggregate(
-      `petaform-core`,
+      `petaform-model`,
+      `petaform-model-repr`,
+      `petaform-model-terraform`,
+      `petaform-parsing`,
+      `petaform-main`,
     )
 
-lazy val `petaform-core` =
+lazy val `petaform-model` =
   project
-    .in(file("petaform-core"))
+    .in(file("petaform-model"))
     .settings(
-      name := "petaform-core",
+      name := "petaform-model",
+      publishSettings,
+      miscSettings,
+      testSettings,
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-core" % HarnessVersion,
+        "org.typelevel" %% "shapeless3-deriving" % "3.4.1-3-4f382ff-SNAPSHOT",
+      ),
+    )
+
+lazy val `petaform-model-repr` =
+  project
+    .in(file("petaform-model-repr"))
+    .settings(
+      name := "petaform-model-repr",
+      publishSettings,
+      miscSettings,
+      testSettings,
+    )
+    .dependsOn(`petaform-model`)
+
+lazy val `petaform-model-terraform` =
+  project
+    .in(file("petaform-model-terraform"))
+    .settings(
+      name := "petaform-model-terraform",
+      publishSettings,
+      miscSettings,
+      testSettings,
+    )
+    .dependsOn(`petaform-model-repr`)
+
+lazy val `petaform-parsing` =
+  project
+    .in(file("petaform-parsing"))
+    .settings(
+      name := "petaform-parsing",
       publishSettings,
       miscSettings,
       testSettings,
       libraryDependencies ++= Seq(
         MyOrg %% "harness-zio" % HarnessVersion,
-        MyOrg %% "harness-zio-test" % HarnessVersion % Test,
         MyOrg %% "slyce-parse" % "2.0.8",
-        MyOrg %% "slyce-parse-exe" % "2.0.8" % Test,
-        "org.typelevel" %% "shapeless3-deriving" % "3.4.1-3-4f382ff-SNAPSHOT",
       ),
+    )
+    .dependsOn(`petaform-model`)
+
+lazy val `petaform-main` =
+  project
+    .in(file("petaform-main"))
+    .settings(
+      name := "petaform-main",
+      publishSettings,
+      miscSettings,
+      testSettings,
       Compile / fork := true,
       Test / fork := true,
     )
+    .dependsOn(`petaform-model-terraform`, `petaform-parsing`)
