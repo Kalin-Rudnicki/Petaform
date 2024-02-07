@@ -210,7 +210,7 @@ object Main extends ExecutableApp {
 
   override val executable: Executable =
     Executable.fromSubCommands(
-      "_export" -> _export,
+      "export" -> _export,
       "init" -> init,
       "plan" -> plan,
       "apply" -> _apply,
