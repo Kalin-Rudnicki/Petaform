@@ -1,6 +1,7 @@
 package petaform.model.conversion
 
 import cats.syntax.either.*
+import cats.syntax.option.*
 import cats.syntax.traverse.*
 import petaform.model.*
 import petaform.model.ast.*
@@ -18,6 +19,30 @@ object RawASTToAST {
       init <- initialStage2(Nil, ast, envVars)
       result <- interpolateAll(ordering, init, envVars, config)
     } yield result
+
+  def convertStringWithoutConfig(
+      str: InterpolatedString,
+      rScope: List[ASTScope],
+      envVars: Map[String, String],
+  ): Either[ScopedError, Option[String]] = {
+    @tailrec
+    def loop(
+        toInterp: List[(Interpolation, String)],
+        rStack: List[String],
+    ): Either[ScopedError, Option[String]] =
+      toInterp match {
+        case (_: Interpolation.Config, _) :: _ => None.asRight
+        case (Interpolation.EnvVar(varName), sH) :: tail =>
+          getEnvVar(rScope, varName, envVars) match {
+            case Right(varValue) => loop(tail, sH :: varValue :: rStack)
+            case Left(error)     => error.asLeft
+          }
+        case Nil =>
+          rStack.reverse.mkString.some.asRight
+      }
+
+    loop(str.pairs, str.prefix :: Nil)
+  }
 
   // =====|  |=====
 
@@ -38,12 +63,12 @@ object RawASTToAST {
 
   private def getInterpolations(scopePath: List[ASTScope], ast: RawPetaformAST): List[Dependency] =
     ast match {
-      case RawPetaformAST.RawValue(_) => Nil
+      case RawPetaformAST.Raw(_) => Nil
       case RawPetaformAST.Str(str) =>
         val deps = str.pairs.map(_._1).collect { case Interpolation.Config(path) => path.toList }.toSet
         if (deps.isEmpty) Nil
         else Dependency(Dependency.Pair(scopePath, str.asRight), deps) :: Nil
-      case RawPetaformAST.Interp(interpolation) =>
+      case RawPetaformAST.FlatInterpolation(interpolation) =>
         interpolation match {
           case Interpolation.Config(path) => Dependency(Dependency.Pair(scopePath, interpolation.asLeft), Set(path.toList)) :: Nil
           case Interpolation.EnvVar(_)    => Nil
@@ -104,26 +129,13 @@ object RawASTToAST {
 
   private def initialStage2(rScope: List[ASTScope], ast: RawPetaformAST, envVars: Map[String, String]): Either[ScopedError, PetaformAST] =
     ast match {
-      case RawPetaformAST.RawValue(value) => PetaformAST.RawValue(value).asRight
+      case RawPetaformAST.Raw(value) => PetaformAST.Raw(value).asRight
       case RawPetaformAST.Str(str) =>
-        @tailrec
-        def loop(
-            toInterp: List[(Interpolation, String)],
-            rStack: List[String],
-        ): Either[ScopedError, PetaformAST] =
-          toInterp match {
-            case (_: Interpolation.Config, _) :: _ => PetaformAST.Undef.asRight
-            case (Interpolation.EnvVar(varName), sH) :: tail =>
-              getEnvVar(rScope, varName, envVars) match {
-                case Right(varValue) => loop(tail, sH :: varValue :: rStack)
-                case Left(error)     => error.asLeft
-              }
-            case Nil =>
-              PetaformAST.Str(rStack.reverse.mkString).asRight
-          }
-
-        loop(str.pairs, str.prefix :: Nil)
-      case RawPetaformAST.Interp(interpolation) =>
+        convertStringWithoutConfig(str, rScope, envVars).map {
+          case Some(str) => PetaformAST.Str(str)
+          case None      => PetaformAST.Undef
+        }
+      case RawPetaformAST.FlatInterpolation(interpolation) =>
         interpolation match {
           case Interpolation.EnvVar(varName) =>
             getEnvVar(rScope, varName, envVars).map(PetaformAST.Str(_))
@@ -136,7 +148,7 @@ object RawASTToAST {
         elems
           .traverse {
             case (key, RawPetaformAST.Obj.Value.Required) =>
-              ScopedError((ASTScope.Key(key) :: rScope).reverse, "Missing required value").asLeft
+              ScopedError((ASTScope.Key(key) :: rScope).reverse, "Value was not provided for @required key").asLeft
             case (key, RawPetaformAST.Obj.Value.Provided(_, value)) =>
               initialStage2(ASTScope.Key(key) :: rScope, value, envVars).map((key, _))
           }
@@ -190,13 +202,13 @@ object RawASTToAST {
               interpolate(pair.path, iH, ast, envVars) match {
                 case Right(value) =>
                   value match {
-                    case PetaformAST.RawValue(value) => loop(tail, sH :: value :: rStack)
-                    case PetaformAST.Str(str)        => loop(tail, sH :: str :: rStack)
-                    case PetaformAST.Obj(_)          => ScopedError(pair.path, s"Can not interpolate Object into String").asLeft
-                    case PetaformAST.Arr(_)          => ScopedError(pair.path, s"Can not interpolate Array into String").asLeft
-                    case PetaformAST.Undef           => ScopedError(pair.path, s"Can not interpolate Undef into String").asLeft
-                    case PetaformAST.Null            => ScopedError(pair.path, s"Can not interpolate Null into String").asLeft
-                    case PetaformAST.Empty           => ScopedError(pair.path, s"Can not interpolate Empty into String").asLeft
+                    case PetaformAST.Raw(value) => loop(tail, sH :: value :: rStack)
+                    case PetaformAST.Str(str)   => loop(tail, sH :: str :: rStack)
+                    case PetaformAST.Obj(_)     => ScopedError(pair.path, s"Can not interpolate Object into String").asLeft
+                    case PetaformAST.Arr(_)     => ScopedError(pair.path, s"Can not interpolate Array into String").asLeft
+                    case PetaformAST.Undef      => ScopedError(pair.path, s"Can not interpolate Undef into String").asLeft
+                    case PetaformAST.Null       => ScopedError(pair.path, s"Can not interpolate Null into String").asLeft
+                    case PetaformAST.Empty      => ScopedError(pair.path, s"Can not interpolate Empty into String").asLeft
                   }
                 case Left(error) => error.asLeft
               }

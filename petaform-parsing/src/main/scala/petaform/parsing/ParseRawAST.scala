@@ -118,7 +118,7 @@ object ParseRawAST {
 
   private def toValue(value: RawASTParser.NonTerminal.Value): RawPetaformAST =
     value.lift match {
-      case interp: RawASTParser.NonTerminal.Interpolation => RawPetaformAST.Interp(toInterpolation(interp))
+      case interp: RawASTParser.NonTerminal.Interpolation => RawPetaformAST.FlatInterpolation(toInterpolation(interp))
       case RawASTParser.NonTerminal.String(_, parts, _) =>
         @tailrec
         def mkString(
@@ -145,7 +145,7 @@ object ParseRawAST {
           Nil,
         )
       case raw: RawASTParser.Terminal.raw =>
-        RawPetaformAST.RawValue(raw.text)
+        RawPetaformAST.Raw(raw.text)
     }
 
   private def freshState(line: TmpLine): State =

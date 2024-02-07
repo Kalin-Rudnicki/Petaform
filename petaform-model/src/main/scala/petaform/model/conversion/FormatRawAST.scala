@@ -20,12 +20,12 @@ object FormatRawAST {
 
   private def simple(ast: RawPetaformAST.Simple): String =
     ast match {
-      case RawPetaformAST.RawValue(value)       => value
-      case RawPetaformAST.Str(str)              => str.show
-      case RawPetaformAST.Interp(interpolation) => interpolation.show
-      case RawPetaformAST.Undef                 => "undef"
-      case RawPetaformAST.Null                  => "null"
-      case RawPetaformAST.Empty                 => ""
+      case RawPetaformAST.Raw(value)                       => value
+      case RawPetaformAST.Str(str)                         => str.show
+      case RawPetaformAST.FlatInterpolation(interpolation) => interpolation.show
+      case RawPetaformAST.Undef                            => "undef"
+      case RawPetaformAST.Null                             => "null"
+      case RawPetaformAST.Empty                            => ""
     }
 
   private def complex(ast: RawPetaformAST.Complex): List[(String, Option[IndentedString])] =

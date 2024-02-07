@@ -15,11 +15,11 @@ object RawPetaformAST {
   sealed trait Simple extends RawPetaformAST
   sealed trait Complex extends RawPetaformAST
 
-  final case class RawValue(value: String) extends RawPetaformAST.Simple
+  final case class Raw(value: String) extends RawPetaformAST.Simple
 
   final case class Str(str: InterpolatedString) extends RawPetaformAST.Simple
 
-  final case class Interp(interpolation: Interpolation) extends RawPetaformAST.Simple
+  final case class FlatInterpolation(interpolation: Interpolation) extends RawPetaformAST.Simple
 
   final case class Obj(elems: List[(String, Obj.Value)]) extends RawPetaformAST.Complex
   object Obj {

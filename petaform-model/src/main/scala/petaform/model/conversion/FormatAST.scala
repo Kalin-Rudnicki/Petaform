@@ -21,11 +21,11 @@ object FormatAST {
 
   private def simple(ast: PetaformAST.Simple): String =
     ast match {
-      case PetaformAST.RawValue(value) => value.replaceAll(Pattern.quote("$"), Matcher.quoteReplacement("$$"))
-      case PetaformAST.Str(str)        => str.unesc.replaceAll(Pattern.quote("$"), Matcher.quoteReplacement("$$"))
-      case PetaformAST.Undef           => "undef"
-      case PetaformAST.Null            => "null"
-      case PetaformAST.Empty           => ""
+      case PetaformAST.Raw(value) => value.replaceAll(Pattern.quote("$"), Matcher.quoteReplacement("$$"))
+      case PetaformAST.Str(str)   => str.unesc.replaceAll(Pattern.quote("$"), Matcher.quoteReplacement("$$"))
+      case PetaformAST.Undef      => "undef"
+      case PetaformAST.Null       => "null"
+      case PetaformAST.Empty      => ""
     }
 
   private def complex(ast: PetaformAST.Complex): List[(String, Option[IndentedString])] =

@@ -16,7 +16,7 @@ object PetaformAST {
   sealed trait Simple extends PetaformAST
   sealed trait Complex extends PetaformAST
 
-  final case class RawValue(value: String) extends PetaformAST.Simple
+  final case class Raw(value: String) extends PetaformAST.Simple
 
   final case class Str(str: String) extends PetaformAST.Simple
 

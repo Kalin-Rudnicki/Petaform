@@ -72,8 +72,8 @@ object ASTDecoder extends ASTDecoderLowPriority {
     }
 
   implicit def fromStringDecoder[A: StringDecoder]: ASTDecoder[A] = {
-    case (rPath, PetaformAST.RawValue(str)) => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
-    case (rPath, PetaformAST.Str(str))      => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
+    case (rPath, PetaformAST.Raw(str)) => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
+    case (rPath, PetaformAST.Str(str)) => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
     case (rPath, ast) =>
       ScopedError(rPath.reverse, s"Expected Raw/Str, but got ${ast.getClass.getSimpleName}").asLeft
   }
@@ -108,7 +108,7 @@ trait ASTDecoderLowPriority2 {
                   case None =>
                     dec.ifMissing match {
                       case Some(value) => ((idx + 1).asRight, value.some)
-                      case None        => (ScopedError(newRPath.reverse, "Missing required value").asLeft, None)
+                      case None        => (ScopedError(newRPath.reverse, s"<${labels.label}> Missing required value, provided keys: ${elems.map(_._1).sorted.mkString("[", ", ", "]")}").asLeft, None)
                     }
                 }
               case Left(error) =>
@@ -120,7 +120,7 @@ trait ASTDecoderLowPriority2 {
         case _                     => ??? // not possible
       }
     case (rPath, ast) =>
-      ScopedError(rPath.reverse, s"Expected Object, but got ${ast.getClass.getSimpleName}").asLeft
+      ScopedError(rPath.reverse, s"Expected <${labels.label}> Object, but got ${ast.getClass.getSimpleName}").asLeft
   }
 
   given astCoproductDecoderGen[A](using inst: => K0.CoproductInstances[ASTDecoder, A], labels: => Labelling[A]): ASTDecoder[A] = {
