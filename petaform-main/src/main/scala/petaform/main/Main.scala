@@ -198,9 +198,12 @@ object Main extends ExecutableApp {
                 else {
                   val (toNotDestroy, toDestroy) = tfState.resources.partition(res => typeNameHardMap.getOrElse((res.`type`, res.name), false))
                   for {
-                    _ <- Logger.log.detailed(s"To destroy: ${toDestroy.map(r => s"${r.`type`}.${r.name}")}")
-                    _ <- Logger.log.detailed(s"To not destroy: ${toNotDestroy.map(r => s"${r.`type`}.${r.name}")}")
-                  } yield toDestroy.map(r => s"-target=${r.`type`}.${r.name}")
+                    _ <- Logger.log.detailed(s"To destroy: ${toDestroy.map(r => s"\n  - ${r.`type`}.${r.name}").mkString}")
+                    _ <- Logger.log.detailed(s"To not destroy: ${toNotDestroy.map(r => s"\n  - ${r.`type`}.${r.name}").mkString}")
+                    targets =
+                      if (toNotDestroy.isEmpty) Nil
+                      else toDestroy.map(r => s"-target=${r.`type`}.${r.name}")
+                  } yield targets
                 }
               _ <- runTerraformCommand(paths, env)("destroy", targets ::: Option.when(autoApprove)("-auto-approve").toList*)
             } yield ()
