@@ -15,8 +15,9 @@ object ASTToTerraform {
     for {
       (requiredProviders, providers) <- buildProviders(resourceGroups)
       resources <- buildResources(resourceGroups)
+      outputs <- buildOutputs(resourceGroups)
       terraformBlockSet = BlockSet("terraform", requiredProviders :: Nil)
-    } yield terraformBlockSet :: providers ::: resources
+    } yield terraformBlockSet :: providers ::: resources ::: outputs
 
   // =====|  |=====
 
@@ -110,5 +111,21 @@ object ASTToTerraform {
 
     resourcesAndScopes.traverse { case (resource, rScope) => buildResource(resource, rScope) }
   }
+
+  private def buildOutput(key: String, value: PetaformAST.Obj, rScope: List[ASTScope]): Either[ScopedError, BlockSet] =
+    toBlockSet(s"output ${key.unesc}", value, ASTScope.Key(key) :: rScope)
+
+  private def buildOutputs(resourceGroups: ResourceGroups): Either[ScopedError, List[BlockSet]] =
+    resourceGroups.resourceGroups.toList
+      .traverse { case (resourceName, variant) =>
+        variant.value.outputs.getOrElse(Map.empty).toList.traverse { case (b, obj) =>
+          buildOutput(
+            b,
+            obj,
+            ASTScope.Key(variant.key) :: ASTScope.Key(resourceName) :: Nil,
+          )
+        }
+      }
+      .map(_.flatten)
 
 }
