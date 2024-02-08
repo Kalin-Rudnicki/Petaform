@@ -136,8 +136,13 @@ object ParseRawAST {
           parts.toList
             .map(_.lift)
             .map {
-              case RawASTParser.Terminal.chars(text, _)           => text.asLeft
-              case RawASTParser.Terminal.escChar(text, _)         => text(1).toString.asLeft
+              case RawASTParser.Terminal.chars(text, _) => text.asLeft
+              case RawASTParser.Terminal.escChar(text, _) =>
+                (text(1) match {
+                  case 'n' => "\n"
+                  case 't' => "\t"
+                  case c   => c
+                }).toString.asLeft
               case interp: RawASTParser.NonTerminal.Interpolation => toInterpolation(interp).asRight
             }
             .reverse,
