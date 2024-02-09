@@ -7,13 +7,14 @@ Lines : (Line . "\n" ^Line)+ "\n"?
 
 Line  : space*
       | space* dash? key "@required" ":"
-      | space* dash? key "@const"? ":" Value?
+      | space* das.h? key "@const"? ":" Value?
       | space* dash Value?
       ;
 
 Value ^ String
       | Interpolation
       | raw
+      | EofString
       ;
 
 String : "\"" StringPart* "\""
@@ -27,3 +28,6 @@ StringPart ^ chars
 Interpolation : "${" "CFG" ("." ^key)+ "}"
               | "${" "ENV" "." key "}"
               ;
+
+EofString : "<<-EOF" "\n" (^StringPart+ "\n")* "EOF"
+          ;

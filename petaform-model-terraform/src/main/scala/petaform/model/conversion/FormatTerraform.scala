@@ -27,7 +27,7 @@ object FormatTerraform {
           "}",
         )
       case TerraformAST.KeyValue(key, value) =>
-        valueToIdtStr(value, "") match {
+        valueToIdtStr(value, "", key.length + 3) match {
           case (firstLine, None) => s"$key = $firstLine"
           case (firstLine, Some(other)) =>
             IndentedString.inline(
@@ -37,18 +37,24 @@ object FormatTerraform {
         }
     }
 
-  private def valueToIdtStr(value: TerraformAST.Value, suffix: String): (String, Option[IndentedString]) =
+  private def valueToIdtStr(value: TerraformAST.Value, suffix: String, idt: Int): (String, Option[IndentedString]) =
     value match {
       case Value.Raw(value) => (s"$value$suffix", None)
       case Value.Str(str)   => (s"${str.unesc}$suffix", None)
-      case Value.Arr(Nil)   => (s"[]$suffix", None)
+      case Value.EofStr(lines) =>
+        val idtStr = " " * idt
+        (
+          "<<-EOF",
+          IndentedString.inline(lines.map(s => s"$idtStr$s") :+ s"${idtStr}EOF$suffix").some,
+        )
+      case Value.Arr(Nil) => (s"[]$suffix", None)
       case Value.Arr(elems) =>
         (
           "[",
           IndentedString
             .inline(
               IndentedString.indented(
-                elems.map(valueToIdtStr(_, ",")).map { case (firstLine, other) => IndentedString.inline(firstLine, other) },
+                elems.map(valueToIdtStr(_, ",", 0)).map { case (firstLine, other) => IndentedString.inline(firstLine, other) },
               ),
               s"]$suffix",
             )
@@ -62,7 +68,7 @@ object FormatTerraform {
             .inline(
               IndentedString.indented(
                 elems.map[IndentedString] { case (key, value) =>
-                  valueToIdtStr(value, "") match {
+                  valueToIdtStr(value, "", key.length + 3) match {
                     case (firstLine, None) => s"$key = $firstLine"
                     case (firstLine, Some(other)) =>
                       IndentedString.inline(

@@ -10,6 +10,7 @@ object TerraformAST {
   object Value {
     final case class Raw(value: String) extends Value
     final case class Str(str: String) extends Value
+    final case class EofStr(lines: List[String]) extends Value
     final case class Arr(elems: List[Value]) extends Value
     final case class Map(elems: List[(String, Value)]) extends Value
   }

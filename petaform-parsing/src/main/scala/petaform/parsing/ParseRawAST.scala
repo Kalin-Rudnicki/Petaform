@@ -116,41 +116,47 @@ object ParseRawAST {
       case RawASTParser.NonTerminal.Interpolation._2(_, _, _, key, _) => Interpolation.EnvVar(key.text)
     }
 
+  def mkString(parts: List[RawASTParser.NonTerminal.StringPart]): InterpolatedString = {
+    @tailrec
+    def loop(
+        rParts: List[Either[String, Interpolation]],
+        currentString: Option[String],
+        stack: List[(Interpolation, String)],
+    ): InterpolatedString =
+      rParts match {
+        case Right(interp) :: tail => loop(tail, None, (interp, currentString.getOrElse("")) :: stack)
+        case Left(str) :: tail     => loop(tail, currentString.fold(str)(str + _).some, stack)
+        case Nil                   => InterpolatedString(currentString.getOrElse(""), stack)
+      }
+
+    loop(
+      parts
+        .map(_.lift)
+        .map {
+          case RawASTParser.Terminal.chars(text, _) => text.asLeft
+          case RawASTParser.Terminal.escChar(text, _) =>
+            (text(1) match {
+              case 'n' => "\n"
+              case 't' => "\t"
+              case c   => c
+            }).toString.asLeft
+          case interp: RawASTParser.NonTerminal.Interpolation => toInterpolation(interp).asRight
+        }
+        .reverse,
+      None,
+      Nil,
+    )
+  }
+
   private def toValue(value: RawASTParser.NonTerminal.Value): RawPetaformAST =
     value.lift match {
       case interp: RawASTParser.NonTerminal.Interpolation => RawPetaformAST.FlatInterpolation(toInterpolation(interp))
       case RawASTParser.NonTerminal.String(_, parts, _) =>
-        @tailrec
-        def mkString(
-            rParts: List[Either[String, Interpolation]],
-            currentString: Option[String],
-            stack: List[(Interpolation, String)],
-        ): RawPetaformAST.Str =
-          rParts match {
-            case Right(interp) :: tail => mkString(tail, None, (interp, currentString.getOrElse("")) :: stack)
-            case Left(str) :: tail     => mkString(tail, currentString.fold(str)(str + _).some, stack)
-            case Nil                   => RawPetaformAST.Str(InterpolatedString(currentString.getOrElse(""), stack))
-          }
-
-        mkString(
-          parts.toList
-            .map(_.lift)
-            .map {
-              case RawASTParser.Terminal.chars(text, _) => text.asLeft
-              case RawASTParser.Terminal.escChar(text, _) =>
-                (text(1) match {
-                  case 'n' => "\n"
-                  case 't' => "\t"
-                  case c   => c
-                }).toString.asLeft
-              case interp: RawASTParser.NonTerminal.Interpolation => toInterpolation(interp).asRight
-            }
-            .reverse,
-          None,
-          Nil,
-        )
+        RawPetaformAST.Str(mkString(parts.toList))
       case raw: RawASTParser.Terminal.raw =>
         RawPetaformAST.Raw(raw.text)
+      case eofString: RawASTParser.NonTerminal.EofString =>
+        RawPetaformAST.EofStr(eofString._3.toList.map(line => mkString(line.toNonEmptyList.toList)))
     }
 
   private def freshState(line: TmpLine): State =

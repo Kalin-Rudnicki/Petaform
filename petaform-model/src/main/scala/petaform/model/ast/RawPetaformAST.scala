@@ -19,6 +19,8 @@ object RawPetaformAST {
 
   final case class Str(str: InterpolatedString) extends RawPetaformAST.Simple
 
+  final case class EofStr(lines: List[InterpolatedString]) extends RawPetaformAST.Complex
+
   final case class FlatInterpolation(interpolation: Interpolation) extends RawPetaformAST.Simple
 
   final case class Obj(elems: List[(String, Obj.Value)]) extends RawPetaformAST.Complex

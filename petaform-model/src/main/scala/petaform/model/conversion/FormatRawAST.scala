@@ -75,6 +75,11 @@ object FormatRawAST {
                 (s"- ", None)
             }
         }
+      case RawPetaformAST.EofStr(lines) =>
+        (
+          "<<-EOF",
+          IndentedString.indented(lines.map(_.showNoQuotes) :+ "EOF").some,
+        ) :: Nil
     }
 
 }

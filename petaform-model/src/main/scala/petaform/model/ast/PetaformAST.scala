@@ -20,6 +20,8 @@ object PetaformAST {
 
   final case class Str(str: String) extends PetaformAST.Simple
 
+  final case class EofStr(lines: List[String]) extends PetaformAST.Complex
+
   final case class Obj(elems: List[(String, PetaformAST)]) extends PetaformAST.Complex {
     val map: Map[String, PetaformAST] = elems.toMap
   }

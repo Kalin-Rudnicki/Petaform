@@ -71,6 +71,11 @@ object FormatAST {
                 (s"- ", None)
             }
         }
+      case PetaformAST.EofStr(lines) =>
+        (
+          "<<-EOF",
+          IndentedString.indented(lines :+ "EOF").some,
+        ) :: Nil
     }
 
 }

@@ -72,8 +72,9 @@ object ASTDecoder extends ASTDecoderLowPriority {
     }
 
   implicit def fromStringDecoder[A: StringDecoder]: ASTDecoder[A] = {
-    case (rPath, PetaformAST.Raw(str)) => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
-    case (rPath, PetaformAST.Str(str)) => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
+    case (rPath, PetaformAST.Raw(str))      => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
+    case (rPath, PetaformAST.Str(str))      => StringDecoder[A].decode(str).leftMap(ScopedError(rPath.reverse, _))
+    case (rPath, PetaformAST.EofStr(lines)) => StringDecoder[A].decode(lines.mkString("\n")).leftMap(ScopedError(rPath.reverse, _))
     case (rPath, ast) =>
       ScopedError(rPath.reverse, s"Expected Raw/Str, but got ${ast.getClass.getSimpleName}").asLeft
   }

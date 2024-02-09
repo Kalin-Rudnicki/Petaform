@@ -37,9 +37,10 @@ object ASTToTerraform {
 
   private def toValue(ast: PetaformAST, rScope: List[ASTScope]): Either[ScopedError, Value] =
     ast match {
-      case PetaformAST.Raw(value) => Value.Raw(value).asRight
-      case PetaformAST.Str(str)   => Value.Str(str).asRight
-      case PetaformAST.Null       => Value.Raw("null").asRight
+      case PetaformAST.Raw(value)    => Value.Raw(value).asRight
+      case PetaformAST.Str(str)      => Value.Str(str).asRight
+      case PetaformAST.EofStr(lines) => Value.EofStr(lines).asRight
+      case PetaformAST.Null          => Value.Raw("null").asRight
       case PetaformAST.Obj(elems) =>
         elems.traverse { case (k, v) => toValue(v, ASTScope.Key(k) :: rScope).map((k, _)) }.map(Value.Map(_))
       case PetaformAST.Arr(elems) =>

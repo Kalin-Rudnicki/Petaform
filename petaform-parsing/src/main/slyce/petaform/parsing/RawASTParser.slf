@@ -16,6 +16,7 @@
 "                                            ; @ -> String
 $\{                                          ; @ -> InterpolationStart
 \n                                           ; @ <-
+<<-EOF                                       ; @ -> EofStringLineStart
 [^ \t\n:$"][^ \t\n:"]*([ \t]+[^ \t\n:"]+)*   ; raw
 
 @mode: SeenKey
@@ -28,12 +29,14 @@ $\{                                          ; @ -> InterpolationStart
 \n                                           ; @ <-
 "                                            ; @ -> String
 $\{                                          ; @ -> InterpolationStart
+<<-EOF                                       ; @ -> EofStringLineStart
 [^ \t\n$"][^ \t\n"]*([ \t]+[^ \t\n"]+)*      ; raw
 
 @mode: String
 "                                            ; @ <-
 \\.                                          ; escChar
 $$                                           ; escChar
+$[^{]                                        ; chars
 [^\\"$]+                                     ; chars
 $\{                                          ; @ -> InterpolationStart
 
@@ -47,3 +50,15 @@ CFG|ENV                                      ; @ >> Interpolation
 \.                                           ; @
 [A-Za-z][A-Za-z0-9_\-]*                      ; key
 
+@mode: EofStringLineStart
+\n                                           ; @
+[ \t]+                                       ; >> EofString
+
+@mode: EofString
+EOF                                          ; @ <-
+\n                                           ; @ >> EofStringLineStart
+\\.                                          ; escChar
+$$                                           ; escChar
+$[^{]                                        ; chars
+[^\\\n$]+                                    ; chars
+$\{                                          ; @ -> InterpolationStart

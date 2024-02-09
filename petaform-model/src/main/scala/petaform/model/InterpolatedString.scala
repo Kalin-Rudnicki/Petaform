@@ -8,8 +8,11 @@ final case class InterpolatedString(
     pairs: List[(Interpolation, String)],
 ) {
 
+  def showNoQuotes: String =
+    s"${prefix.unesc("")}${pairs.map { case (i, s) => s"${i.show}${s.unesc("")}" }.mkString}"
+  
   def show: String =
-    s"\"${prefix.unesc("")}${pairs.map { case (i, s) => s"${i.show}${s.unesc("")}" }.mkString}\""
+    s"\"$showNoQuotes\""
 
 }
 
