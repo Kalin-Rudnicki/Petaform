@@ -7,7 +7,7 @@ Lines : (Line . "\n" ^Line)+ "\n"?
 
 Line  : space*
       | space* dash? key "@required" ":"
-      | space* das.h? key "@const"? ":" Value?
+      | space* dash? key "@const"? ":" Value?
       | space* dash Value?
       ;
 
