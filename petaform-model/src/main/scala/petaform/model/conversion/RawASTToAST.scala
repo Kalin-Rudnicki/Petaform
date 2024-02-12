@@ -11,7 +11,7 @@ object RawASTToAST {
 
   def apply(
       ast: RawPetaformAST,
-      envVars: EnvVars ,
+      envVars: EnvVars,
       config: Option[PetaformAST],
   ): Either[ScopedError, PetaformAST] =
     for {
@@ -23,7 +23,7 @@ object RawASTToAST {
   def convertStringWithoutConfig(
       str: InterpolatedString,
       rScope: List[ASTScope],
-      envVars: EnvVars ,
+      envVars: EnvVars,
   ): Either[ScopedError, Option[String]] = {
     @tailrec
     def loop(
@@ -132,13 +132,13 @@ object RawASTToAST {
     )
   }
 
-  private def getEnvVar(rScope: List[ASTScope], varName: String, envVars: EnvVars ): Either[ScopedError, String] =
+  private def getEnvVar(rScope: List[ASTScope], varName: String, envVars: EnvVars): Either[ScopedError, String] =
     envVars.get(varName) match {
       case Some(varValue) => varValue.asRight
       case None           => ScopedError(rScope, s"Missing env var '$varName'").asLeft
     }
 
-  private def initialStage2(rScope: List[ASTScope], ast: RawPetaformAST, envVars: EnvVars ): Either[ScopedError, PetaformAST] =
+  private def initialStage2(rScope: List[ASTScope], ast: RawPetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
     ast match {
       case RawPetaformAST.Raw(value) => PetaformAST.Raw(value).asRight
       case RawPetaformAST.Str(str) =>
@@ -205,7 +205,7 @@ object RawASTToAST {
       pair: Dependency.Pair,
       interpString: InterpolatedString,
       ast: PetaformAST,
-      envVars: EnvVars ,
+      envVars: EnvVars,
   ): Either[ScopedError, String] = {
     @tailrec
     def loop(
@@ -235,13 +235,13 @@ object RawASTToAST {
     loop(interpString.pairs, interpString.prefix :: Nil)
   }
 
-  private def interpolate(fromScope: List[ASTScope], interp: Interpolation, ast: PetaformAST, envVars: EnvVars ): Either[ScopedError, PetaformAST] =
+  private def interpolate(fromScope: List[ASTScope], interp: Interpolation, ast: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
     interp match {
       case Interpolation.EnvVar(varName)      => getEnvVar(fromScope, varName, envVars).map(PetaformAST.Str(_))
       case Interpolation.Config(__configPath) => getFromAst2(fromScope, Nil, __configPath.toList, ast)
     }
 
-  private def interpolate(pair: Dependency.Pair, ast: PetaformAST, envVars: EnvVars ): Either[ScopedError, PetaformAST] =
+  private def interpolate(pair: Dependency.Pair, ast: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
     pair.interpolationType match {
       case Dependency.InterpolationType.Str(interpString) =>
         interpolateString(pair, interpString, ast, envVars).map(PetaformAST.Str(_))
@@ -292,7 +292,7 @@ object RawASTToAST {
   private def interpolateAll(
       ordering: List[Dependency.Pair],
       ast: PetaformAST,
-      envVars: EnvVars ,
+      envVars: EnvVars,
       config: Option[PetaformAST],
   ): Either[ScopedError, PetaformAST] =
     ordering match {

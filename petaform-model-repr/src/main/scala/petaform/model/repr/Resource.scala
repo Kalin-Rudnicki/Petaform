@@ -7,6 +7,7 @@ final case class Resource(
     base: ResourceBase,
     config: PetaformAST.Obj,
     requireHardDestroy: Option[Boolean],
+    build: Option[List[String]],
 )
 object Resource {
   implicit val astCodec: ASTCodec[Resource] = ASTCodec.derived

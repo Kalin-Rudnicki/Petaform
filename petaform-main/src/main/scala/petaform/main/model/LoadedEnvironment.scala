@@ -16,7 +16,7 @@ final case class LoadedEnvironment private (
 )
 object LoadedEnvironment {
 
-  def fromPartiallyLoadedEnvironment(partial: PartiallyLoadedEnvironment, configPath: Path, envVars: EnvVars ): SHTask[LoadedEnvironment] =
+  def fromPartiallyLoadedEnvironment(partial: PartiallyLoadedEnvironment, configPath: Path, envVars: EnvVars): SHTask[LoadedEnvironment] =
     for {
       rawConfigASTs <- ZIO.foreach(partial.configPaths)(configPath.child(_).flatMap(ParseRawAST.fromPath))
       environment <- Errors.scopedToTask(convert(rawConfigASTs, partial, envVars))
@@ -27,7 +27,7 @@ object LoadedEnvironment {
   private def convert(
       rawConfigASTs: List[RawPetaformAST],
       partial: PartiallyLoadedEnvironment,
-      envVars: EnvVars ,
+      envVars: EnvVars,
   ): Either[ScopedError, LoadedEnvironment] =
     for {
       rawConfigAST <- RawPetaformAST.merge(rawConfigASTs)

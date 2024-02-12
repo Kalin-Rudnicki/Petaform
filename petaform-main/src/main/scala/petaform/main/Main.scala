@@ -106,8 +106,13 @@ object Main extends ExecutableApp {
       environmentsRawAST <- ParseRawAST.fromPath(paths.environmentsPath)
       partiallyLoadedEnvironmentMap <- Errors.scopedToTask(PartiallyLoadedEnvironment.mapFromRawEnvsAST(environmentsRawAST, envVars))
       partiallyLoadedEnvironments <- getForEnvironment(cfg.environment, partiallyLoadedEnvironmentMap)
-      loadedEnvironments <- ZIO.foreach(partiallyLoadedEnvironments)(LoadedEnvironment.fromPartiallyLoadedEnvironment(_, paths.configPath, envVars))
-      builtEnvironments <- Errors.scopedToTask(loadedEnvironments.traverse(BuiltEnvironment.build(partialResources, _, envVars)))
+      builtEnvironments <- ZIO.foreach(partiallyLoadedEnvironments) { ple =>
+        val newEnvVars = envVars.add("PETAFORM_ENV", ple.envName)
+        for {
+          loadedEnvironment <- LoadedEnvironment.fromPartiallyLoadedEnvironment(ple, paths.configPath, newEnvVars)
+          builtEnvironment <- Errors.scopedToTask(BuiltEnvironment.build(partialResources, loadedEnvironment, newEnvVars))
+        } yield builtEnvironment
+      }
 
       _ <- ZIO.foreachDiscard(builtEnvironments) { built =>
         val envName = built.env.envName

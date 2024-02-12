@@ -20,7 +20,7 @@ object BuiltEnvironment {
   def build(partialResources: PartialResources, environment: LoadedEnvironment, envVars: EnvVars): Either[ScopedError, BuiltEnvironment] =
     for {
       rawFilteredResourcesAST <- filterVariants(partialResources, environment.envName, environment.environment.resources)
-      resourcesAST <- RawASTToAST(rawFilteredResourcesAST, envVars.add("PETAFORM_ENV", environment.envName), environment.config.some)
+      resourcesAST <- RawASTToAST(rawFilteredResourcesAST, envVars, environment.config.some)
       resourceGroups <- resourcesAST.decodeTo[ResourceGroups]
       terraformASTs <- ASTToTerraform(resourceGroups)
     } yield BuiltEnvironment(environment, resourceGroups, FormatTerraform(terraformASTs))
