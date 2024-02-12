@@ -13,7 +13,7 @@ final case class PartiallyLoadedEnvironment private (
 )
 object PartiallyLoadedEnvironment {
 
-  def mapFromRawEnvsAST(rawEnvsAST: RawPetaformAST, envVars: Map[String, String]): Either[ScopedError, Map[String, PartiallyLoadedEnvironment]] =
+  def mapFromRawEnvsAST(rawEnvsAST: RawPetaformAST, envVars: EnvVars ): Either[ScopedError, Map[String, PartiallyLoadedEnvironment]] =
     for {
       envMap <- ConversionUtil.rawASTToMap(rawEnvsAST, Nil)
       envList <- envMap.toList.traverse { case (k, v) => parseEnvironment(k, v, envVars) }
@@ -21,7 +21,7 @@ object PartiallyLoadedEnvironment {
 
   // =====|  |=====
 
-  private def parseEnvironment(envName: String, envAST: RawPetaformAST, envVars: Map[String, String]): Either[ScopedError, (String, PartiallyLoadedEnvironment)] = {
+  private def parseEnvironment(envName: String, envAST: RawPetaformAST, envVars: EnvVars ): Either[ScopedError, (String, PartiallyLoadedEnvironment)] = {
     val envRScope = ASTScope.Key(envName) :: Nil
     val configsRScope = ASTScope.Key("configs") :: envRScope
 

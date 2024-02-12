@@ -98,7 +98,7 @@ object Main extends ExecutableApp {
       _ <- Logger.log.info("Calculating envs")
       _ <- Logger.log.detailed(s"petaform-dir: ${cfg.petaformDir}")
 
-      envVars <- System.envs.mapError(HError.fromThrowable)
+      envVars <- System.envs.mapError(HError.fromThrowable).map(EnvVars(_, Map.empty))
 
       resourcesRawAST <- ParseRawAST.fromPath(paths.resourcesPath)
       partialResources <- Errors.scopedToTask(PartialResources.fromRawResourcesAST(resourcesRawAST))

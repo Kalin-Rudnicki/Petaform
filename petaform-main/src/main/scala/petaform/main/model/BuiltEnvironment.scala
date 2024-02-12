@@ -17,10 +17,10 @@ final case class BuiltEnvironment private (
 )
 object BuiltEnvironment {
 
-  def build(partialResources: PartialResources, environment: LoadedEnvironment, envVars: Map[String, String]): Either[ScopedError, BuiltEnvironment] =
+  def build(partialResources: PartialResources, environment: LoadedEnvironment, envVars: EnvVars): Either[ScopedError, BuiltEnvironment] =
     for {
       rawFilteredResourcesAST <- filterVariants(partialResources, environment.envName, environment.environment.resources)
-      resourcesAST <- RawASTToAST(rawFilteredResourcesAST, envVars + ("PETAFORM_ENV" -> environment.envName), environment.config.some)
+      resourcesAST <- RawASTToAST(rawFilteredResourcesAST, envVars.add("PETAFORM_ENV", environment.envName), environment.config.some)
       resourceGroups <- resourcesAST.decodeTo[ResourceGroups]
       terraformASTs <- ASTToTerraform(resourceGroups)
     } yield BuiltEnvironment(environment, resourceGroups, FormatTerraform(terraformASTs))
@@ -29,7 +29,7 @@ object BuiltEnvironment {
       partialResources: PartialResources,
       environment: PartiallyLoadedEnvironment,
       configPath: Path,
-      envVars: Map[String, String],
+      envVars: EnvVars,
   ): SHTask[BuiltEnvironment] =
     for {
       loadedEnvironment <- LoadedEnvironment.fromPartiallyLoadedEnvironment(environment, configPath, envVars)
