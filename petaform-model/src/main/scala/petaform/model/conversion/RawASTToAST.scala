@@ -271,6 +271,7 @@ object RawASTToAST {
           case "upper"  => getStr(fromScope, ast).map(_.mapStr(_.toUpperCase))
           case "lower"  => getStr(fromScope, ast).map(_.mapStr(_.toLowerCase))
           case "unesc"  => getStr(fromScope, ast).map(_.mapStr(_.unesc))
+          case "json"   => ASTToJson(ast).map(PetaformAST.Raw(_))
           case _        => ScopedError(fromScope, s"Invalid function '$head'").asLeft
         }) match {
           case Right(newAst) => applyFunctions(fromScope, newAst, tail)

@@ -76,7 +76,7 @@ lazy val `petaform-model` =
       miscSettings,
       testSettings,
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-core" % HarnessVersion,
+        MyOrg %% "harness-zio" % HarnessVersion,
         "org.typelevel" %% "shapeless3-deriving" % "3.4.1-3-4f382ff-SNAPSHOT",
       ),
     )
@@ -112,7 +112,6 @@ lazy val `petaform-parsing` =
       miscSettings,
       testSettings,
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % HarnessVersion,
         MyOrg %% "slyce-parse" % "2.0.8",
       ),
     )
@@ -126,7 +125,7 @@ lazy val `petaform-main` =
       publishSettings,
       miscSettings,
       testSettings,
-      version := "0.0.5",
+      version := "0.0.6",
       assemblyJarName := s"${name.value}-${version.value}.jar",
       // Compile / fork := true,
       Test / fork := true,
