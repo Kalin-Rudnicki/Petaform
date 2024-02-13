@@ -16,7 +16,13 @@ object ASTToJson {
 
   private def toAst(rScope: List[ASTScope], ast: PetaformAST): Either[ScopedError, Json] =
     ast match {
-      case PetaformAST.Raw(value)    => Json.Str(value).asRight
+      case PetaformAST.Raw(value) =>
+        value.toIntOption
+          .map(Json.Num(_))
+          .orElse(value.toDoubleOption.map(Json.Num(_)))
+          .orElse(value.toBooleanOption.map(Json.Bool(_)))
+          .getOrElse(Json.Str(value))
+          .asRight
       case PetaformAST.Str(str)      => Json.Str(str).asRight
       case PetaformAST.EofStr(lines) => Json.Str(lines.mkString("\n")).asRight
       case PetaformAST.Null          => Json.Null.asRight
