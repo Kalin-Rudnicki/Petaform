@@ -41,9 +41,6 @@ object Main extends ExecutableApp {
   private val environmentOrAllEnvironmentsParser: Parser[Option[String]] =
     environmentParser.indentedHelpMessage.<^||(allEnvironmentsParser.indentedHelpMessage).map(_.swap.toOption)
 
-  private val buildParser: Parser[Boolean] =
-    Parser.flag(LongName.unsafe("build"))
-
   private val skipExportParser: Parser[Boolean] =
     Parser.flag(LongName.unsafe("skip-export"))
 
@@ -73,7 +70,6 @@ object Main extends ExecutableApp {
   private final case class Cfg(
       petaformDir: String,
       environment: Option[String],
-      build: Boolean,
       skipExport: Boolean,
       envVars: Map[String, String],
   )
@@ -82,7 +78,6 @@ object Main extends ExecutableApp {
     val parser: Parser[Cfg] = {
       petaformDirParser &&
       environmentOrAllEnvironmentsParser &&
-      buildParser &&
       skipExportParser &&
       envVarsParser
     }.map { Cfg.apply }
@@ -141,23 +136,6 @@ object Main extends ExecutableApp {
           _ <- Logger.log.trace(s"[:  $envName  -  resources  :]\n${ASTEncoder[ResourceGroups].encode(built.resourceGroups).format}")
           _ <- Logger.log.trace(s"[:  $envName  -  terraform  :]\n${built.terraformString}")
           _ <- exportTerraform(paths, built).unless(cfg.skipExport)
-          buildCommands = for {
-            a <- built.resourceGroups.resourceGroups.toList
-            b <- a._2.value.resources
-            c <- b.build.getOrElse(Nil)
-          } yield c
-          _ <- ZIO.when(cfg.build) {
-            Logger.log.info(s"Building...${buildCommands.map(c => s"\n  - $c").mkString}") *>
-              ZIO.foldLeft(buildCommands)(built.envVars) {
-                case (envVars, CommandAndArgs("export", args)) =>
-                  args match {
-                    case Some(List(key, value)) => Logger.log.detailed(s"Adding env var: $key=${value.unesc}").as(envVars.add(key, value))
-                    case _                      => ZIO.fail(HError.UserError("Invalid args for `export`, expected 2, key & value"))
-                  }
-                case (envVars, CommandAndArgs(cmd, args)) =>
-                  Sys.execute0.runComplex(envVars.additional)(Sys.Command(cmd, args)).as(envVars)
-              }
-          }
         } yield ()
       }
     } yield builtEnvironments
@@ -177,6 +155,35 @@ object Main extends ExecutableApp {
           _ <- Logger.log.info("Running Petaform export")
           paths <- PetaformPaths.fromPetaformPathString(cfg.petaformDir)
           _ <- getEnvs(cfg, paths)
+        } yield ()
+      }
+
+  private val build: Executable =
+    Executable
+      .withParser(Cfg.parser)
+      .withEffect { cfg =>
+        for {
+          _ <- Logger.log.info("Running Petaform build")
+          paths <- PetaformPaths.fromPetaformPathString(cfg.petaformDir)
+          envs <- getEnvs(cfg, paths)
+          _ <- ZIO.foreachDiscard(envs) { built =>
+            val buildCommands =
+              for {
+                a <- built.resourceGroups.resourceGroups.toList
+                b <- a._2.value.resources
+                c <- b.build.getOrElse(Nil)
+              } yield c
+
+            ZIO.foldLeft(buildCommands)(built.envVars) {
+              case (envVars, CommandAndArgs("export", args)) =>
+                args match {
+                  case Some(List(key, value)) => Logger.log.detailed(s"Adding env var: $key=${value.unesc}").as(envVars.add(key, value))
+                  case _                      => ZIO.fail(HError.UserError("Invalid args for `export`, expected 2, key & value"))
+                }
+              case (envVars, CommandAndArgs(cmd, args)) =>
+                Sys.execute0.runComplex(envVars.additional)(Sys.Command(cmd, args)).as(envVars)
+            }
+          }
         } yield ()
       }
 
@@ -256,6 +263,7 @@ object Main extends ExecutableApp {
   override val executable: Executable =
     Executable.fromSubCommands(
       "export" -> _export,
+      "build" -> build,
       "init" -> init,
       "plan" -> plan,
       "apply" -> _apply,
