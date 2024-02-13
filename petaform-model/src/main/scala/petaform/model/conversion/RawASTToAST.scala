@@ -3,6 +3,7 @@ package petaform.model.conversion
 import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.traverse.*
+import harness.core.*
 import petaform.model.*
 import petaform.model.ast.*
 import scala.annotation.tailrec
@@ -31,8 +32,8 @@ object RawASTToAST {
         rStack: List[String],
     ): Either[ScopedError, Option[String]] =
       toInterp match {
-        case (_: Interpolation.Config, _) :: _ => None.asRight
-        case (Interpolation.EnvVar(varName), sH) :: tail =>
+        case (Interpolation(_: Interpolation.Source.Config, _), _) :: _ => None.asRight
+        case (Interpolation(Interpolation.Source.EnvVar(varName), _), sH) :: tail =>
           getEnvVar(rScope, varName, envVars) match {
             case Right(varValue) => loop(tail, sH :: varValue :: rStack)
             case Left(error)     => error.asLeft
@@ -68,17 +69,24 @@ object RawASTToAST {
 
   // =====|  |=====
 
+  private object InterpolationHelpers {
+
+    val interpolationToConfigPaths: PartialFunction[Interpolation, List[ASTScope]] = { case Interpolation(Interpolation.Source.Config(paths), _) => paths.toList }
+
+  }
+
   private def getInterpolations(scopePath: List[ASTScope], ast: RawPetaformAST): List[Dependency] =
     ast match {
       case RawPetaformAST.Raw(_) => Nil
       case RawPetaformAST.Str(str) =>
-        val deps = str.pairs.map(_._1).collect { case Interpolation.Config(path) => path.toList }.toSet
+        val deps = str.pairs.map(_._1).collect(InterpolationHelpers.interpolationToConfigPaths).toSet
         if (deps.isEmpty) Nil
         else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.Str(str)), deps) :: Nil
       case RawPetaformAST.FlatInterpolation(interpolation) =>
         interpolation match {
-          case Interpolation.Config(path) => Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.FlatInterpolation(interpolation)), Set(path.toList)) :: Nil
-          case Interpolation.EnvVar(_)    => Nil
+          case Interpolation(Interpolation.Source.Config(path), _) =>
+            Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.FlatInterpolation(interpolation)), Set(path.toList)) :: Nil
+          case Interpolation(Interpolation.Source.EnvVar(_), _) => Nil
         }
       case RawPetaformAST.Undef => Nil
       case RawPetaformAST.Null  => Nil
@@ -93,7 +101,7 @@ object RawASTToAST {
           getInterpolations(scopePath :+ ASTScope.Idx(idx), elem)
         }
       case RawPetaformAST.EofStr(lines) =>
-        val deps = lines.flatMap(_.pairs.map(_._1)).collect { case Interpolation.Config(path) => path.toList }.toSet
+        val deps = lines.flatMap(_.pairs.map(_._1)).collect(InterpolationHelpers.interpolationToConfigPaths).toSet
         if (deps.isEmpty) Nil
         else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.Lines(lines)), deps) :: Nil
     }
@@ -148,9 +156,10 @@ object RawASTToAST {
         }
       case RawPetaformAST.FlatInterpolation(interpolation) =>
         interpolation match {
-          case Interpolation.EnvVar(varName) =>
+          case Interpolation(Interpolation.Source.EnvVar(varName), _) =>
             getEnvVar(rScope, varName, envVars).map(PetaformAST.Str(_))
-          case _: Interpolation.Config => PetaformAST.Undef.asRight
+          case Interpolation(_: Interpolation.Source.Config, _) =>
+            PetaformAST.Undef.asRight
         }
       case RawPetaformAST.Undef => PetaformAST.Undef.asRight
       case RawPetaformAST.Null  => PetaformAST.Null.asRight
@@ -202,7 +211,7 @@ object RawASTToAST {
     }
 
   private def interpolateString(
-      pair: Dependency.Pair,
+      depPair: Dependency.Pair,
       interpString: InterpolatedString,
       ast: PetaformAST,
       envVars: EnvVars,
@@ -214,17 +223,17 @@ object RawASTToAST {
     ): Either[ScopedError, String] =
       pairs match {
         case (iH, sH) :: tail =>
-          interpolate(pair.path, iH, ast, envVars) match {
+          interpolate(depPair.path, iH, ast, envVars) match {
             case Right(value) =>
               value match {
                 case PetaformAST.Raw(value)    => loop(tail, sH :: value :: rStack)
                 case PetaformAST.Str(str)      => loop(tail, sH :: str :: rStack)
                 case PetaformAST.EofStr(lines) => loop(tail, sH :: lines.mkString("\n") :: rStack)
-                case PetaformAST.Obj(_)        => ScopedError(pair.path, s"Can not interpolate Object into String").asLeft
-                case PetaformAST.Arr(_)        => ScopedError(pair.path, s"Can not interpolate Array into String").asLeft
-                case PetaformAST.Undef         => ScopedError(pair.path, s"Can not interpolate Undef into String").asLeft
-                case PetaformAST.Null          => ScopedError(pair.path, s"Can not interpolate Null into String").asLeft
-                case PetaformAST.Empty         => ScopedError(pair.path, s"Can not interpolate Empty into String").asLeft
+                case PetaformAST.Obj(_)        => ScopedError(depPair.path, s"Can not interpolate Object into String").asLeft
+                case PetaformAST.Arr(_)        => ScopedError(depPair.path, s"Can not interpolate Array into String").asLeft
+                case PetaformAST.Undef         => ScopedError(depPair.path, s"Can not interpolate Undef into String").asLeft
+                case PetaformAST.Null          => ScopedError(depPair.path, s"Can not interpolate Null into String").asLeft
+                case PetaformAST.Empty         => ScopedError(depPair.path, s"Can not interpolate Empty into String").asLeft
               }
             case Left(error) => error.asLeft
           }
@@ -235,11 +244,40 @@ object RawASTToAST {
     loop(interpString.pairs, interpString.prefix :: Nil)
   }
 
-  private def interpolate(fromScope: List[ASTScope], interp: Interpolation, ast: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
-    interp match {
-      case Interpolation.EnvVar(varName)      => getEnvVar(fromScope, varName, envVars).map(PetaformAST.Str(_))
-      case Interpolation.Config(__configPath) => getFromAst2(fromScope, Nil, __configPath.toList, ast)
+  private def mapStr(fromScope: List[ASTScope], ast: PetaformAST, f: String => String): Either[ScopedError, PetaformAST] =
+    ast match {
+      case PetaformAST.Raw(value)    => PetaformAST.Raw(f(value)).asRight
+      case PetaformAST.Str(str)      => PetaformAST.Str(f(str)).asRight
+      case PetaformAST.EofStr(lines) => PetaformAST.EofStr(lines.map(f)).asRight
+      case _                         => ScopedError(fromScope, s"Expected String, but got ${ast.getClass.getSimpleName}").asLeft
     }
+
+  @tailrec
+  private def applyFunctions(fromScope: List[ASTScope], ast: PetaformAST, functions: List[String]): Either[ScopedError, PetaformAST] =
+    functions match {
+      case head :: tail =>
+        (head match {
+          // TODO (KR) : do we need different handling of `EofStr`?
+          case "format" => PetaformAST.Str(FormatAST(ast)).asRight
+          case "upper"  => mapStr(fromScope, ast, _.toUpperCase)
+          case "lower"  => mapStr(fromScope, ast, _.toLowerCase)
+          case "unesc"  => mapStr(fromScope, ast, _.unesc)
+          case _        => ScopedError(fromScope, s"Invalid function '$head'").asLeft
+        }) match {
+          case Right(newAst) => applyFunctions(fromScope, newAst, tail)
+          case Left(error)   => error.asLeft
+        }
+      case Nil => ast.asRight
+    }
+
+  private def interpolate(fromScope: List[ASTScope], interp: Interpolation, ast: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
+    for {
+      raw <- interp.source match {
+        case Interpolation.Source.EnvVar(varName)      => getEnvVar(fromScope, varName, envVars).map(PetaformAST.Str(_))
+        case Interpolation.Source.Config(__configPath) => getFromAst2(fromScope, Nil, __configPath.toList, ast)
+      }
+      afterFunctions <- applyFunctions(fromScope, raw, interp.functions)
+    } yield afterFunctions
 
   private def interpolate(pair: Dependency.Pair, ast: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
     pair.interpolationType match {

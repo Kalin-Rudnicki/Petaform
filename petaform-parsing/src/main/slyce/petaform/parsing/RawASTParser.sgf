@@ -25,9 +25,12 @@ StringPart ^ chars
            | Interpolation
            ;
 
-Interpolation : "${" "CFG" ("." ^key)+ "}"
-              | "${" "ENV" "." key "}"
+Interpolation : "${" "CFG" ("." ^key)+ InterpolationFunction* "}"
+              | "${" "ENV" "." key InterpolationFunction* "}"
               ;
+
+InterpolationFunction ^ "|" ^key
+                      ;
 
 EofString : "<<-EOF" "\n" (^StringPart+ "\n")* "EOF"
           ;

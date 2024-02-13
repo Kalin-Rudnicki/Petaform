@@ -112,8 +112,10 @@ object ParseRawAST {
 
   private def toInterpolation(interp: RawASTParser.NonTerminal.Interpolation): Interpolation =
     interp match {
-      case RawASTParser.NonTerminal.Interpolation._1(_, _, path, _)   => Interpolation.Config(path.toNonEmptyList.map(tok => ASTScope.Key(tok.text)))
-      case RawASTParser.NonTerminal.Interpolation._2(_, _, _, key, _) => Interpolation.EnvVar(key.text)
+      case RawASTParser.NonTerminal.Interpolation._1(_, _, path, functions, _) =>
+        Interpolation(Interpolation.Source.Config(path.toNonEmptyList.map(tok => ASTScope.Key(tok.text))), functions.toList.map(_.lift.text))
+      case RawASTParser.NonTerminal.Interpolation._2(_, _, _, key, functions, _) =>
+        Interpolation(Interpolation.Source.EnvVar(key.text), functions.toList.map(_.lift.text))
     }
 
   def mkString(parts: List[RawASTParser.NonTerminal.StringPart]): InterpolatedString = {

@@ -3,31 +3,28 @@ package petaform.model
 import cats.data.NonEmptyList
 import scala.language.dynamics
 
-sealed trait Interpolation {
+final case class Interpolation(
+    source: Interpolation.Source,
+    functions: List[String],
+) {
 
-  final def show: String =
-    this match {
-      case Interpolation.EnvVar(varName)      => s"$${ENV.$varName}"
-      case Interpolation.Config(__configPath) => s"$${CFG${__configPath.toList.map(_.pathString).mkString}}"
-    }
+  def show: String = s"$${${source.show}${functions.map(f => s" | $f").mkString}}"
 
 }
 object Interpolation {
 
-  final case class EnvVar(varName: String) extends Interpolation
-  final case class Config(__configPath: NonEmptyList[ASTScope]) extends Interpolation with Dynamic {
-    def selectDynamic(fieldName: String): Config = Config(__configPath :+ ASTScope.Key(fieldName))
-    def apply(idx: Int): Config = Config(__configPath :+ ASTScope.Idx(idx))
+  sealed trait Source {
+
+    final def show: String =
+      this match {
+        case Interpolation.Source.EnvVar(varName)      => s"ENV.$varName"
+        case Interpolation.Source.Config(__configPath) => s"CFG${__configPath.toList.map(_.pathString).mkString}"
+      }
+
+  }
+  object Source {
+    final case class EnvVar(varName: String) extends Interpolation.Source
+    final case class Config(__configPath: NonEmptyList[ASTScope]) extends Interpolation.Source
   }
 
-}
-
-// =====| Builders |=====
-
-object env extends Dynamic {
-  def selectDynamic(fieldName: String): Interpolation.EnvVar = Interpolation.EnvVar(fieldName)
-}
-
-object cfg extends Dynamic {
-  def selectDynamic(fieldName: String): Interpolation.Config = Interpolation.Config(NonEmptyList.one(ASTScope.Key(fieldName)))
 }

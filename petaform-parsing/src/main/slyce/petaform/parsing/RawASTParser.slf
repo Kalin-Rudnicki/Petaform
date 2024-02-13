@@ -52,6 +52,7 @@ CFG|ENV                                      ; @ >> Interpolation
 \}                                           ; @ <-
 \.                                           ; @
 [A-Za-z][A-Za-z0-9_\-]*                      ; key
+\|                                           ; @
 
 @mode: EofStringLineStart
 \n                                           ; @

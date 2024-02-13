@@ -13,6 +13,7 @@ import zio.*
 final case class BuiltEnvironment private (
     env: LoadedEnvironment,
     resourceGroups: ResourceGroups,
+    envVars: EnvVars,
     terraformString: String,
 )
 object BuiltEnvironment {
@@ -23,7 +24,7 @@ object BuiltEnvironment {
       resourcesAST <- RawASTToAST(rawFilteredResourcesAST, envVars, environment.config.some)
       resourceGroups <- resourcesAST.decodeTo[ResourceGroups]
       terraformASTs <- ASTToTerraform(resourceGroups)
-    } yield BuiltEnvironment(environment, resourceGroups, FormatTerraform(terraformASTs))
+    } yield BuiltEnvironment(environment, resourceGroups, envVars, FormatTerraform(terraformASTs))
 
   def build(
       partialResources: PartialResources,

@@ -32,7 +32,8 @@ object PartiallyLoadedEnvironment {
       configs <- configsArray.elems.zipWithIndex.traverse { case (elem, idx) =>
         val elemRScope = ASTScope.Idx(idx) :: configsRScope
         ConversionUtil.safeCastRawAST2[RawPetaformAST.Raw, RawPetaformAST.Str](elem, elemRScope).flatMap {
-          case RawPetaformAST.Raw(str) => str.asRight
+          case RawPetaformAST.Raw(str) =>
+            str.asRight
           case RawPetaformAST.Str(str) =>
             RawASTToAST
               .convertStringWithoutConfig(str, elemRScope, envVars)
