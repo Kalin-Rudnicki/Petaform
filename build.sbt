@@ -49,7 +49,7 @@ lazy val testSettings =
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
   )
 
-lazy val HarnessVersion = "3.1.14"
+lazy val HarnessVersion = "3.2.1"
 
 // =====| Projects |=====
 
@@ -126,9 +126,9 @@ lazy val `petaform-main` =
       publishSettings,
       miscSettings,
       testSettings,
-      version := "0.0.4",
+      version := "0.0.5",
       assemblyJarName := s"${name.value}-${version.value}.jar",
-      Compile / fork := true,
+      // Compile / fork := true,
       Test / fork := true,
     )
     .dependsOn(`petaform-model-terraform`, `petaform-parsing`)

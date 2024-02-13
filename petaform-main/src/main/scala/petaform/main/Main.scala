@@ -1,7 +1,6 @@
 package petaform.main
 
-import cats.data.NonEmptyList
-import cats.syntax.traverse.*
+import cats.syntax.option.*
 import harness.cli.*
 import harness.core.*
 import harness.zio.*
@@ -11,6 +10,7 @@ import petaform.model.conversion.*
 import petaform.model.repr.*
 import petaform.model.typeclass.*
 import petaform.parsing.*
+import scala.util.matching.Regex
 import zio.*
 
 object Main extends ExecutableApp {
@@ -41,8 +41,24 @@ object Main extends ExecutableApp {
   private val environmentOrAllEnvironmentsParser: Parser[Option[String]] =
     environmentParser.indentedHelpMessage.<^||(allEnvironmentsParser.indentedHelpMessage).map(_.swap.toOption)
 
+  private val buildParser: Parser[Boolean] =
+    Parser.flag(LongName.unsafe("build"))
+
   private val skipExportParser: Parser[Boolean] =
     Parser.flag(LongName.unsafe("skip-export"))
+
+  private val keyValueRegex: Regex = "^([^=]+)=(.*)$".r
+  private implicit val keyValueStringDecoder: StringDecoder[(String, String)] =
+    StringDecoder.fromOptionF(
+      "key=value",
+      {
+        case keyValueRegex(key, value) => (key, value).some
+        case _                         => None
+      },
+    )
+
+  private val envVarsParser: Parser[Map[String, String]] =
+    Parser.values.list[(String, String)](LongName.unsafe("var")).map(_.toMap)
 
   private val autoApproveParser: Parser[Boolean] =
     Parser.flag(LongName.unsafe("auto-approve"))
@@ -57,14 +73,18 @@ object Main extends ExecutableApp {
   private final case class Cfg(
       petaformDir: String,
       environment: Option[String],
+      build: Boolean,
       skipExport: Boolean,
+      envVars: Map[String, String],
   )
   private object Cfg {
 
     val parser: Parser[Cfg] = {
       petaformDirParser &&
       environmentOrAllEnvironmentsParser &&
-      skipExportParser
+      buildParser &&
+      skipExportParser &&
+      envVarsParser
     }.map { Cfg.apply }
 
   }
@@ -98,7 +118,7 @@ object Main extends ExecutableApp {
       _ <- Logger.log.info("Calculating envs")
       _ <- Logger.log.detailed(s"petaform-dir: ${cfg.petaformDir}")
 
-      envVars <- System.envs.mapError(HError.fromThrowable).map(EnvVars(_, Map.empty))
+      envVars <- System.envs.mapBoth(HError.fromThrowable, EnvVars(_, cfg.envVars))
 
       resourcesRawAST <- ParseRawAST.fromPath(paths.resourcesPath)
       partialResources <- Errors.scopedToTask(PartialResources.fromRawResourcesAST(resourcesRawAST))
@@ -121,6 +141,23 @@ object Main extends ExecutableApp {
           _ <- Logger.log.trace(s"[:  $envName  -  resources  :]\n${ASTEncoder[ResourceGroups].encode(built.resourceGroups).format}")
           _ <- Logger.log.trace(s"[:  $envName  -  terraform  :]\n${built.terraformString}")
           _ <- exportTerraform(paths, built).unless(cfg.skipExport)
+          buildCommands = for {
+            a <- built.resourceGroups.resourceGroups.toList
+            b <- a._2.value.resources
+            c <- b.build.getOrElse(Nil)
+          } yield c
+          _ <- ZIO.when(cfg.build) {
+            Logger.log.info(s"Building...${buildCommands.map(c => s"\n  - $c").mkString}") *>
+              ZIO.foldLeft(buildCommands)(built.envVars) {
+                case (envVars, CommandAndArgs("export", args)) =>
+                  args match {
+                    case Some(List(key, value)) => Logger.log.detailed(s"Adding env var: $key=${value.unesc}").as(envVars.add(key, value))
+                    case _                      => ZIO.fail(HError.UserError("Invalid args for `export`, expected 2, key & value"))
+                  }
+                case (envVars, CommandAndArgs(cmd, args)) =>
+                  Sys.execute0.runComplex(envVars.additional)(Sys.Command(cmd, args)).as(envVars)
+              }
+          }
         } yield ()
       }
     } yield builtEnvironments
@@ -129,7 +166,7 @@ object Main extends ExecutableApp {
     for {
       _ <- Logger.log.info(s"Running terraform '$cmd' for '${env.env.envName}'")
       envDir <- paths.internalEnvironmentsPath.child(env.env.envName)
-      _ <- Sys.execute0(NonEmptyList("terraform", s"-chdir=${envDir.show}" :: cmd :: args.toList))
+      _ <- Sys.execute0.runComplex(env.envVars.additional)(Sys.Command("terraform", s"-chdir=${envDir.show}" :: cmd :: args.toList*))
     } yield ()
 
   private val _export: Executable =

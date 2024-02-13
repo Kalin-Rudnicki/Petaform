@@ -12,3 +12,4 @@ final case class EnvVars(
   def add(key: String, value: String): EnvVars = EnvVars(fromSystem, additional + (key -> value))
 
 }
+ 
