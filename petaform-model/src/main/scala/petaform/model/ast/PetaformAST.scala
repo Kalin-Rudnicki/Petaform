@@ -16,11 +16,13 @@ object PetaformAST {
   sealed trait Simple extends PetaformAST
   sealed trait Complex extends PetaformAST
 
-  final case class Raw(value: String) extends PetaformAST.Simple
+  sealed trait StringLike extends PetaformAST
 
-  final case class Str(str: String) extends PetaformAST.Simple
+  final case class Raw(value: String) extends PetaformAST.Simple with StringLike
 
-  final case class EofStr(lines: List[String]) extends PetaformAST.Complex
+  final case class Str(str: String) extends PetaformAST.Simple with StringLike
+
+  final case class EofStr(lines: List[String]) extends PetaformAST.Complex with StringLike
 
   final case class Obj(elems: List[(String, PetaformAST)]) extends PetaformAST.Complex {
     val map: Map[String, PetaformAST] = elems.toMap

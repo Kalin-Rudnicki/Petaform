@@ -244,13 +244,22 @@ object RawASTToAST {
     loop(interpString.pairs, interpString.prefix :: Nil)
   }
 
-  private def mapStr(fromScope: List[ASTScope], ast: PetaformAST, f: String => String): Either[ScopedError, PetaformAST] =
+  private def getStr(fromScope: List[ASTScope], ast: PetaformAST): Either[ScopedError, PetaformAST.StringLike] =
     ast match {
-      case PetaformAST.Raw(value)    => PetaformAST.Raw(f(value)).asRight
-      case PetaformAST.Str(str)      => PetaformAST.Str(f(str)).asRight
-      case PetaformAST.EofStr(lines) => PetaformAST.EofStr(lines.map(f)).asRight
-      case _                         => ScopedError(fromScope, s"Expected String, but got ${ast.getClass.getSimpleName}").asLeft
+      case ast: PetaformAST.StringLike => ast.asRight
+      case _                           => ScopedError(fromScope, s"Expected StringLike, but got ${ast.getClass.getSimpleName}").asLeft
     }
+
+  private implicit class StringLikeOps(stringLike: PetaformAST.StringLike) {
+
+    def mapStr(f: String => String): PetaformAST.StringLike =
+      stringLike match {
+        case PetaformAST.Raw(value)    => PetaformAST.Raw(f(value))
+        case PetaformAST.Str(str)      => PetaformAST.Str(f(str))
+        case PetaformAST.EofStr(lines) => PetaformAST.EofStr(lines.map(f))
+      }
+
+  }
 
   @tailrec
   private def applyFunctions(fromScope: List[ASTScope], ast: PetaformAST, functions: List[String]): Either[ScopedError, PetaformAST] =
@@ -259,9 +268,9 @@ object RawASTToAST {
         (head match {
           // TODO (KR) : do we need different handling of `EofStr`?
           case "format" => PetaformAST.Str(FormatAST(ast)).asRight
-          case "upper"  => mapStr(fromScope, ast, _.toUpperCase)
-          case "lower"  => mapStr(fromScope, ast, _.toLowerCase)
-          case "unesc"  => mapStr(fromScope, ast, _.unesc)
+          case "upper"  => getStr(fromScope, ast).map(_.mapStr(_.toUpperCase))
+          case "lower"  => getStr(fromScope, ast).map(_.mapStr(_.toLowerCase))
+          case "unesc"  => getStr(fromScope, ast).map(_.mapStr(_.unesc))
           case _        => ScopedError(fromScope, s"Invalid function '$head'").asLeft
         }) match {
           case Right(newAst) => applyFunctions(fromScope, newAst, tail)
