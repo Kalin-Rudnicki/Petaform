@@ -112,7 +112,7 @@ lazy val `petaform-parsing` =
       miscSettings,
       testSettings,
       libraryDependencies ++= Seq(
-        MyOrg %% "slyce-parse" % "2.0.8",
+        MyOrg %% "slyce-parse" % "2.0.9",
       ),
     )
     .dependsOn(`petaform-model`)
@@ -125,7 +125,7 @@ lazy val `petaform-main` =
       publishSettings,
       miscSettings,
       testSettings,
-      version := "0.0.8",
+      version := "0.0.9",
       assemblyJarName := s"../../../jars/${name.value}-${version.value}.jar",
       // Compile / fork := true,
       Test / fork := true,

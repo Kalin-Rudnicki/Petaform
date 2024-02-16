@@ -7,6 +7,7 @@ import harness.zio.*
 import petaform.model.*
 import petaform.model.ast.*
 import petaform.model.conversion.*
+import petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw
 import scala.annotation.tailrec
 import slyce.core.*
 import zio.*
@@ -155,10 +156,13 @@ object ParseRawAST {
       case interp: RawASTParser.NonTerminal.Interpolation => RawPetaformAST.FlatInterpolation(toInterpolation(interp))
       case RawASTParser.NonTerminal.String(_, parts, _) =>
         RawPetaformAST.Str(mkString(parts.toList))
-      case raw: RawASTParser.Terminal.raw =>
-        RawPetaformAST.Raw(raw.text)
       case eofString: RawASTParser.NonTerminal.EofString =>
         RawPetaformAST.EofStr(eofString._3.toList.map(line => mkString(line.toNonEmptyList.toList)))
+      case keyOrRaw: RawASTParser.NonTerminal.KeyOrRaw =>
+        keyOrRaw match {
+          case KeyOrRaw._1(key) => RawPetaformAST.Raw(key.text)
+          case KeyOrRaw._2(raw) => RawPetaformAST.Raw(raw.text)
+        }
     }
 
   private def freshState(line: TmpLine): State =

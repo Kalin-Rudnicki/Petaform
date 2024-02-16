@@ -25,6 +25,7 @@ $\{                                          ; @ -> InterpolationStart
 [ \t]+                                       ;
 \@(required|const)                           ; @
 :                                            ; @ >> SeenColon
+\n                                           ; @ <-
 
 @mode: SeenColon
 #[^\n]*                                      ;

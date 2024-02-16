@@ -11,9 +11,13 @@ Line  : space*
       | space* dash Value?
       ;
 
+KeyOrRaw : key
+         | raw
+         ;
+
 Value ^ String
       | Interpolation
-      | raw
+      | KeyOrRaw
       | EofString
       ;
 
