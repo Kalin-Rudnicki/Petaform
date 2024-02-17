@@ -125,7 +125,7 @@ lazy val `petaform-main` =
       publishSettings,
       miscSettings,
       testSettings,
-      version := "0.0.9",
+      version := "0.0.10",
       assemblyJarName := s"../../../jars/${name.value}-${version.value}.jar",
       // Compile / fork := true,
       Test / fork := true,

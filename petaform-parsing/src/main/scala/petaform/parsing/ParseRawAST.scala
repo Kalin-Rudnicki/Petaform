@@ -163,6 +163,7 @@ object ParseRawAST {
           case KeyOrRaw._1(key) => RawPetaformAST.Raw(key.text)
           case KeyOrRaw._2(raw) => RawPetaformAST.Raw(raw.text)
         }
+      case _: RawASTParser.Terminal.`null` => RawPetaformAST.Null
     }
 
   private def freshState(line: TmpLine): State =

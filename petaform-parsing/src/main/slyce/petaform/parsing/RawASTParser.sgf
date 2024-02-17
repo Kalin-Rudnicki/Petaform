@@ -19,6 +19,7 @@ Value ^ String
       | Interpolation
       | KeyOrRaw
       | EofString
+      | "null"
       ;
 
 String : "\"" StringPart* "\""
