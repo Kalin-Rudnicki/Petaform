@@ -55,7 +55,7 @@ lazy val `petaform-root` =
 
 lazy val `petaform-model` =
   project
-    .in(file("petaform-model"))
+    .in(file("modules/petaform-model"))
     .settings(
       name := "petaform-model",
       publishSettings,
@@ -70,7 +70,7 @@ lazy val `petaform-model` =
 
 lazy val `petaform-model-repr` =
   project
-    .in(file("petaform-model-repr"))
+    .in(file("modules/petaform-model-repr"))
     .settings(
       name := "petaform-model-repr",
       publishSettings,
@@ -81,7 +81,7 @@ lazy val `petaform-model-repr` =
 
 lazy val `petaform-model-terraform` =
   project
-    .in(file("petaform-model-terraform"))
+    .in(file("modules/petaform-model-terraform"))
     .settings(
       name := "petaform-model-terraform",
       publishSettings,
@@ -92,7 +92,7 @@ lazy val `petaform-model-terraform` =
 
 lazy val `petaform-parsing` =
   project
-    .in(file("petaform-parsing"))
+    .in(file("modules/petaform-parsing"))
     .settings(
       name := "petaform-parsing",
       publishSettings,
@@ -106,14 +106,14 @@ lazy val `petaform-parsing` =
 
 lazy val `petaform-main` =
   project
-    .in(file("petaform-main"))
+    .in(file("modules/petaform-main"))
     .settings(
       name := "petaform-main",
       publishSettings,
       miscSettings,
       testSettings,
-      version := "0.0.10",
-      assemblyJarName := s"../../../jars/${name.value}-${version.value}.jar",
+      version := "0.1.0",
+      assemblyJarName := s"../../../../jars/${name.value}-${version.value}.jar",
       // Compile / fork := true,
       Test / fork := true,
     )

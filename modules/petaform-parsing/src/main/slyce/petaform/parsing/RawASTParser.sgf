@@ -1,0 +1,41 @@
+
+@start: Lines
+@lookAhead: 2
+
+Lines : (Line . "\n" ^Line)+ "\n"?
+      ;
+
+Line  : space*
+      | space* dash? key "@required" ":"
+      | space* dash? key "@const"? ":" Value?
+      | space* dash Value?
+      ;
+
+KeyOrRaw : key
+         | raw
+         ;
+
+Value ^ String
+      | Interpolation
+      | KeyOrRaw
+      | EofString
+      | "null"
+      ;
+
+String : "\"" StringPart* "\""
+       ;
+
+StringPart ^ chars
+           | escChar
+           | Interpolation
+           ;
+
+Interpolation : "${" "CFG" ("." ^key)+ InterpolationFunction* "}"
+              | "${" "ENV" "." key InterpolationFunction* "}"
+              ;
+
+InterpolationFunction ^ "|" ^key
+                      ;
+
+EofString : "<<-EOF" "\n" (^StringPart+ "\n")* "EOF"
+          ;

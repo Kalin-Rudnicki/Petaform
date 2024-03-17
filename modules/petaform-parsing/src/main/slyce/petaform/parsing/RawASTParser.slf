@@ -1,0 +1,71 @@
+
+@start: NewLine
+
+@mode: NewLine
+#[^\n]*                                      ;
+[ ][ ]                                       ; space
+(- )                                         ; dash -> SeenDash
+(-\n)                                        ; dash, "\n"
+[^ \t\n":\-$][^ \t\n":]*                     ; key -> SeenKey
+\n                                           ; @
+"                                            ; @ -> String
+
+@mode: SeenDash
+#[^\n]*                                      ;
+(- )                                         ; dash
+(-[ ]?\n)                                    ; dash[0,-2], "\n"[-1]
+null                                         ; @
+$\{                                          ; @ -> InterpolationStart
+<<-EOF                                       ; @ -> EofStringLineStart
+[^ \t\n":\-$][^ \t\n":]*                     ; key >> SeenKey
+"                                            ; @ -> String
+\n                                           ; @ <-
+[^ \t\n:$"][^ \t\n:"]*([ \t]+[^ \t\n:"]+)*   ; raw
+
+@mode: SeenKey
+[ \t]+                                       ;
+\@(required|const)                           ; @
+:                                            ; @ >> SeenColon
+\n                                           ; @ <-
+
+@mode: SeenColon
+#[^\n]*                                      ;
+[ \t]+                                       ;
+\n                                           ; @ <-
+"                                            ; @ -> String
+null                                         ; @
+$\{                                          ; @ -> InterpolationStart
+<<-EOF                                       ; @ -> EofStringLineStart
+[^ \t\n$"][^ \t\n"]*([ \t]+[^ \t\n"]+)*      ; raw
+
+@mode: String
+"                                            ; @ <-
+\\.                                          ; escChar
+$$                                           ; escChar
+$[^{]                                        ; chars
+[^\\"$]+                                     ; chars
+$\{                                          ; @ -> InterpolationStart
+
+@mode: InterpolationStart
+[ \t]+                                       ;
+CFG|ENV                                      ; @ >> Interpolation
+
+@mode: Interpolation
+[ \t]+                                       ;
+\}                                           ; @ <-
+\.                                           ; @
+[A-Za-z][A-Za-z0-9_\-]*                      ; key
+\|                                           ; @
+
+@mode: EofStringLineStart
+\n                                           ; @
+[ \t]+                                       ; >> EofString
+
+@mode: EofString
+EOF                                          ; @ <-
+\n                                           ; @ >> EofStringLineStart
+\\.                                          ; escChar
+$$                                           ; escChar
+$[^{]                                        ; chars
+[^\\\n$]+                                    ; chars
+$\{                                          ; @ -> InterpolationStart
