@@ -2,6 +2,7 @@ package petaform.main.model
 
 import cats.syntax.option.*
 import harness.zio.*
+import petaform.main.error.PetaformError
 import petaform.model.*
 import petaform.model.ast.*
 import petaform.model.conversion.*
@@ -16,10 +17,16 @@ final case class LoadedEnvironment private (
 )
 object LoadedEnvironment {
 
-  def fromPartiallyLoadedEnvironment(partial: PartiallyLoadedEnvironment, configPath: Path, envVars: EnvVars): SHTask[LoadedEnvironment] =
+  def fromPartiallyLoadedEnvironment(partial: PartiallyLoadedEnvironment, configPath: Path, envVars: EnvVars): ZIO[HarnessEnv, PetaformError, LoadedEnvironment] =
     for {
-      rawConfigASTs <- ZIO.foreach(partial.configPaths)(configPath.child(_).flatMap(ParseRawAST.fromPath))
-      environment <- Errors.scopedToTask(convert(rawConfigASTs, partial, envVars))
+      rawConfigASTs <-
+        ZIO.foreach(partial.configPaths) {
+          configPath
+            .child(_)
+            .mapError(PetaformError.Generic(_))
+            .flatMap(ParseRawAST.fromPath(_).mapError(PetaformError.fromParseError))
+        }
+      environment <- ZIO.fromEither(convert(rawConfigASTs, partial, envVars)).mapError(PetaformError.ScopedErr(_))
     } yield environment
 
   // =====|  |=====

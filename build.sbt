@@ -11,8 +11,6 @@ git.gitTagToVersionNumber := { tag =>
 val Scala_3 = "3.3.0"
 
 val MyOrg = "io.github.kalin-rudnicki"
-val githubUsername = "Kalin-Rudnicki"
-val githubProject = "petaform"
 
 ThisBuild / watchBeforeCommand := Watch.clearScreen
 
@@ -31,25 +29,13 @@ lazy val miscSettings =
 lazy val publishSettings =
   Seq(
     organization := MyOrg,
-    description := "Miscellaneous libraries/utilities for Scala.",
-    licenses := List("MIT" -> new URL("https://opensource.org/licenses/MIT")),
-    homepage := Some(url(s"https://github.com/$githubUsername/$githubProject")),
-    developers := List(
-      Developer(
-        id = "Kalin-Rudnicki",
-        name = "Kalin Rudnicki",
-        email = "kalin.rudnicki@gmail.com",
-        url = url(s"https://github.com/$githubUsername"),
-      ),
-    ),
+    description := "Utility to sit on top of terraform.",
   )
 
 lazy val testSettings =
   Seq(
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
   )
-
-lazy val HarnessVersion = "3.2.1"
 
 // =====| Projects |=====
 
@@ -76,8 +62,9 @@ lazy val `petaform-model` =
       miscSettings,
       testSettings,
       libraryDependencies ++= Seq(
-        MyOrg %% "harness-zio" % HarnessVersion,
-        "org.typelevel" %% "shapeless3-deriving" % "3.4.1-3-4f382ff-SNAPSHOT",
+        MyOrg %% "harness-zio" % Versions.harness,
+        MyOrg %% "harness-deriving" % Versions.harness,
+        MyOrg %% "harness-zio-test" % Versions.harness % Test,
       ),
     )
 
@@ -90,7 +77,7 @@ lazy val `petaform-model-repr` =
       miscSettings,
       testSettings,
     )
-    .dependsOn(`petaform-model`)
+    .dependsOn(`petaform-model` % testAndCompile)
 
 lazy val `petaform-model-terraform` =
   project
@@ -101,7 +88,7 @@ lazy val `petaform-model-terraform` =
       miscSettings,
       testSettings,
     )
-    .dependsOn(`petaform-model-repr`)
+    .dependsOn(`petaform-model-repr` % testAndCompile)
 
 lazy val `petaform-parsing` =
   project
@@ -112,10 +99,10 @@ lazy val `petaform-parsing` =
       miscSettings,
       testSettings,
       libraryDependencies ++= Seq(
-        MyOrg %% "slyce-parse" % "2.0.9",
+        MyOrg %% "slyce-parse" % Versions.slyce,
       ),
     )
-    .dependsOn(`petaform-model`)
+    .dependsOn(`petaform-model` % testAndCompile)
 
 lazy val `petaform-main` =
   project
@@ -130,4 +117,7 @@ lazy val `petaform-main` =
       // Compile / fork := true,
       Test / fork := true,
     )
-    .dependsOn(`petaform-model-terraform`, `petaform-parsing`)
+    .dependsOn(
+      `petaform-model-terraform` % testAndCompile,
+      `petaform-parsing` % testAndCompile,
+    )

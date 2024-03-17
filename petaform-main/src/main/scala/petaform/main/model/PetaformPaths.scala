@@ -1,6 +1,8 @@
 package petaform.main.model
 
 import harness.zio.*
+import petaform.main.error.PetaformError
+import zio.*
 
 final case class PetaformPaths private (
     petaformPath: Path,
@@ -12,8 +14,8 @@ final case class PetaformPaths private (
 )
 object PetaformPaths {
 
-  def fromPetaformPathString(pathString: String): HRIO[FileSystem, PetaformPaths] =
-    for {
+  def fromPetaformPathString(pathString: String): ZIO[FileSystem, PetaformError.Generic, PetaformPaths] =
+    (for {
       // TODO (KR) : ensure exists
       petaformPath <- Path(pathString)
       internalPath <- petaformPath.child(".internal")
@@ -24,6 +26,7 @@ object PetaformPaths {
 
       _ <- internalPath.mkdirs.unlessZIO(internalPath.exists)
       _ <- internalEnvironmentsPath.mkdirs.unlessZIO(internalEnvironmentsPath.exists)
-    } yield PetaformPaths(petaformPath, internalPath, internalEnvironmentsPath, environmentsPath, resourcesPath, configPath)
+    } yield PetaformPaths(petaformPath, internalPath, internalEnvironmentsPath, environmentsPath, resourcesPath, configPath))
+      .mapError(PetaformError.Generic(_))
 
 }

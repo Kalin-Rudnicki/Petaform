@@ -6,8 +6,8 @@ import harness.core.*
 import harness.zio.*
 import petaform.model.*
 import petaform.model.ast.*
-import petaform.model.conversion.*
 import petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw
+import petaform.parsing.error.ParseError
 import scala.annotation.tailrec
 import slyce.core.*
 import zio.*
@@ -20,18 +20,17 @@ object ParseRawAST {
       lines = ast._1.toNonEmptyList.toList.flatMap(TmpLine.fromRaw)
       assembled <- assembleLines(lines.reverse, Nil)
     } yield assembled
-  def fromSource(source: Source): HTask[RawPetaformAST] =
-    Errors.validatedToTask(fromSourceEither(source))
-  def fromPath(path: Path): HTask[RawPetaformAST] =
+  def fromSource(source: Source): IO[ParseError.MarkedErr, RawPetaformAST] =
+    ZIO.fromEither(fromSourceEither(source)).mapError(ParseError.MarkedErr(_))
+  def fromPath(path: Path): IO[ParseError, RawPetaformAST] =
     for {
-      _ <- path.ensureExists
-      _ <- ZIO.fail(HError.UserError(s"Not a file: ${path.show}")).unlessZIO(path.isFile)
-      contents <- path.readString
+      _ <- path.ensureIsFile.mapError(ParseError.Generic(_))
+      contents <- path.readString.mapError(ParseError.Generic(_))
       source = Source(contents, path.show.some)
       res <- fromSource(source)
     } yield res
-  def fromPathString(pathString: String): HRIO[FileSystem, RawPetaformAST] =
-    Path(pathString).flatMap(fromPath)
+  def fromPathString(pathString: String): ZIO[FileSystem, ParseError, RawPetaformAST] =
+    Path(pathString).mapError(ParseError.Generic(_)).flatMap(fromPath)
 
   // =====|  |=====
 

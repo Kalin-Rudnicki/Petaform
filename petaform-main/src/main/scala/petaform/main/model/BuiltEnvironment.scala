@@ -4,6 +4,7 @@ import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.traverse.*
 import harness.zio.*
+import petaform.main.error.PetaformError
 import petaform.model.*
 import petaform.model.ast.*
 import petaform.model.conversion.*
@@ -31,10 +32,10 @@ object BuiltEnvironment {
       environment: PartiallyLoadedEnvironment,
       configPath: Path,
       envVars: EnvVars,
-  ): SHTask[BuiltEnvironment] =
+  ): ZIO[HarnessEnv, PetaformError, BuiltEnvironment] =
     for {
       loadedEnvironment <- LoadedEnvironment.fromPartiallyLoadedEnvironment(environment, configPath, envVars)
-      builtEnvironment <- Errors.scopedToTask(build(partialResources, loadedEnvironment, envVars))
+      builtEnvironment <- ZIO.fromEither(build(partialResources, loadedEnvironment, envVars)).mapError(PetaformError.ScopedErr(_))
     } yield builtEnvironment
 
   // =====|  |=====

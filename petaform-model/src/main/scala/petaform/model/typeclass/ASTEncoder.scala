@@ -66,7 +66,7 @@ trait ASTEncoderLowPriority2 {
       )
 
   given astCoproductEncoderGen[A](using inst: => K0.CoproductInstances[ASTEncoder, A], labels: => Labelling[A]): ASTEncoder[A] = { a =>
-    val idx = inst.mirror.ordinal(a.asInstanceOf)
+    val idx: Int = inst.mirror.ordinal(a.asInstanceOf)
 
     PetaformAST.Obj(
       (
