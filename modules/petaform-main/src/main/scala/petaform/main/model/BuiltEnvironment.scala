@@ -31,10 +31,11 @@ object BuiltEnvironment {
       partialResources: PartialResources,
       environment: PartiallyLoadedEnvironment,
       configPath: Path,
+      configGroups: List[String],
       envVars: EnvVars,
   ): ZIO[HarnessEnv, PetaformError, BuiltEnvironment] =
     for {
-      loadedEnvironment <- LoadedEnvironment.fromPartiallyLoadedEnvironment(environment, configPath, envVars)
+      loadedEnvironment <- LoadedEnvironment.fromPartiallyLoadedEnvironment(environment, configPath, configGroups, envVars)
       builtEnvironment <- ZIO.fromEither(build(partialResources, loadedEnvironment, envVars)).mapError(PetaformError.ScopedErr(_))
     } yield builtEnvironment
 

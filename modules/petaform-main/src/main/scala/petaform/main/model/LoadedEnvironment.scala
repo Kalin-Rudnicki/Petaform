@@ -17,10 +17,11 @@ final case class LoadedEnvironment private (
 )
 object LoadedEnvironment {
 
-  def fromPartiallyLoadedEnvironment(partial: PartiallyLoadedEnvironment, configPath: Path, envVars: EnvVars): ZIO[HarnessEnv, PetaformError, LoadedEnvironment] =
+  def fromPartiallyLoadedEnvironment(partial: PartiallyLoadedEnvironment, configPath: Path, configGroups: List[String], envVars: EnvVars): ZIO[HarnessEnv, PetaformError, LoadedEnvironment] =
     for {
+      allPaths <- ZIO.foreach(configGroups)(getConfigPaths(partial, _))
       rawConfigASTs <-
-        ZIO.foreach(partial.configPaths) {
+        ZIO.foreach(allPaths.flatten.distinct) {
           configPath
             .child(_)
             .mapError(PetaformError.Generic(_))
@@ -30,6 +31,9 @@ object LoadedEnvironment {
     } yield environment
 
   // =====|  |=====
+
+  private def getConfigPaths(partial: PartiallyLoadedEnvironment, configGroup: String): IO[PetaformError.NoSuchConfigGroup, List[String]] =
+    ZIO.getOrFailWith(PetaformError.NoSuchConfigGroup(partial.envName, configGroup))(partial.configPaths.get(configGroup))
 
   private def convert(
       rawConfigASTs: List[RawPetaformAST],
@@ -41,6 +45,7 @@ object LoadedEnvironment {
       configAST <- RawASTToAST(rawConfigAST, envVars, None)
       environmentAST <- RawASTToAST(partial.rawPetaformAST, envVars, configAST.some)
       environment <- environmentAST.decodeTo[SingleKeyMap[Environment]]
+      // TODO (KR) : filter out config-groups that are not included?
     } yield LoadedEnvironment(partial.envName, environment.value, configAST)
 
 }

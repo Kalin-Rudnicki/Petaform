@@ -57,6 +57,9 @@ object Main extends ExecutableApp {
   private val envVarsParser: Parser[Map[String, String]] =
     Parser.values.list[(String, String)](LongName.unsafe("var")).map(_.toMap)
 
+  private val extraConfigGroups: Parser[List[String]] =
+    Parser.values.list[String](LongName.unsafe("config-group"))
+
   private val autoApproveParser: Parser[Boolean] =
     Parser.flag(LongName.unsafe("auto-approve"))
 
@@ -72,6 +75,7 @@ object Main extends ExecutableApp {
       environment: Option[String],
       skipExport: Boolean,
       envVars: Map[String, String],
+      extraConfigGroups: List[String],
   )
   private object Cfg {
 
@@ -79,7 +83,8 @@ object Main extends ExecutableApp {
       petaformDirParser &&
       environmentOrAllEnvironmentsParser &&
       skipExportParser &&
-      envVarsParser
+      envVarsParser &&
+      extraConfigGroups
     }.map { Cfg.apply }
 
   }
@@ -124,7 +129,7 @@ object Main extends ExecutableApp {
       builtEnvironments <- ZIO.foreach(partiallyLoadedEnvironments) { ple =>
         val newEnvVars = envVars.add("PETAFORM_ENV", ple.envName)
         for {
-          loadedEnvironment <- LoadedEnvironment.fromPartiallyLoadedEnvironment(ple, paths.configPath, newEnvVars)
+          loadedEnvironment <- LoadedEnvironment.fromPartiallyLoadedEnvironment(ple, paths.configPath, "default" :: cfg.extraConfigGroups, newEnvVars)
           builtEnvironment <- ZIO.fromEither(BuiltEnvironment.build(partialResources, loadedEnvironment, newEnvVars)).mapError(PetaformError.ScopedErr(_))
         } yield builtEnvironment
       }
