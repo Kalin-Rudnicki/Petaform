@@ -30,8 +30,11 @@ StringPart ^ chars
            | Interpolation
            ;
 
-Interpolation : "${" "CFG" ("." ^key)+ InterpolationFunction* "}"
-              | "${" "ENV" "." key InterpolationFunction* "}"
+InterpolationSource : "CFG" ("." ^key)+
+                    | "ENV" "." key
+                    ;
+
+Interpolation : "${" (InterpolationSource . "+" ^InterpolationSource)+ InterpolationFunction* "}"
               ;
 
 InterpolationFunction ^ "|" ^key

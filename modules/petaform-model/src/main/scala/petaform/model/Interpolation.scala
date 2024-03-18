@@ -1,14 +1,13 @@
 package petaform.model
 
 import cats.data.NonEmptyList
-import scala.language.dynamics
 
 final case class Interpolation(
-    source: Interpolation.Source,
+    sources: NonEmptyList[Interpolation.Source],
     functions: List[String],
 ) {
 
-  def show: String = s"$${${source.show}${functions.map(f => s" | $f").mkString}}"
+  def show: String = s"$${${sources.toList.map(_.show).mkString(" + ")}${functions.map(f => s" | $f").mkString}}"
 
 }
 object Interpolation {

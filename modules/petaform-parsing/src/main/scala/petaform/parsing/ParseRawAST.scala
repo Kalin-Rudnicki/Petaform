@@ -6,7 +6,6 @@ import harness.core.*
 import harness.zio.*
 import petaform.model.*
 import petaform.model.ast.*
-import petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw
 import petaform.parsing.error.ParseError
 import scala.annotation.tailrec
 import slyce.core.*
@@ -110,13 +109,17 @@ object ParseRawAST {
 
   // =====|  |=====
 
-  private def toInterpolation(interp: RawASTParser.NonTerminal.Interpolation): Interpolation =
-    interp match {
-      case RawASTParser.NonTerminal.Interpolation._1(_, _, path, functions, _) =>
-        Interpolation(Interpolation.Source.Config(path.toNonEmptyList.map(tok => ASTScope.Key(tok.text))), functions.toList.map(_.lift.text))
-      case RawASTParser.NonTerminal.Interpolation._2(_, _, _, key, functions, _) =>
-        Interpolation(Interpolation.Source.EnvVar(key.text), functions.toList.map(_.lift.text))
+  private def toInterpolationSource(src: RawASTParser.NonTerminal.InterpolationSource): Interpolation.Source =
+    src match {
+      case RawASTParser.NonTerminal.InterpolationSource._1(_, path)   => Interpolation.Source.Config(path.toNonEmptyList.map(tok => ASTScope.Key(tok.text)))
+      case RawASTParser.NonTerminal.InterpolationSource._2(_, _, key) => Interpolation.Source.EnvVar(key.text)
     }
+
+  private def toInterpolation(interp: RawASTParser.NonTerminal.Interpolation): Interpolation =
+    Interpolation(
+      interp._2.toNonEmptyList.map(toInterpolationSource),
+      interp._3.toList.map(_.lift.text),
+    )
 
   def mkString(parts: List[RawASTParser.NonTerminal.StringPart]): InterpolatedString = {
     @tailrec
@@ -159,8 +162,8 @@ object ParseRawAST {
         RawPetaformAST.EofStr(eofString._3.toList.map(line => mkString(line.toNonEmptyList.toList)))
       case keyOrRaw: RawASTParser.NonTerminal.KeyOrRaw =>
         keyOrRaw match {
-          case KeyOrRaw._1(key) => RawPetaformAST.Raw(key.text)
-          case KeyOrRaw._2(raw) => RawPetaformAST.Raw(raw.text)
+          case RawASTParser.NonTerminal.KeyOrRaw._1(key) => RawPetaformAST.Raw(key.text)
+          case RawASTParser.NonTerminal.KeyOrRaw._2(raw) => RawPetaformAST.Raw(raw.text)
         }
       case _: RawASTParser.Terminal.`null` => RawPetaformAST.Null
     }
