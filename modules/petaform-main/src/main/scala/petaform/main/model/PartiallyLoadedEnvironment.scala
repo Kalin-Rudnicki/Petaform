@@ -15,39 +15,39 @@ object PartiallyLoadedEnvironment {
 
   def mapFromRawEnvsAST(rawEnvsAST: RawPetaformAST, envVars: EnvVars): Either[ScopedError, Map[String, PartiallyLoadedEnvironment]] =
     for {
-      envMap <- ConversionUtil.rawASTToMap(rawEnvsAST, Nil)
+      envMap <- ConversionUtil.rawASTToMap(rawEnvsAST, ScopePath.empty)
       envList <- envMap.toList.traverse { case (k, v) => parseEnvironment(k, v, envVars) }
     } yield envList.toMap
 
   // =====|  |=====
 
   private def parseEnvironment(envName: String, envAST: RawPetaformAST, envVars: EnvVars): Either[ScopedError, (String, PartiallyLoadedEnvironment)] = {
-    val envRScope = ASTScope.Key(envName) :: Nil
-    val configsRScope = ASTScope.Key("configs") :: envRScope
+    val envScope = ScopePath.reversed(ASTScope.Key(envName) :: Nil)
+    val configsScope = envScope :+ ASTScope.Key("configs")
 
     for {
-      envASTObj <- ConversionUtil.safeCastRawAST[RawPetaformAST.Obj](envAST, envRScope)
-      configsValue <- ConversionUtil.getProvidedValue(envASTObj, "configs", envRScope)
-      configsMap <- ConversionUtil.safeCastRawAST[RawPetaformAST.Obj](configsValue.value, configsRScope)
+      envASTObj <- ConversionUtil.safeCastRawAST[RawPetaformAST.Obj](envAST, envScope)
+      configsValue <- ConversionUtil.getProvidedValue(envASTObj, "configs", envScope)
+      configsMap <- ConversionUtil.safeCastRawAST[RawPetaformAST.Obj](configsValue.value, configsScope)
       configsPairs <- configsMap.elems.traverse {
         case (key, RawPetaformAST.Obj.Value.Provided(_, ast)) =>
-          ConversionUtil.safeCastRawAST[RawPetaformAST.Arr](ast, ASTScope.Key(key) :: configsRScope).map((key, _))
+          ConversionUtil.safeCastRawAST[RawPetaformAST.Arr](ast, configsScope :+ ASTScope.Key(key)).map((key, _))
         case (key, RawPetaformAST.Obj.Value.Required) =>
-          ScopedError((ASTScope.Key(key) :: configsRScope).reverse, "Must be provided").asLeft
+          ScopedError(configsScope :+ ASTScope.Key(key), "Must be provided").asLeft
       }
       configs <- configsPairs.traverse { case (key, configsArray) =>
-        val keyRScope = ASTScope.Key(key) :: configsRScope
+        val keyScope = configsScope :+ ASTScope.Key(key)
         configsArray.elems.zipWithIndex
           .traverse { case (elem, idx) =>
-            val elemRScope = ASTScope.Idx(idx) :: keyRScope
-            ConversionUtil.safeCastRawAST2[RawPetaformAST.Raw, RawPetaformAST.Str](elem, elemRScope).flatMap {
+            val elemScope = keyScope :+ ASTScope.Idx(idx)
+            ConversionUtil.safeCastRawAST2[RawPetaformAST.Raw, RawPetaformAST.Str](elem, elemScope).flatMap {
               case RawPetaformAST.Raw(str) =>
                 str.asRight
               case RawPetaformAST.Str(str) =>
-                RawASTToAST
-                  .convertStringWithoutConfig(str, elemRScope, envVars)
+                RawASTToAST.Stage1
+                  .attemptConvertInterpolatedString(str, elemScope, envVars)
                   .flatMap {
-                    _.toRight(ScopedError(elemRScope.reverse, "config path can not contain CFG interpolation"))
+                    _.toRight(ScopedError(elemScope, "config path can not contain CFG interpolation"))
                   }
             }
           }

@@ -43,7 +43,7 @@ object BuiltEnvironment {
 
   private def filterVariants(partialResources: PartialResources, env: String, resources: Map[String, String]): Either[ScopedError, RawPetaformAST] =
     if (resources.isEmpty)
-      ScopedError(List(ASTScope.Key(env), ASTScope.Key("resources")), "resources are empty").asLeft
+      ScopedError(ScopePath.inOrder(List(ASTScope.Key(env), ASTScope.Key("resources"))), "resources are empty").asLeft
     else
       resources.toList
         .traverse { case (resourceName, variantName) =>

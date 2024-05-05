@@ -1,5 +1,6 @@
 package petaform.model.ast
 
+import cats.syntax.option.*
 import petaform.model.*
 import petaform.model.conversion.*
 import petaform.model.typeclass.ASTDecoder
@@ -16,7 +17,26 @@ object PetaformAST {
   sealed trait Simple extends PetaformAST
   sealed trait Complex extends PetaformAST
 
-  sealed trait StringLike extends PetaformAST
+  sealed trait StringLike extends PetaformAST {
+
+    final def stringValue: String = this match
+      case Raw(value)    => value
+      case Str(str)      => str
+      case EofStr(lines) => lines.mkString("\n")
+
+    final def mapString(f: String => String): StringLike = this match
+      case Raw(value)    => Raw(f(value))
+      case Str(str)      => Str(f(str))
+      case EofStr(lines) => EofStr(lines.map(f))
+
+  }
+  object StringLike {
+
+    def unapply(arg: PetaformAST): Option[String] = arg match
+      case stringLike: StringLike => stringLike.stringValue.some
+      case _                      => None
+
+  }
 
   final case class Raw(value: String) extends PetaformAST.Simple with StringLike
 

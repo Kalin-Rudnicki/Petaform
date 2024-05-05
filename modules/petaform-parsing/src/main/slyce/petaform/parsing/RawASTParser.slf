@@ -48,15 +48,16 @@ $\{                                          ; @ -> InterpolationStart
 
 @mode: InterpolationStart
 [ \t]+                                       ;
-CFG|ENV                                      ; @ >> Interpolation
 
 @mode: Interpolation
-[ \t]+                                       ;
-\}                                           ; @ <-
-\.                                           ; @
-[A-Za-z][A-Za-z0-9_\-]*                      ; key
-\+                                           ; @ >> InterpolationStart
-\|                                           ; @
+[ \t]+                                               ;
+\}                                                   ; @ <-
+\.                                                   ; @
+\+\+                                                 ; @
+[(),]                                                ; @
+CFG|ENV                                              ; @ >> Interpolation
+[A-Za-z][A-Za-z0-9_\-]*                              ; key
+[^ \t\n:$"][^ \t\n:"()},]*([ \t]+[^ \t\n:"()},]+)*   ; raw
 
 @mode: EofStringLineStart
 \n                                           ; @

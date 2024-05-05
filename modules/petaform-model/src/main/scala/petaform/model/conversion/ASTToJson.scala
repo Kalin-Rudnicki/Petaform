@@ -10,11 +10,11 @@ import zio.json.ast.*
 object ASTToJson {
 
   def apply(ast: PetaformAST): Either[ScopedError, String] =
-    toAst(Nil, ast).map(_.toJson)
+    toAst(ScopePath.empty, ast).map(_.toJson)
 
   // =====|  |=====
 
-  private def toAst(rScope: List[ASTScope], ast: PetaformAST): Either[ScopedError, Json] =
+  private def toAst(scope: ScopePath, ast: PetaformAST): Either[ScopedError, Json] =
     ast match {
       case PetaformAST.Raw(value) =>
         value.toIntOption
@@ -28,14 +28,14 @@ object ASTToJson {
       case PetaformAST.Null          => Json.Null.asRight
       case PetaformAST.Obj(elems) =>
         elems
-          .traverse { case (key, value) => toAst(ASTScope.Key(key) :: rScope, value).map((key, _)) }
+          .traverse { case (key, value) => toAst(scope :+ ASTScope.Key(key), value).map((key, _)) }
           .map { elems => Json.Obj(elems*) }
       case PetaformAST.Arr(elems) =>
         elems.zipWithIndex
-          .traverse { case (value, idx) => toAst(ASTScope.Idx(idx) :: rScope, value) }
+          .traverse { case (value, idx) => toAst(scope :+ ASTScope.Idx(idx), value) }
           .map { elems => Json.Arr(elems*) }
-      case PetaformAST.Empty => ScopedError(rScope.reverse, "Can not convert 'Empty' to json").asLeft
-      case PetaformAST.Undef => ScopedError(rScope.reverse, "Can not convert 'Undef' to json").asLeft
+      case PetaformAST.Empty => ScopedError(scope, "Can not convert 'Empty' to json").asLeft
+      case PetaformAST.Undef => ScopedError(scope, "Can not convert 'Undef' to json").asLeft
     }
 
 }

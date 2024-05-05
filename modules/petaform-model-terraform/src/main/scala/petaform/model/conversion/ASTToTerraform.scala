@@ -35,47 +35,47 @@ object ASTToTerraform {
 
   }
 
-  private def toValue(ast: PetaformAST, rScope: List[ASTScope]): Either[ScopedError, Value] =
+  private def toValue(ast: PetaformAST, scope: ScopePath): Either[ScopedError, Value] =
     ast match {
       case PetaformAST.Raw(value)    => Value.Raw(value).asRight
       case PetaformAST.Str(str)      => Value.Str(str).asRight
       case PetaformAST.EofStr(lines) => Value.EofStr(lines).asRight
       case PetaformAST.Null          => Value.Raw("null").asRight
       case PetaformAST.Obj(elems) =>
-        elems.traverse { case (k, v) => toValue(v, ASTScope.Key(k) :: rScope).map((k, _)) }.map(Value.Map(_))
+        elems.traverse { case (k, v) => toValue(v, scope :+ ASTScope.Key(k)).map((k, _)) }.map(Value.Map(_))
       case PetaformAST.Arr(elems) =>
-        elems.zipWithIndex.traverse { case (ast, idx) => toValue(ast, ASTScope.Idx(idx) :: rScope) }.map(Value.Arr(_))
-      case PetaformAST.Empty => ScopedError(rScope.reverse, "Empty -> TerraformAST not supported").asLeft
-      case PetaformAST.Undef => ScopedError(rScope.reverse, "Undef -> TerraformAST not supported").asLeft
+        elems.zipWithIndex.traverse { case (ast, idx) => toValue(ast, scope :+ ASTScope.Idx(idx)) }.map(Value.Arr(_))
+      case PetaformAST.Empty => ScopedError(scope, "Empty -> TerraformAST not supported").asLeft
+      case PetaformAST.Undef => ScopedError(scope, "Undef -> TerraformAST not supported").asLeft
     }
 
-  private def toAsts(key: String, ast: PetaformAST, rScope: List[ASTScope]): Either[ScopedError, List[TerraformAST]] = {
-    val keyRScope = ASTScope.Key(key) :: rScope
+  private def toAsts(key: String, ast: PetaformAST, scope: ScopePath): Either[ScopedError, List[TerraformAST]] = {
+    val keyRScope = scope :+ ASTScope.Key(key)
     ast match {
       case ArrayOfObjects(objs) => toBlockSets(key, objs, keyRScope)
       case _                    => toValue(ast, keyRScope).map(KeyValue(key, _) :: Nil)
     }
   }
 
-  private def toBlockSet(key: String, ast: PetaformAST.Obj, rScope: List[ASTScope]): Either[ScopedError, BlockSet] =
-    ast.elems.traverse(toAsts(_, _, rScope)).map(_.flatten).map(BlockSet(key, _))
-  private def toBlockSets(key: String, asts: List[PetaformAST.Obj], rScope: List[ASTScope]): Either[ScopedError, List[BlockSet]] =
-    asts.zipWithIndex.traverse { case (ast, idx) => toBlockSet(key, ast, ASTScope.Idx(idx) :: rScope) }
+  private def toBlockSet(key: String, ast: PetaformAST.Obj, scope: ScopePath): Either[ScopedError, BlockSet] =
+    ast.elems.traverse(toAsts(_, _, scope)).map(_.flatten).map(BlockSet(key, _))
+  private def toBlockSets(key: String, asts: List[PetaformAST.Obj], scope: ScopePath): Either[ScopedError, List[BlockSet]] =
+    asts.zipWithIndex.traverse { case (ast, idx) => toBlockSet(key, ast, scope :+ ASTScope.Idx(idx)) }
 
   private def buildProviders(resourceGroups: ResourceGroups): Either[ScopedError, (BlockSet, List[BlockSet])] = {
     val all = resourceGroups.resourceGroups.toList.flatMap(_._2.value.providers.toList)
     val grouped = all.groupMap(_._1)(_._2)
-    val providersRScope = ASTScope.Key("providers") :: ASTScope.Key("*") :: ASTScope.Key("*") :: Nil
+    val providersScope = ScopePath.reversed(ASTScope.Key("providers") :: ASTScope.Key("*") :: ASTScope.Key("*") :: Nil)
 
     for {
       providerMap <-
         grouped.toList
           .traverse { case (name, values) =>
-            val providerRScope = ASTScope.Key(name) :: providersRScope
+            val providerScope = providersScope :+ ASTScope.Key(name)
             values.distinct match {
               case head :: Nil => (name, head).asRight
-              case _ :: _      => ScopedError(providerRScope.reverse, s"provider '$name' has multiple values").asLeft
-              case Nil         => ScopedError(providerRScope.reverse, s"provider '$name' has no values?").asLeft
+              case _ :: _      => ScopedError(providerScope, s"provider '$name' has multiple values").asLeft
+              case Nil         => ScopedError(providerScope, s"provider '$name' has no values?").asLeft
             }
           }
           .map(_.toMap)
@@ -92,29 +92,29 @@ object ASTToTerraform {
         },
       )
       providerBlocks <- providerList.traverse { case (key, value) =>
-        toBlockSet(s"provider ${key.unesc}", value.config, ASTScope.Key(key) :: providersRScope)
+        toBlockSet(s"provider ${key.unesc}", value.config, providersScope :+ ASTScope.Key(key))
       }
     } yield (requiredProviders, providerBlocks)
   }
 
-  private def buildResource(resource: Resource, rScope: List[ASTScope]): Either[ScopedError, BlockSet] =
-    toBlockSet(s"resource ${resource.base.`type`.unesc} ${resource.base.name.unesc}", resource.config, ASTScope.Key("config") :: rScope)
+  private def buildResource(resource: Resource, scope: ScopePath): Either[ScopedError, BlockSet] =
+    toBlockSet(s"resource ${resource.base.`type`.unesc} ${resource.base.name.unesc}", resource.config, scope :+ ASTScope.Key("config"))
 
   private def buildResources(resourceGroups: ResourceGroups): Either[ScopedError, List[BlockSet]] = {
     val resourcesAndScopes = resourceGroups.resourceGroups.toList.flatMap { case (resourceName, variant) =>
       variant.value.resources.zipWithIndex.map { case (resource, idx) =>
         (
           resource,
-          ASTScope.Idx(idx) :: ASTScope.Key(variant.key) :: ASTScope.Key(resourceName) :: Nil,
+          ScopePath.reversed(ASTScope.Idx(idx) :: ASTScope.Key(variant.key) :: ASTScope.Key(resourceName) :: Nil),
         )
       }
     }
 
-    resourcesAndScopes.traverse { case (resource, rScope) => buildResource(resource, rScope) }
+    resourcesAndScopes.traverse { case (resource, scope) => buildResource(resource, scope) }
   }
 
-  private def buildOutput(key: String, value: PetaformAST.Obj, rScope: List[ASTScope]): Either[ScopedError, BlockSet] =
-    toBlockSet(s"output ${key.unesc}", value, ASTScope.Key(key) :: rScope)
+  private def buildOutput(key: String, value: PetaformAST.Obj, scope: ScopePath): Either[ScopedError, BlockSet] =
+    toBlockSet(s"output ${key.unesc}", value, scope :+ ASTScope.Key(key))
 
   private def buildOutputs(resourceGroups: ResourceGroups): Either[ScopedError, List[BlockSet]] =
     resourceGroups.resourceGroups.toList
@@ -123,7 +123,7 @@ object ASTToTerraform {
           buildOutput(
             b,
             obj,
-            ASTScope.Key(variant.key) :: ASTScope.Key(resourceName) :: Nil,
+            ScopePath.reversed(ASTScope.Key(variant.key) :: ASTScope.Key(resourceName) :: Nil),
           )
         }
       }

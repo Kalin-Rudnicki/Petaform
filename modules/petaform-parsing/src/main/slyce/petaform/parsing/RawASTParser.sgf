@@ -34,11 +34,17 @@ InterpolationSource : "CFG" ("." ^key)+
                     | "ENV" "." key
                     ;
 
-Interpolation : "${" (InterpolationSource . "+" ^InterpolationSource)+ InterpolationFunction* "}"
-              ;
+InterpolationValue ~ < "++"
+                   : InterpolationSource
+                   | key
+                   | raw
+                   | String
+                   | key "(" (InterpolationValue . "," ^InterpolationValue)* ")"
+                   | "(" InterpolationValue ")"
+                   ;
 
-InterpolationFunction ^ "|" ^key
-                      ;
+Interpolation : "${" InterpolationValue "}"
+              ;
 
 EofString : "<<-EOF" "\n" (^StringPart+ "\n")* "EOF"
           ;

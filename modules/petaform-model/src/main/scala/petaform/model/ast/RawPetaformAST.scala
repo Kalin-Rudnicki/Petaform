@@ -33,7 +33,7 @@ object RawPetaformAST {
       else
         RawPetaformAST.merge(elems.toList.map(tup => Obj(tup :: Nil))).flatMap {
           case obj: Obj => obj.asRight
-          case ast      => ScopedError(Nil, s"Expected Object but got ${ast.getClass.getSimpleName}").asLeft
+          case ast      => ScopedError(ScopePath.empty, s"Expected Object but got ${ast.getClass.getSimpleName}").asLeft
         }
 
     sealed trait Value
@@ -59,18 +59,18 @@ object RawPetaformAST {
 
   // =====|  |=====
 
-  private def mergeObjValues(rScope: List[ASTScope], value1: RawPetaformAST.Obj.Value, value2: RawPetaformAST.Obj.Value): Either[ScopedError, RawPetaformAST.Obj.Value] =
+  private def mergeObjValues(scope: ScopePath, value1: RawPetaformAST.Obj.Value, value2: RawPetaformAST.Obj.Value): Either[ScopedError, RawPetaformAST.Obj.Value] =
     (value1, value2) match {
-      case (RawPetaformAST.Obj.Value.Provided(true, _), _)                                  => ScopedError(rScope.reverse, "Can not override const value").asLeft
+      case (RawPetaformAST.Obj.Value.Provided(true, _), _)                                  => ScopedError(scope, "Can not override const value").asLeft
       case (RawPetaformAST.Obj.Value.Provided(false, _), RawPetaformAST.Obj.Value.Required) => value1.asRight
       case (RawPetaformAST.Obj.Value.Provided(false, value1), RawPetaformAST.Obj.Value.Provided(const, value2)) =>
-        merge2(rScope, value1, value2).map(RawPetaformAST.Obj.Value.Provided(const, _))
+        merge2(scope, value1, value2).map(RawPetaformAST.Obj.Value.Provided(const, _))
       case (RawPetaformAST.Obj.Value.Required, _) => value2.asRight
     }
 
   @tailrec
   private def mergeArrayValues(
-      rScope: List[ASTScope],
+      scope: ScopePath,
       idx: Int,
       elems1: List[RawPetaformAST],
       elems2: List[RawPetaformAST],
@@ -78,16 +78,16 @@ object RawPetaformAST {
   ): Either[ScopedError, List[RawPetaformAST]] =
     (elems1, elems2) match {
       case (e1H :: e1T, e2H :: e2T) =>
-        merge2(ASTScope.Idx(idx) :: rScope, e1H, e2H) match {
-          case Right(value) => mergeArrayValues(rScope, idx + 1, e1T, e2T, value :: rStack)
+        merge2(scope :+ ASTScope.Idx(idx), e1H, e2H) match {
+          case Right(value) => mergeArrayValues(scope, idx + 1, e1T, e2T, value :: rStack)
           case Left(error)  => error.asLeft
         }
-      case (e1H :: e1T, Nil) => mergeArrayValues(rScope, idx + 1, e1T, Nil, e1H :: rStack)
-      case (Nil, e2H :: e2T) => mergeArrayValues(rScope, idx + 1, e2T, Nil, e2H :: rStack)
+      case (e1H :: e1T, Nil) => mergeArrayValues(scope, idx + 1, e1T, Nil, e1H :: rStack)
+      case (Nil, e2H :: e2T) => mergeArrayValues(scope, idx + 1, e2T, Nil, e2H :: rStack)
       case (Nil, Nil)        => rStack.reverse.asRight
     }
 
-  private def merge2(rScope: List[ASTScope], ast1: RawPetaformAST, ast2: RawPetaformAST): Either[ScopedError, RawPetaformAST] =
+  private def merge2(scope: ScopePath, ast1: RawPetaformAST, ast2: RawPetaformAST): Either[ScopedError, RawPetaformAST] =
     (ast1, ast2) match {
       case (ast1: RawPetaformAST.Obj, ast2: RawPetaformAST.Obj) =>
         val map1 = ast1.elems.toMap
@@ -99,7 +99,7 @@ object RawPetaformAST {
         (keys1 ::: keys2)
           .traverse { key =>
             (map1.get(key), map2.get(key)) match {
-              case (Some(value1), Some(value2)) => mergeObjValues(ASTScope.Key(key) :: rScope, value1, value2).map((key, _).some)
+              case (Some(value1), Some(value2)) => mergeObjValues(scope :+ ASTScope.Key(key), value1, value2).map((key, _).some)
               case (Some(value1), None)         => (key, value1).some.asRight
               case (None, Some(value2))         => (key, value2).some.asRight
               case (None, None)                 => None.asRight
@@ -107,7 +107,7 @@ object RawPetaformAST {
           }
           .map { elems => RawPetaformAST.Obj(elems.flatten) }
       case (ast1: RawPetaformAST.Arr, ast2: RawPetaformAST.Arr) =>
-        mergeArrayValues(rScope, 0, ast1.elems, ast2.elems, Nil).map(RawPetaformAST.Arr(_))
+        mergeArrayValues(scope, 0, ast1.elems, ast2.elems, Nil).map(RawPetaformAST.Arr(_))
       case _ => ast2.asRight
     }
 
@@ -119,7 +119,7 @@ object RawPetaformAST {
     ): Either[ScopedError, RawPetaformAST] =
       queue match {
         case head :: tail =>
-          merge2(Nil, current, head) match {
+          merge2(ScopePath.empty, current, head) match {
             case Right(newCurrent) => loop(newCurrent, tail)
             case Left(error)       => error.asLeft
           }

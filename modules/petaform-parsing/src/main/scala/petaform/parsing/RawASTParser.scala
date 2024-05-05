@@ -28,7 +28,13 @@ object RawASTParser extends _root_.slyce.parse.Parser {
                                                                   with _root_.slyce.core.Token.Const
     final case class `${`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""${"""")
                                                                   with _root_.slyce.core.Token.Const
-    final case class `+`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""+"""")
+    final case class `(`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""("""")
+                                                                 with _root_.slyce.core.Token.Const
+    final case class `)`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal("""")"""")
+                                                                 with _root_.slyce.core.Token.Const
+    final case class `++`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""++"""")
+                                                                  with _root_.slyce.core.Token.Const
+    final case class `,`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal("""","""")
                                                                  with _root_.slyce.core.Token.Const
     final case class `.`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""."""")
                                                                  with _root_.slyce.core.Token.Const
@@ -49,8 +55,6 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     final case class `null`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""null"""")
                                                                     with _root_.slyce.core.Token.Const
                                                                     with _root_.petaform.parsing.RawASTParser.NonTerminal.Value.Lift
-    final case class `|`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""|"""")
-                                                                 with _root_.slyce.core.Token.Const
     final case class `}`(span: _root_.slyce.core.Span.Highlight) extends _root_.petaform.parsing.RawASTParser.Terminal(""""}"""")
                                                                  with _root_.slyce.core.Token.Const
     
@@ -59,7 +63,10 @@ object RawASTParser extends _root_.slyce.parse.Parser {
         case "\n" => Terminal.`\n`(span)
         case "\"" => Terminal.`\"`(span)
         case "${" => Terminal.`${`(span)
-        case "+" => Terminal.`+`(span)
+        case "(" => Terminal.`(`(span)
+        case ")" => Terminal.`)`(span)
+        case "++" => Terminal.`++`(span)
+        case "," => Terminal.`,`(span)
         case "." => Terminal.`.`(span)
         case ":" => Terminal.`:`(span)
         case "<<-EOF" => Terminal.`<<-EOF`(span)
@@ -69,7 +76,6 @@ object RawASTParser extends _root_.slyce.parse.Parser {
         case "ENV" => Terminal.`ENV`(span)
         case "EOF" => Terminal.`EOF`(span)
         case "null" => Terminal.`null`(span)
-        case "|" => Terminal.`|`(span)
         case "}" => Terminal.`}`(span)
       }
   }
@@ -95,10 +101,10 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     }
     object AnonList0 {
       
-      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction
+      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart
       
       final case class _1(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction,
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart,
         _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0,
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0
       
@@ -122,10 +128,10 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     }
     object AnonList1 {
       
-      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart
+      type Lift = _root_.petaform.parsing.RawASTParser.Terminal.space
       
       final case class _1(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart,
+        _1: _root_.petaform.parsing.RawASTParser.Terminal.space,
         _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1,
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1
       
@@ -134,7 +140,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     }
     
     final case class AnonList2Head(
-      _1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource,
+      _1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart,
       _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail,
     ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList2Head") {
       
@@ -142,7 +148,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
         @_root_.scala.annotation.tailrec
         def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head.Lift] =
           queue match {
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._1(_, lift, next) => loop(next, lift :: stack)
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._1(lift, next) => loop(next, lift :: stack)
             case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2 => stack.reverse
           }
         
@@ -152,7 +158,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     }
     object AnonList2Head {
       
-      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource
+      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart
       
     }
     
@@ -160,74 +166,82 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     object AnonList2Tail {
       
       final case class _1(
-        _1: _root_.petaform.parsing.RawASTParser.Terminal.`+`,
-        _2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource,
-        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail,
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart,
+        _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail,
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail
       
       case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail
       
     }
     
-    sealed abstract class AnonList3 extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList3") {
+    sealed abstract class AnonList3Head extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList3Head") {
       
-      final def toList: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3.Lift] = {
+      final def toList: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head.Lift] = {
         @_root_.scala.annotation.tailrec
-        def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3.Lift] =
+        def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head.Lift] =
           queue match {
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._1(lift, next) => loop(next, lift :: stack)
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2 => stack.reverse
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._1(_, lift, next) => loop(next, lift :: stack)
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._2 => stack.reverse
+          }
+        
+        this match {
+          case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._1(lift, next) => loop(next, lift :: Nil)
+          case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2 => Nil
+        }
+      }
+      
+    }
+    object AnonList3Head {
+      
+      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue
+      
+      final case class _1(
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue,
+        _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head
+      
+      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head
+      
+    }
+    
+    sealed abstract class AnonList3Tail extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList3Tail")
+    object AnonList3Tail {
+      
+      final case class _1(
+        _1: _root_.petaform.parsing.RawASTParser.Terminal.`,`,
+        _2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue,
+        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail
+      
+      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail
+      
+    }
+    
+    sealed abstract class AnonList4 extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList4") {
+      
+      final def toList: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4.Lift] = {
+        @_root_.scala.annotation.tailrec
+        def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4.Lift] =
+          queue match {
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4._1(lift, _, next) => loop(next, lift :: stack)
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4._2 => stack.reverse
           }
         
         loop(this, Nil)
       }
       
     }
-    object AnonList3 {
+    object AnonList4 {
       
-      type Lift = _root_.petaform.parsing.RawASTParser.Terminal.space
-      
-      final case class _1(
-        _1: _root_.petaform.parsing.RawASTParser.Terminal.space,
-        _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3,
-      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3
-      
-      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3
-      
-    }
-    
-    final case class AnonList4Head(
-      _1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart,
-      _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail,
-    ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList4Head") {
-      
-      final def toNonEmptyList: _root_.cats.data.NonEmptyList[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head.Lift] = {
-        @_root_.scala.annotation.tailrec
-        def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head.Lift] =
-          queue match {
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail._1(lift, next) => loop(next, lift :: stack)
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail._2 => stack.reverse
-          }
-        
-        _root_.cats.data.NonEmptyList[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head.Lift](this._1, loop(this._2, Nil))
-      }
-      
-    }
-    object AnonList4Head {
-      
-      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart
-      
-    }
-    
-    sealed abstract class AnonList4Tail extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList4Tail")
-    object AnonList4Tail {
+      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head
       
       final case class _1(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart,
-        _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail,
-      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head,
+        _2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`,
+        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4
       
-      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail
+      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4
       
     }
     
@@ -268,100 +282,57 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       
     }
     
-    sealed abstract class AnonList6 extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList6") {
-      
-      final def toList: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6.Lift] = {
-        @_root_.scala.annotation.tailrec
-        def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6.Lift] =
-          queue match {
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6._1(lift, _, next) => loop(next, lift :: stack)
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6._2 => stack.reverse
-          }
-        
-        loop(this, Nil)
-      }
-      
-    }
-    object AnonList6 {
-      
-      type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head
-      
-      final case class _1(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head,
-        _2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`,
-        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6,
-      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6
-      
-      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6
-      
-    }
-    
-    final case class AnonList7Head(
+    final case class AnonList6Head(
       _1: _root_.petaform.parsing.RawASTParser.NonTerminal.Line,
-      _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail,
-    ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList7Head") {
+      _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail,
+    ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList6Head") {
       
-      final def toNonEmptyList: _root_.cats.data.NonEmptyList[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head.Lift] = {
+      final def toNonEmptyList: _root_.cats.data.NonEmptyList[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head.Lift] = {
         @_root_.scala.annotation.tailrec
-        def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head.Lift] =
+        def loop(queue: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail, stack: _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head.Lift]): _root_.scala.List[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head.Lift] =
           queue match {
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._1(_, lift, next) => loop(next, lift :: stack)
-            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._2 => stack.reverse
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._1(_, lift, next) => loop(next, lift :: stack)
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._2 => stack.reverse
           }
         
-        _root_.cats.data.NonEmptyList[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head.Lift](this._1, loop(this._2, Nil))
+        _root_.cats.data.NonEmptyList[_root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head.Lift](this._1, loop(this._2, Nil))
       }
       
     }
-    object AnonList7Head {
+    object AnonList6Head {
       
       type Lift = _root_.petaform.parsing.RawASTParser.NonTerminal.Line
       
     }
     
-    sealed abstract class AnonList7Tail extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList7Tail")
-    object AnonList7Tail {
+    sealed abstract class AnonList6Tail extends _root_.petaform.parsing.RawASTParser.NonTerminal("AnonList6Tail")
+    object AnonList6Tail {
       
       final case class _1(
         _1: _root_.petaform.parsing.RawASTParser.Terminal.`\n`,
         _2: _root_.petaform.parsing.RawASTParser.NonTerminal.Line,
-        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail,
-      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail
+        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail
       
-      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail
+      case object _2 extends _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail
       
     }
     
     final case class EofString(
       _1: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`,
       _2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`,
-      _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6,
+      _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4,
       _4: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`,
     ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("EofString")
       with _root_.petaform.parsing.RawASTParser.NonTerminal.Value.Lift
     
     final case class Interpolation(
       _1: _root_.petaform.parsing.RawASTParser.Terminal.`${`,
-      _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head,
-      _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0,
-      _4: _root_.petaform.parsing.RawASTParser.Terminal.`}`,
+      _2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue,
+      _3: _root_.petaform.parsing.RawASTParser.Terminal.`}`,
     ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("Interpolation")
       with _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart.Lift
       with _root_.petaform.parsing.RawASTParser.NonTerminal.Value.Lift
-    
-    final case class InterpolationFunction(
-      _1: _root_.petaform.parsing.RawASTParser.Terminal.`|`,
-      _2: _root_.petaform.parsing.RawASTParser.Terminal.key,
-    ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("InterpolationFunction") {
-      
-      final def lift: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction.Lift = this._2
-      
-    }
-    object InterpolationFunction {
-      
-      type Lift = _root_.petaform.parsing.RawASTParser.Terminal.key
-      
-    }
     
     sealed abstract class InterpolationSource extends _root_.petaform.parsing.RawASTParser.NonTerminal("InterpolationSource")
     object InterpolationSource {
@@ -376,6 +347,73 @@ object RawASTParser extends _root_.slyce.parse.Parser {
         _2: _root_.petaform.parsing.RawASTParser.Terminal.`.`,
         _3: _root_.petaform.parsing.RawASTParser.Terminal.key,
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource
+      
+    }
+    
+    sealed abstract class InterpolationValue extends _root_.petaform.parsing.RawASTParser.NonTerminal("InterpolationValue") {
+      
+      final def toExpr: _root_.slyce.parse.Expression[_root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue.Operand, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue.Operator] = {
+        def toExpr1(expr: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue): _root_.slyce.parse.Expression[_root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue.Operand, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue.Operator] =
+          expr match {
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(left, op, right) => _root_.slyce.parse.Expression(toExpr1(left), op, toExpr2(right))
+            case _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(expr) => toExpr2(expr)
+          }
+        
+        def toExpr2(expr: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2): _root_.slyce.parse.Expression[_root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue.Operand, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue.Operator] =
+          _root_.slyce.parse.Expression(expr)
+        
+        toExpr1(this)
+      }
+      
+    }
+    object InterpolationValue {
+      
+      type Operand = _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2
+      type Operator = _root_.petaform.parsing.RawASTParser.Terminal.`++`
+      
+      final case class _1(
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue,
+        _2: _root_.petaform.parsing.RawASTParser.Terminal.`++`,
+        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue
+      
+      final case class _2(
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue
+      
+    }
+    
+    sealed abstract class InterpolationValue2 extends _root_.petaform.parsing.RawASTParser.NonTerminal("InterpolationValue2")
+    object InterpolationValue2 {
+      
+      final case class _1(
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2
+      
+      final case class _2(
+        _1: _root_.petaform.parsing.RawASTParser.Terminal.key,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2
+      
+      final case class _3(
+        _1: _root_.petaform.parsing.RawASTParser.Terminal.raw,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2
+      
+      final case class _4(
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.String,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2
+      
+      final case class _5(
+        _1: _root_.petaform.parsing.RawASTParser.Terminal.key,
+        _2: _root_.petaform.parsing.RawASTParser.Terminal.`(`,
+        _3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head,
+        _4: _root_.petaform.parsing.RawASTParser.Terminal.`)`,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2
+      
+      final case class _6(
+        _1: _root_.petaform.parsing.RawASTParser.Terminal.`(`,
+        _2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue,
+        _3: _root_.petaform.parsing.RawASTParser.Terminal.`)`,
+      ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2
       
     }
     
@@ -399,11 +437,11 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     object Line {
       
       final case class _1(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3,
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1,
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.Line
       
       final case class _2(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3,
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1,
         _2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash,
         _3: _root_.petaform.parsing.RawASTParser.Terminal.key,
         _4: _root_.petaform.parsing.RawASTParser.Terminal.`@required`,
@@ -411,7 +449,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.Line
       
       final case class _3(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3,
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1,
         _2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash,
         _3: _root_.petaform.parsing.RawASTParser.Terminal.key,
         _4: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const`,
@@ -420,7 +458,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.Line
       
       final case class _4(
-        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3,
+        _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1,
         _2: _root_.petaform.parsing.RawASTParser.Terminal.dash,
         _3: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value,
       ) extends _root_.petaform.parsing.RawASTParser.NonTerminal.Line
@@ -428,7 +466,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     }
     
     final case class Lines(
-      _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head,
+      _1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head,
       _2: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n`,
     ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("Lines")
     
@@ -472,7 +510,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     
     final case class String(
       _1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`,
-      _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1,
+      _2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0,
       _3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`,
     ) extends _root_.petaform.parsing.RawASTParser.NonTerminal("String")
       with _root_.petaform.parsing.RawASTParser.NonTerminal.Value.Lift
@@ -590,43 +628,46 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       id = 0,
       on = _root_.scala.collection.immutable.Map(
         9 -> _root_.scala.None, // '\t'
-        10 -> _root_.scala.Some(lexerState56), // '\n'
-        32 -> _root_.scala.Some(lexerState86), // ' '
-        34 -> _root_.scala.Some(lexerState41), // '\"'
-        35 -> _root_.scala.Some(lexerState25), // '#'
+        10 -> _root_.scala.Some(lexerState32), // '\n'
+        32 -> _root_.scala.Some(lexerState113), // ' '
+        34 -> _root_.scala.Some(lexerState87), // '\"'
+        35 -> _root_.scala.Some(lexerState30), // '#'
         36 -> _root_.scala.None, // '$'
-        45 -> _root_.scala.Some(lexerState98), // '-'
+        45 -> _root_.scala.Some(lexerState54), // '-'
         58 -> _root_.scala.None, // ':'
       ),
-      elseOn = _root_.scala.Some(lexerState50),
+      elseOn = _root_.scala.Some(lexerState31),
       yields = None,
     )
   
   private lazy val lexerState1: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 1,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState96), // '\t'
+        10 -> _root_.scala.Some(lexerState12), // '\n'
+        32 -> _root_.scala.Some(lexerState96), // ' '
+        34 -> _root_.scala.Some(lexerState95), // '\"'
+        35 -> _root_.scala.Some(lexerState82), // '#'
+        36 -> _root_.scala.Some(lexerState80), // '$'
+        60 -> _root_.scala.Some(lexerState59), // '<'
+        110 -> _root_.scala.Some(lexerState33), // 'n'
       ),
-    ) {
-      case 32 => _root_.scala.Some(lexerState89) // ' '
-      case 9 => _root_.scala.Some(lexerState89) // '\t'
-      case 34 => _root_.scala.None // '\"'
-      case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState1)
-    }
+      elseOn = _root_.scala.Some(lexerState67),
+      yields = None,
+    )
   
   private lazy val lexerState2: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 2,
+      yields = None,
+    ) {
+      case 101 => _root_.scala.Some(lexerState5) // 'e'
+    }
+  
+  private lazy val lexerState3: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 3,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -636,40 +677,38 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState11)),
         ),
       ),
     )
   
-  private lazy val lexerState3: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState4: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 3,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
+      id = 4,
+      yields = None,
     ) {
-      case 10 => _root_.scala.None // '\n'
-      case 32 => _root_.scala.Some(lexerState84) // ' '
-      case 9 => _root_.scala.Some(lexerState84) // '\t'
-      case 34 => _root_.scala.Some(lexerState72) // '\"'
-      case _ => _root_.scala.Some(lexerState3)
+      case 105 => _root_.scala.Some(lexerState8) // 'i'
     }
   
-  private lazy val lexerState4: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState5: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 5,
+      yields = None,
+    ) {
+      case 100 => _root_.scala.Some(lexerState94) // 'd'
+    }
+  
+  private lazy val lexerState6: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 4,
+      id = 6,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
+        9 -> _root_.scala.Some(lexerState83), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
+        32 -> _root_.scala.Some(lexerState83), // ' '
         34 -> _root_.scala.None, // '\"'
-        108 -> _root_.scala.Some(lexerState49), // 'l'
+        69 -> _root_.scala.Some(lexerState36), // 'E'
       ),
-      elseOn = _root_.scala.Some(lexerState26),
+      elseOn = _root_.scala.Some(lexerState67),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -683,18 +722,39 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState5: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState7: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 5,
+      id = 7,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-        117 -> _root_.scala.Some(lexerState19), // 'u'
+        9 -> _root_.scala.Some(lexerState101), // '\t'
+        10 -> _root_.scala.Some(lexerState22), // '\n'
+        32 -> _root_.scala.Some(lexerState101), // ' '
+        58 -> _root_.scala.Some(lexerState43), // ':'
+        64 -> _root_.scala.Some(lexerState48), // '@'
       ),
-      elseOn = _root_.scala.Some(lexerState14),
+      elseOn = _root_.scala.None,
+      yields = None,
+    )
+  
+  private lazy val lexerState8: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 8,
+      yields = None,
+    ) {
+      case 114 => _root_.scala.Some(lexerState2) // 'r'
+    }
+  
+  private lazy val lexerState9: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 9,
+      yields = None,
+    ) {
+      case 111 => _root_.scala.Some(lexerState75) // 'o'
+    }
+  
+  private lazy val lexerState10: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 10,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -703,106 +763,36 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState6: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 6,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
     ) {
-      case 32 => _root_.scala.Some(lexerState89) // ' '
-      case 9 => _root_.scala.Some(lexerState89) // '\t'
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState91) // 'a' - 'z'
+      case c if c >= 72 && c <= 90 => _root_.scala.Some(lexerState91) // 'H' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState91) // '0' - '9'
+      case c if c >= 65 && c <= 70 => _root_.scala.Some(lexerState91) // 'A' - 'F'
+      case 125 => _root_.scala.None // '}'
+      case 58 => _root_.scala.None // ':'
+      case 44 => _root_.scala.None // ','
+      case c if c >= 40 && c <= 41 => _root_.scala.None // '(' - ')'
       case 34 => _root_.scala.None // '\"'
       case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState26)
+      case 32 => _root_.scala.Some(lexerState58) // ' '
+      case 9 => _root_.scala.Some(lexerState58) // '\t'
+      case 71 => _root_.scala.Some(lexerState85) // 'G'
+      case 95 => _root_.scala.Some(lexerState91) // '_'
+      case 45 => _root_.scala.Some(lexerState91) // '-'
+      case _ => _root_.scala.Some(lexerState28)
     }
-  
-  private lazy val lexerState7: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 7,
-      yields = None,
-    ) {
-      case 101 => _root_.scala.Some(lexerState57) // 'e'
-    }
-  
-  private lazy val lexerState8: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 8,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.escChar(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState9: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 9,
-      yields = None,
-    ) {
-      case 117 => _root_.scala.Some(lexerState43) // 'u'
-    }
-  
-  private lazy val lexerState10: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 10,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState46)),
-        ),
-      ),
-    )
   
   private lazy val lexerState11: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 11,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState67)),
-        ),
-      ),
-    )
+      yields = None,
+    ) {
+      case 32 => _root_.scala.Some(lexerState109) // ' '
+      case 9 => _root_.scala.Some(lexerState109) // '\t'
+    }
   
   private lazy val lexerState12: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
@@ -816,29 +806,95 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState46)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
         ),
       ),
     )
   
   private lazy val lexerState13: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 13,
-      on = _ => _root_.scala.Some(lexerState15),
-      yields = None,
-    )
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 32 => _root_.scala.Some(lexerState13) // ' '
+      case 9 => _root_.scala.Some(lexerState13) // '\t'
+    }
   
   private lazy val lexerState14: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 14,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 92 => _root_.scala.None // '\\'
+      case 36 => _root_.scala.None // '$'
+      case 10 => _root_.scala.None // '\n'
+      case 79 => _root_.scala.Some(lexerState25) // 'O'
+      case _ => _root_.scala.Some(lexerState76)
+    }
+  
+  private lazy val lexerState15: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 15,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
+        9 -> _root_.scala.Some(lexerState105), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
+        32 -> _root_.scala.Some(lexerState105), // ' '
+        34 -> _root_.scala.Some(lexerState111), // '\"'
+        58 -> _root_.scala.Some(lexerState111), // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState15),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState16: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 16,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 10 => _root_.scala.None // '\n'
+      case _ => _root_.scala.Some(lexerState16)
+    }
+  
+  private lazy val lexerState17: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 17,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
         34 -> _root_.scala.None, // '\"'
         58 -> _root_.scala.None, // ':'
+        60 -> _root_.scala.Some(lexerState92), // '<'
       ),
-      elseOn = _root_.scala.Some(lexerState14),
+      elseOn = _root_.scala.Some(lexerState64),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -847,14 +903,54 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
         ),
       ),
     )
   
-  private lazy val lexerState15: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState18: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 18,
+      yields = None,
+    ) {
+      case 101 => _root_.scala.Some(lexerState88) // 'e'
+    }
+  
+  private lazy val lexerState19: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 15,
+      id = 19,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState20: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 20,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState118)),
+        ),
+      ),
+    ) {
+      case 32 => _root_.scala.Some(lexerState20) // ' '
+      case 9 => _root_.scala.Some(lexerState20) // '\t'
+    }
+  
+  private lazy val lexerState21: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 21,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -869,24 +965,9 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState16: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 16,
-      yields = None,
-    ) {
-      case 113 => _root_.scala.Some(lexerState9) // 'q'
-    }
-  
-  private lazy val lexerState17: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState22: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 17,
-      on = _ => _root_.scala.Some(lexerState60),
-      yields = None,
-    )
-  
-  private lazy val lexerState18: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 18,
+      id = 22,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -896,84 +977,10 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
         ),
       ),
     )
-  
-  private lazy val lexerState19: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 19,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-        108 -> _root_.scala.Some(lexerState95), // 'l'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState20: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 20,
-      yields = None,
-    ) {
-      case 123 => _root_.scala.Some(lexerState12) // '{'
-      case 36 => _root_.scala.Some(lexerState65) // '$'
-      case _ => _root_.scala.Some(lexerState44)
-    }
-  
-  private lazy val lexerState21: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 21,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
-        34 -> _root_.scala.None, // '\"'
-        69 -> _root_.scala.Some(lexerState38), // 'E'
-      ),
-      elseOn = _root_.scala.Some(lexerState26),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState22: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 22,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState22)
-    }
   
   private lazy val lexerState23: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
@@ -987,42 +994,69 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState11)),
         ),
       ),
     )
   
   private lazy val lexerState24: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 24,
-      yields = None,
-    ) {
-      case 123 => _root_.scala.Some(lexerState42) // '{'
-    }
-  
-  private lazy val lexerState25: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 25,
+      id = 24,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState110), // '\t'
+        9 -> _root_.scala.Some(lexerState72), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState110), // ' '
-        34 -> _root_.scala.Some(lexerState110), // '\"'
-        58 -> _root_.scala.Some(lexerState110), // ':'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+        69 -> _root_.scala.Some(lexerState97), // 'E'
       ),
-      elseOn = _root_.scala.Some(lexerState25),
+      elseOn = _root_.scala.Some(lexerState64),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
         ),
       ),
     )
   
-  private lazy val lexerState26: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState25: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 25,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 92 => _root_.scala.None // '\\'
+      case 36 => _root_.scala.None // '$'
+      case 10 => _root_.scala.None // '\n'
+      case 70 => _root_.scala.Some(lexerState38) // 'F'
+      case _ => _root_.scala.Some(lexerState76)
+    }
+  
+  private lazy val lexerState26: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 26,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState83), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState83), // ' '
+        34 -> _root_.scala.None, // '\"'
+        70 -> _root_.scala.Some(lexerState61), // 'F'
+      ),
+      elseOn = _root_.scala.Some(lexerState67),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1034,32 +1068,171 @@ object RawASTParser extends _root_.slyce.parse.Parser {
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
-    ) {
-      case 32 => _root_.scala.Some(lexerState89) // ' '
-      case 9 => _root_.scala.Some(lexerState89) // '\t'
-      case 34 => _root_.scala.None // '\"'
-      case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState26)
-    }
+    )
   
   private lazy val lexerState27: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 27,
       yields = None,
     ) {
-      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState88) // 'a' - 'z'
-      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState88) // 'A' - 'Z'
-      case 124 => _root_.scala.Some(lexerState2) // '|'
-      case 43 => _root_.scala.Some(lexerState45) // '+'
-      case 125 => _root_.scala.Some(lexerState106) // '}'
-      case 46 => _root_.scala.Some(lexerState18) // '.'
-      case 32 => _root_.scala.Some(lexerState54) // ' '
-      case 9 => _root_.scala.Some(lexerState54) // '\t'
+      case 115 => _root_.scala.Some(lexerState114) // 's'
     }
   
   private lazy val lexerState28: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 28,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState58), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState58), // ' '
+        34 -> _root_.scala.None, // '\"'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        44 -> _root_.scala.None, // ','
+        58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
+      ),
+      elseOn = _root_.scala.Some(lexerState28),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState29: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 29,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState30: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 30,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState53), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState53), // ' '
+        34 -> _root_.scala.Some(lexerState53), // '\"'
+        58 -> _root_.scala.Some(lexerState53), // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState30),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState31: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 31,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState7)),
+        ),
+      ),
+    ) {
+      case 58 => _root_.scala.None // ':'
+      case 34 => _root_.scala.None // '\"'
+      case 32 => _root_.scala.None // ' '
+      case c if c >= 9 && c <= 10 => _root_.scala.None // '\t' - '\n'
+      case _ => _root_.scala.Some(lexerState31)
+    }
+  
+  private lazy val lexerState32: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 32,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState33: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 33,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState83), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState83), // ' '
+        34 -> _root_.scala.None, // '\"'
+        117 -> _root_.scala.Some(lexerState50), // 'u'
+      ),
+      elseOn = _root_.scala.Some(lexerState67),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState34: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 34,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.escChar(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState35: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 35,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -1074,9 +1247,258 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState29: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState36: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 36,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState83), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState83), // ' '
+        34 -> _root_.scala.None, // '\"'
+        79 -> _root_.scala.Some(lexerState26), // 'O'
+      ),
+      elseOn = _root_.scala.Some(lexerState67),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState37: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 37,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState91) // 'a' - 'z'
+      case c if c >= 65 && c <= 85 => _root_.scala.Some(lexerState91) // 'A' - 'U'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState91) // '0' - '9'
+      case c if c >= 87 && c <= 90 => _root_.scala.Some(lexerState91) // 'W' - 'Z'
+      case 125 => _root_.scala.None // '}'
+      case 58 => _root_.scala.None // ':'
+      case 44 => _root_.scala.None // ','
+      case c if c >= 40 && c <= 41 => _root_.scala.None // '(' - ')'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState58) // ' '
+      case 9 => _root_.scala.Some(lexerState58) // '\t'
+      case 86 => _root_.scala.Some(lexerState85) // 'V'
+      case 95 => _root_.scala.Some(lexerState91) // '_'
+      case 45 => _root_.scala.Some(lexerState91) // '-'
+      case _ => _root_.scala.Some(lexerState28)
+    }
+  
+  private lazy val lexerState38: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 38,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+        ),
+      ),
+    ) {
+      case 92 => _root_.scala.None // '\\'
+      case 36 => _root_.scala.None // '$'
+      case 10 => _root_.scala.None // '\n'
+      case _ => _root_.scala.Some(lexerState76)
+    }
+  
+  private lazy val lexerState39: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 39,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState58), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState58), // ' '
+        34 -> _root_.scala.None, // '\"'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        44 -> _root_.scala.None, // ','
+        58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
+      ),
+      elseOn = _root_.scala.Some(lexerState28),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState40: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 40,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState83), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState83), // ' '
+        34 -> _root_.scala.None, // '\"'
+        45 -> _root_.scala.Some(lexerState6), // '-'
+      ),
+      elseOn = _root_.scala.Some(lexerState67),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState41: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 41,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+        117 -> _root_.scala.Some(lexerState66), // 'u'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState42: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 42,
+      yields = None,
+    ) {
+      case 34 => _root_.scala.Some(lexerState81) // '\"'
+      case 92 => _root_.scala.Some(lexerState103) // '\\'
+      case 36 => _root_.scala.Some(lexerState108) // '$'
+      case _ => _root_.scala.Some(lexerState77)
+    }
+  
+  private lazy val lexerState43: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 29,
+      id = 43,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState1)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState44: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 44,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState44),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState45: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 45,
+      yields = None,
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState91) // 'a' - 'z'
+      case c if c >= 70 && c <= 90 => _root_.scala.Some(lexerState91) // 'F' - 'Z'
+      case 125 => _root_.scala.Some(lexerState93) // '}'
+      case 68 => _root_.scala.Some(lexerState91) // 'D'
+      case c if c >= 65 && c <= 66 => _root_.scala.Some(lexerState91) // 'A' - 'B'
+      case 44 => _root_.scala.Some(lexerState49) // ','
+      case c if c >= 40 && c <= 41 => _root_.scala.Some(lexerState49) // '(' - ')'
+      case 58 => _root_.scala.None // ':'
+      case 36 => _root_.scala.None // '$'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 67 => _root_.scala.Some(lexerState55) // 'C'
+      case 43 => _root_.scala.Some(lexerState57) // '+'
+      case 69 => _root_.scala.Some(lexerState68) // 'E'
+      case 46 => _root_.scala.Some(lexerState39) // '.'
+      case 32 => _root_.scala.Some(lexerState13) // ' '
+      case 9 => _root_.scala.Some(lexerState13) // '\t'
+      case _ => _root_.scala.Some(lexerState28)
+    }
+  
+  private lazy val lexerState46: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 46,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState47: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 47,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -1086,308 +1508,9 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.dash(text, span),
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState47)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState78)),
         ),
       ),
-    )
-  
-  private lazy val lexerState30: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 30,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState31: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 31,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
-        34 -> _root_.scala.None, // '\"'
-        70 -> _root_.scala.Some(lexerState114), // 'F'
-      ),
-      elseOn = _root_.scala.Some(lexerState26),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState32: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 32,
-      yields = None,
-    ) {
-      case 116 => _root_.scala.Some(lexerState37) // 't'
-    }
-  
-  private lazy val lexerState33: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 33,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case 92 => _root_.scala.None // '\\'
-      case 36 => _root_.scala.None // '$'
-      case 10 => _root_.scala.None // '\n'
-      case 79 => _root_.scala.Some(lexerState75) // 'O'
-      case _ => _root_.scala.Some(lexerState94)
-    }
-  
-  private lazy val lexerState34: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 34,
-      yields = None,
-    ) {
-      case 70 => _root_.scala.Some(lexerState99) // 'F'
-    }
-  
-  private lazy val lexerState35: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 35,
-      yields = None,
-    ) {
-      case 110 => _root_.scala.Some(lexerState105) // 'n'
-    }
-  
-  private lazy val lexerState36: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 36,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case 10 => _root_.scala.None // '\n'
-      case 32 => _root_.scala.Some(lexerState84) // ' '
-      case 9 => _root_.scala.Some(lexerState84) // '\t'
-      case 34 => _root_.scala.Some(lexerState72) // '\"'
-      case _ => _root_.scala.Some(lexerState36)
-    }
-  
-  private lazy val lexerState37: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 37,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState38: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 38,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
-        34 -> _root_.scala.None, // '\"'
-        79 -> _root_.scala.Some(lexerState31), // 'O'
-      ),
-      elseOn = _root_.scala.Some(lexerState26),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState39: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 39,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-        60 -> _root_.scala.Some(lexerState69), // '<'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState40: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 40,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case 32 => _root_.scala.Some(lexerState40) // ' '
-      case 9 => _root_.scala.Some(lexerState40) // '\t'
-    }
-  
-  private lazy val lexerState41: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 41,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState87)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState42: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 42,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState46)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState43: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 43,
-      yields = None,
-    ) {
-      case 105 => _root_.scala.Some(lexerState76) // 'i'
-    }
-  
-  private lazy val lexerState44: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 44,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState45: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 45,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState46)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState46: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 46,
-      yields = None,
-    ) {
-      case 69 => _root_.scala.Some(lexerState66) // 'E'
-      case 67 => _root_.scala.Some(lexerState34) // 'C'
-      case 32 => _root_.scala.Some(lexerState103) // ' '
-      case 9 => _root_.scala.Some(lexerState103) // '\t'
-    }
-  
-  private lazy val lexerState47: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 47,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.None, // '\t'
-        10 -> _root_.scala.Some(lexerState23), // '\n'
-        32 -> _root_.scala.None, // ' '
-        34 -> _root_.scala.Some(lexerState102), // '\"'
-        35 -> _root_.scala.Some(lexerState104), // '#'
-        36 -> _root_.scala.Some(lexerState24), // '$'
-        45 -> _root_.scala.Some(lexerState52), // '-'
-        58 -> _root_.scala.None, // ':'
-        60 -> _root_.scala.Some(lexerState39), // '<'
-        110 -> _root_.scala.Some(lexerState5), // 'n'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
-      yields = None,
     )
   
   private lazy val lexerState48: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
@@ -1395,26 +1518,31 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       id = 48,
       yields = None,
     ) {
-      case 123 => _root_.scala.Some(lexerState10) // '{'
+      case 114 => _root_.scala.Some(lexerState18) // 'r'
+      case 99 => _root_.scala.Some(lexerState9) // 'c'
     }
   
   private lazy val lexerState49: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 49,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
+        9 -> _root_.scala.Some(lexerState58), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
+        32 -> _root_.scala.Some(lexerState58), // ' '
         34 -> _root_.scala.None, // '\"'
-        108 -> _root_.scala.Some(lexerState6), // 'l'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        44 -> _root_.scala.None, // ','
+        58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
       ),
-      elseOn = _root_.scala.Some(lexerState26),
+      elseOn = _root_.scala.Some(lexerState28),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
@@ -1423,59 +1551,16 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     )
   
   private lazy val lexerState50: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 50,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState55)),
-        ),
-      ),
-    ) {
-      case 58 => _root_.scala.None // ':'
-      case 34 => _root_.scala.None // '\"'
-      case 32 => _root_.scala.None // ' '
-      case c if c >= 9 && c <= 10 => _root_.scala.None // '\t' - '\n'
-      case _ => _root_.scala.Some(lexerState50)
-    }
-  
-  private lazy val lexerState51: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 51,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
-      ),
-    ) {
-      case 92 => _root_.scala.None // '\\'
-      case 36 => _root_.scala.None // '$'
-      case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState94)
-    }
-  
-  private lazy val lexerState52: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 52,
+      id = 50,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.Some(lexerState68), // '\n'
-        32 -> _root_.scala.Some(lexerState91), // ' '
+        9 -> _root_.scala.Some(lexerState83), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState83), // ' '
         34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
+        108 -> _root_.scala.Some(lexerState73), // 'l'
       ),
-      elseOn = _root_.scala.Some(lexerState96),
+      elseOn = _root_.scala.Some(lexerState67),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1489,57 +1574,127 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
+  private lazy val lexerState51: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 51,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+        70 -> _root_.scala.Some(lexerState112), // 'F'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState52: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 52,
+      on = _ => _root_.scala.Some(lexerState34),
+      yields = None,
+    )
+  
   private lazy val lexerState53: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 53,
-      yields = None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
     ) {
-      case 36 => _root_.scala.Some(lexerState20) // '$'
-      case 92 => _root_.scala.Some(lexerState13) // '\\'
-      case 69 => _root_.scala.Some(lexerState33) // 'E'
-      case 10 => _root_.scala.Some(lexerState73) // '\n'
-      case _ => _root_.scala.Some(lexerState94)
+      case 10 => _root_.scala.None // '\n'
+      case _ => _root_.scala.Some(lexerState53)
     }
   
   private lazy val lexerState54: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 54,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
+      yields = None,
     ) {
-      case 32 => _root_.scala.Some(lexerState54) // ' '
-      case 9 => _root_.scala.Some(lexerState54) // '\t'
+      case 10 => _root_.scala.Some(lexerState63) // '\n'
+      case 32 => _root_.scala.Some(lexerState47) // ' '
     }
   
   private lazy val lexerState55: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 55,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState40), // '\t'
-        10 -> _root_.scala.Some(lexerState111), // '\n'
-        32 -> _root_.scala.Some(lexerState40), // ' '
-        58 -> _root_.scala.Some(lexerState74), // ':'
-        64 -> _root_.scala.Some(lexerState71), // '@'
-      ),
-      elseOn = _root_.scala.None,
-      yields = None,
-    )
-  
-  private lazy val lexerState56: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 56,
-      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState91) // 'a' - 'z'
+      case c if c >= 71 && c <= 90 => _root_.scala.Some(lexerState91) // 'G' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState91) // '0' - '9'
+      case c if c >= 65 && c <= 69 => _root_.scala.Some(lexerState91) // 'A' - 'E'
+      case 125 => _root_.scala.None // '}'
+      case 58 => _root_.scala.None // ':'
+      case 44 => _root_.scala.None // ','
+      case c if c >= 40 && c <= 41 => _root_.scala.None // '(' - ')'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState58) // ' '
+      case 9 => _root_.scala.Some(lexerState58) // '\t'
+      case 70 => _root_.scala.Some(lexerState10) // 'F'
+      case 95 => _root_.scala.Some(lexerState91) // '_'
+      case 45 => _root_.scala.Some(lexerState91) // '-'
+      case _ => _root_.scala.Some(lexerState28)
+    }
+  
+  private lazy val lexerState56: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 56,
+      yields = None,
+    ) {
+      case 32 => _root_.scala.Some(lexerState20) // ' '
+      case 9 => _root_.scala.Some(lexerState20) // '\t'
+      case 10 => _root_.scala.Some(lexerState46) // '\n'
+    }
+  
+  private lazy val lexerState57: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 57,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState58), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState58), // ' '
+        34 -> _root_.scala.None, // '\"'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        43 -> _root_.scala.Some(lexerState116), // '+'
+        44 -> _root_.scala.None, // ','
+        58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
+      ),
+      elseOn = _root_.scala.Some(lexerState28),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
             ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
@@ -1547,42 +1702,35 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState57: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 57,
-      yields = None,
-    ) {
-      case 100 => _root_.scala.Some(lexerState37) // 'd'
-    }
-  
   private lazy val lexerState58: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 58,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState58), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState58), // ' '
+        34 -> _root_.scala.None, // '\"'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        44 -> _root_.scala.None, // ','
+        58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
       ),
+      elseOn = _root_.scala.Some(lexerState100),
+      yields = None,
     )
   
   private lazy val lexerState59: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 59,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
+        9 -> _root_.scala.Some(lexerState83), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
+        32 -> _root_.scala.Some(lexerState83), // ' '
         34 -> _root_.scala.None, // '\"'
-        117 -> _root_.scala.Some(lexerState4), // 'u'
+        60 -> _root_.scala.Some(lexerState40), // '<'
       ),
-      elseOn = _root_.scala.Some(lexerState26),
+      elseOn = _root_.scala.Some(lexerState67),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1597,26 +1745,30 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     )
   
   private lazy val lexerState60: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 60,
-      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.escChar(text, span),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
             ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
-    )
+    ) {
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState83) // ' '
+      case 9 => _root_.scala.Some(lexerState83) // '\t'
+      case _ => _root_.scala.Some(lexerState60)
+    }
   
   private lazy val lexerState61: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 61,
-      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1625,14 +1777,28 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState27)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState56)),
         ),
       ),
-    )
+    ) {
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState83) // ' '
+      case 9 => _root_.scala.Some(lexerState83) // '\t'
+      case _ => _root_.scala.Some(lexerState67)
+    }
   
   private lazy val lexerState62: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 62,
+      yields = None,
+    ) {
+      case 117 => _root_.scala.Some(lexerState4) // 'u'
+    }
+  
+  private lazy val lexerState63: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 63,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -1645,26 +1811,6 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               span = (0, -1),
               build = span => _ => _root_.petaform.parsing.RawASTParser.Terminal.`\n`(span),
             ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState63: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 63,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState79), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState79), // ' '
-        34 -> _root_.scala.Some(lexerState22), // '\"'
-        58 -> _root_.scala.Some(lexerState22), // ':'
-      ),
-      elseOn = _root_.scala.Some(lexerState63),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
@@ -1672,81 +1818,16 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     )
   
   private lazy val lexerState64: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 64,
-      yields = None,
-    ) {
-      case 86 => _root_.scala.Some(lexerState61) // 'V'
-    }
-  
-  private lazy val lexerState65: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 65,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.escChar(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState66: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 66,
-      yields = None,
-    ) {
-      case 78 => _root_.scala.Some(lexerState64) // 'N'
-    }
-  
-  private lazy val lexerState67: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 67,
-      yields = None,
-    ) {
-      case 10 => _root_.scala.Some(lexerState81) // '\n'
-      case 32 => _root_.scala.Some(lexerState85) // ' '
-      case 9 => _root_.scala.Some(lexerState85) // '\t'
-    }
-  
-  private lazy val lexerState68: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 68,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -2),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.dash(text, span),
-            ),
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (-1, -1),
-              build = span => _ => _root_.petaform.parsing.RawASTParser.Terminal.`\n`(span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState69: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 69,
+      id = 64,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
+        9 -> _root_.scala.Some(lexerState72), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
+        32 -> _root_.scala.Some(lexerState72), // ' '
         34 -> _root_.scala.None, // '\"'
-        45 -> _root_.scala.Some(lexerState92), // '-'
         58 -> _root_.scala.None, // ':'
       ),
-      elseOn = _root_.scala.Some(lexerState14),
+      elseOn = _root_.scala.Some(lexerState64),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1755,31 +1836,118 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
         ),
       ),
     )
   
-  private lazy val lexerState70: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState65: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 65,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.Some(lexerState104), // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState44),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.dash(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState66: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 66,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+        108 -> _root_.scala.Some(lexerState74), // 'l'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState67: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 70,
-      yields = None,
+      id = 67,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
     ) {
-      case 111 => _root_.scala.Some(lexerState35) // 'o'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState83) // ' '
+      case 9 => _root_.scala.Some(lexerState83) // '\t'
+      case _ => _root_.scala.Some(lexerState67)
     }
   
-  private lazy val lexerState71: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState68: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 71,
-      yields = None,
+      id = 68,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
     ) {
-      case 114 => _root_.scala.Some(lexerState78) // 'r'
-      case 99 => _root_.scala.Some(lexerState70) // 'c'
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState91) // 'a' - 'z'
+      case c if c >= 65 && c <= 77 => _root_.scala.Some(lexerState91) // 'A' - 'M'
+      case c if c >= 79 && c <= 90 => _root_.scala.Some(lexerState91) // 'O' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState91) // '0' - '9'
+      case 125 => _root_.scala.None // '}'
+      case 58 => _root_.scala.None // ':'
+      case 44 => _root_.scala.None // ','
+      case c if c >= 40 && c <= 41 => _root_.scala.None // '(' - ')'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 78 => _root_.scala.Some(lexerState37) // 'N'
+      case 32 => _root_.scala.Some(lexerState58) // ' '
+      case 9 => _root_.scala.Some(lexerState58) // '\t'
+      case 95 => _root_.scala.Some(lexerState91) // '_'
+      case 45 => _root_.scala.Some(lexerState91) // '-'
+      case _ => _root_.scala.Some(lexerState28)
     }
   
-  private lazy val lexerState72: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState69: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 72,
+      id = 69,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1789,39 +1957,113 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     ) {
       case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState72)
+      case 32 => _root_.scala.Some(lexerState69) // ' '
+      case 9 => _root_.scala.Some(lexerState69) // '\t'
+      case 34 => _root_.scala.Some(lexerState16) // '\"'
+      case _ => _root_.scala.Some(lexerState70)
     }
   
-  private lazy val lexerState73: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 73,
-      on = _ => _root_.scala.None,
+  private lazy val lexerState70: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 70,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState69) // ' '
+      case 9 => _root_.scala.Some(lexerState69) // '\t'
+      case 34 => _root_.scala.Some(lexerState16) // '\"'
+      case _ => _root_.scala.Some(lexerState70)
+    }
+  
+  private lazy val lexerState71: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 71,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.Some(lexerState104), // '\n'
+        32 -> _root_.scala.Some(lexerState65), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState90),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState67)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState72: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 72,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState44),
+      yields = None,
+    )
+  
+  private lazy val lexerState73: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 73,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState83), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState83), // ' '
+        34 -> _root_.scala.None, // '\"'
+        108 -> _root_.scala.Some(lexerState106), // 'l'
+      ),
+      elseOn = _root_.scala.Some(lexerState67),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
     )
   
   private lazy val lexerState74: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 74,
-      on = _ => _root_.scala.None,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+        108 -> _root_.scala.Some(lexerState29), // 'l'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState83)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
         ),
       ),
     )
@@ -1829,6 +2071,14 @@ object RawASTParser extends _root_.slyce.parse.Parser {
   private lazy val lexerState75: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 75,
+      yields = None,
+    ) {
+      case 110 => _root_.scala.Some(lexerState27) // 'n'
+    }
+  
+  private lazy val lexerState76: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 76,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -1844,298 +2094,77 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       case 92 => _root_.scala.None // '\\'
       case 36 => _root_.scala.None // '$'
       case 10 => _root_.scala.None // '\n'
-      case 70 => _root_.scala.Some(lexerState51) // 'F'
-      case _ => _root_.scala.Some(lexerState94)
-    }
-  
-  private lazy val lexerState76: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 76,
-      yields = None,
-    ) {
-      case 114 => _root_.scala.Some(lexerState7) // 'r'
+      case _ => _root_.scala.Some(lexerState76)
     }
   
   private lazy val lexerState77: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 77,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-      ),
-      elseOn = _root_.scala.Some(lexerState113),
-      yields = None,
-    )
-  
-  private lazy val lexerState78: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 78,
-      yields = None,
-    ) {
-      case 101 => _root_.scala.Some(lexerState16) // 'e'
-    }
-  
-  private lazy val lexerState79: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 79,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState79), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState79), // ' '
-        34 -> _root_.scala.Some(lexerState22), // '\"'
-        58 -> _root_.scala.Some(lexerState22), // ':'
-      ),
-      elseOn = _root_.scala.Some(lexerState63),
+      id = 77,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
+            ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 92 => _root_.scala.None // '\\'
+      case 36 => _root_.scala.None // '$'
+      case 34 => _root_.scala.None // '\"'
+      case _ => _root_.scala.Some(lexerState77)
+    }
+  
+  private lazy val lexerState78: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 78,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.None, // '\t'
+        10 -> _root_.scala.Some(lexerState99), // '\n'
+        32 -> _root_.scala.None, // ' '
+        34 -> _root_.scala.Some(lexerState117), // '\"'
+        35 -> _root_.scala.Some(lexerState89), // '#'
+        36 -> _root_.scala.Some(lexerState110), // '$'
+        45 -> _root_.scala.Some(lexerState71), // '-'
+        58 -> _root_.scala.None, // ':'
+        60 -> _root_.scala.Some(lexerState17), // '<'
+        110 -> _root_.scala.Some(lexerState41), // 'n'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = None,
+    )
+  
+  private lazy val lexerState79: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 79,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState11)),
         ),
       ),
     )
   
   private lazy val lexerState80: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 80,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState87)),
-        ),
-      ),
-    )
+      yields = None,
+    ) {
+      case 123 => _root_.scala.Some(lexerState79) // '{'
+    }
   
   private lazy val lexerState81: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 81,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState82: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 82,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
-        34 -> _root_.scala.None, // '\"'
-        60 -> _root_.scala.Some(lexerState112), // '<'
-      ),
-      elseOn = _root_.scala.Some(lexerState26),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState83: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 83,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState101), // '\t'
-        10 -> _root_.scala.Some(lexerState58), // '\n'
-        32 -> _root_.scala.Some(lexerState101), // ' '
-        34 -> _root_.scala.Some(lexerState80), // '\"'
-        35 -> _root_.scala.Some(lexerState36), // '#'
-        36 -> _root_.scala.Some(lexerState48), // '$'
-        60 -> _root_.scala.Some(lexerState82), // '<'
-        110 -> _root_.scala.Some(lexerState59), // 'n'
-      ),
-      elseOn = _root_.scala.Some(lexerState26),
-      yields = None,
-    )
-  
-  private lazy val lexerState84: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 84,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case 10 => _root_.scala.None // '\n'
-      case 32 => _root_.scala.Some(lexerState84) // ' '
-      case 9 => _root_.scala.Some(lexerState84) // '\t'
-      case 34 => _root_.scala.Some(lexerState72) // '\"'
-      case _ => _root_.scala.Some(lexerState3)
-    }
-  
-  private lazy val lexerState85: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 85,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState53)),
-        ),
-      ),
-    ) {
-      case 32 => _root_.scala.Some(lexerState85) // ' '
-      case 9 => _root_.scala.Some(lexerState85) // '\t'
-    }
-  
-  private lazy val lexerState86: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 86,
-      yields = None,
-    ) {
-      case 32 => _root_.scala.Some(lexerState108) // ' '
-    }
-  
-  private lazy val lexerState87: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 87,
-      yields = None,
-    ) {
-      case 34 => _root_.scala.Some(lexerState93) // '\"'
-      case 92 => _root_.scala.Some(lexerState17) // '\\'
-      case 36 => _root_.scala.Some(lexerState107) // '$'
-      case _ => _root_.scala.Some(lexerState100)
-    }
-  
-  private lazy val lexerState88: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 88,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState88) // 'a' - 'z'
-      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState88) // 'A' - 'Z'
-      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState88) // '0' - '9'
-      case 95 => _root_.scala.Some(lexerState88) // '_'
-      case 45 => _root_.scala.Some(lexerState88) // '-'
-    }
-  
-  private lazy val lexerState89: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 89,
-      yields = None,
-    ) {
-      case 32 => _root_.scala.Some(lexerState89) // ' '
-      case 9 => _root_.scala.Some(lexerState89) // '\t'
-      case 34 => _root_.scala.None // '\"'
-      case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState1)
-    }
-  
-  private lazy val lexerState90: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 90,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-        79 -> _root_.scala.Some(lexerState97), // 'O'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState91: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 91,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.Some(lexerState68), // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-      ),
-      elseOn = _root_.scala.Some(lexerState113),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.dash(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState92: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 92,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-        69 -> _root_.scala.Some(lexerState90), // 'E'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState93: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 93,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -2150,63 +2179,157 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState94: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState82: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 94,
+      id = 82,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
-            ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
     ) {
-      case 92 => _root_.scala.None // '\\'
-      case 36 => _root_.scala.None // '$'
       case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState94)
+      case 32 => _root_.scala.Some(lexerState69) // ' '
+      case 9 => _root_.scala.Some(lexerState69) // '\t'
+      case 34 => _root_.scala.Some(lexerState16) // '\"'
+      case _ => _root_.scala.Some(lexerState82)
     }
   
-  private lazy val lexerState95: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 95,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-        108 -> _root_.scala.Some(lexerState30), // 'l'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
+  private lazy val lexerState83: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 83,
+      yields = None,
+    ) {
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState83) // ' '
+      case 9 => _root_.scala.Some(lexerState83) // '\t'
+      case _ => _root_.scala.Some(lexerState60)
+    }
+  
+  private lazy val lexerState84: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 84,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState11)),
         ),
       ),
     )
   
-  private lazy val lexerState96: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState85: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 85,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState45)),
+        ),
+      ),
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState91) // 'a' - 'z'
+      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState91) // 'A' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState91) // '0' - '9'
+      case 125 => _root_.scala.None // '}'
+      case 58 => _root_.scala.None // ':'
+      case 44 => _root_.scala.None // ','
+      case c if c >= 40 && c <= 41 => _root_.scala.None // '(' - ')'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState58) // ' '
+      case 9 => _root_.scala.Some(lexerState58) // '\t'
+      case 95 => _root_.scala.Some(lexerState91) // '_'
+      case 45 => _root_.scala.Some(lexerState91) // '-'
+      case _ => _root_.scala.Some(lexerState28)
+    }
+  
+  private lazy val lexerState86: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 86,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.escChar(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState87: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 87,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState42)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState88: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 88,
+      yields = None,
+    ) {
+      case 113 => _root_.scala.Some(lexerState62) // 'q'
+    }
+  
+  private lazy val lexerState89: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 96,
+      id = 89,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
+        9 -> _root_.scala.Some(lexerState105), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
+        32 -> _root_.scala.Some(lexerState105), // ' '
+        34 -> _root_.scala.Some(lexerState111), // '\"'
+        58 -> _root_.scala.Some(lexerState111), // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState89),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState90: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 90,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
         34 -> _root_.scala.None, // '\"'
         58 -> _root_.scala.None, // ':'
       ),
-      elseOn = _root_.scala.Some(lexerState96),
+      elseOn = _root_.scala.Some(lexerState90),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -2220,18 +2343,9 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState97: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 97,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
-        58 -> _root_.scala.None, // ':'
-        70 -> _root_.scala.Some(lexerState11), // 'F'
-      ),
-      elseOn = _root_.scala.Some(lexerState14),
+  private lazy val lexerState91: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 91,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -2240,7 +2354,149 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState55)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case c if c >= 97 && c <= 122 => _root_.scala.Some(lexerState91) // 'a' - 'z'
+      case c if c >= 65 && c <= 90 => _root_.scala.Some(lexerState91) // 'A' - 'Z'
+      case c if c >= 48 && c <= 57 => _root_.scala.Some(lexerState91) // '0' - '9'
+      case 125 => _root_.scala.None // '}'
+      case 58 => _root_.scala.None // ':'
+      case 44 => _root_.scala.None // ','
+      case c if c >= 40 && c <= 41 => _root_.scala.None // '(' - ')'
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState58) // ' '
+      case 9 => _root_.scala.Some(lexerState58) // '\t'
+      case 95 => _root_.scala.Some(lexerState91) // '_'
+      case 45 => _root_.scala.Some(lexerState91) // '-'
+      case _ => _root_.scala.Some(lexerState28)
+    }
+  
+  private lazy val lexerState92: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 92,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        45 -> _root_.scala.Some(lexerState24), // '-'
+        58 -> _root_.scala.None, // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState93: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 93,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState58), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState58), // ' '
+        34 -> _root_.scala.None, // '\"'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        44 -> _root_.scala.None, // ','
+        58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
+      ),
+      elseOn = _root_.scala.Some(lexerState28),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState94: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 94,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState95: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 95,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState42)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState96: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 96,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 32 => _root_.scala.Some(lexerState96) // ' '
+      case 9 => _root_.scala.Some(lexerState96) // '\t'
+    }
+  
+  private lazy val lexerState97: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 97,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+        79 -> _root_.scala.Some(lexerState51), // 'O'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.key(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState7)),
         ),
       ),
     )
@@ -2250,38 +2506,55 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       id = 98,
       yields = None,
     ) {
-      case 32 => _root_.scala.Some(lexerState29) // ' '
-      case 10 => _root_.scala.Some(lexerState62) // '\n'
+      case 123 => _root_.scala.Some(lexerState3) // '{'
+      case 36 => _root_.scala.Some(lexerState86) // '$'
+      case _ => _root_.scala.Some(lexerState35)
     }
   
   private lazy val lexerState99: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 99,
-      yields = None,
-    ) {
-      case 71 => _root_.scala.Some(lexerState61) // 'G'
-    }
-  
-  private lazy val lexerState100: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 100,
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
             _root_.slyce.parse.Lexer.Yields.Yield(
               span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.chars(text, span),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+        ),
+      ),
+    )
+  
+  private lazy val lexerState100: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 100,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState58), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState58), // ' '
+        34 -> _root_.scala.None, // '\"'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        44 -> _root_.scala.None, // ','
+        58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
+      ),
+      elseOn = _root_.scala.Some(lexerState100),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
             ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
-    ) {
-      case 92 => _root_.scala.None // '\\'
-      case 36 => _root_.scala.None // '$'
-      case 34 => _root_.scala.None // '\"'
-      case _ => _root_.scala.Some(lexerState100)
-    }
+    )
   
   private lazy val lexerState101: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
@@ -2310,40 +2583,33 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState87)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.To(_root_.slyce.core.Lazy(lexerState56)),
         ),
       ),
     )
   
   private lazy val lexerState103: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 103,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case 32 => _root_.scala.Some(lexerState103) // ' '
-      case 9 => _root_.scala.Some(lexerState103) // '\t'
-    }
+      on = _ => _root_.scala.Some(lexerState107),
+      yields = None,
+    )
   
   private lazy val lexerState104: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 104,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState79), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState79), // ' '
-        34 -> _root_.scala.Some(lexerState22), // '\"'
-        58 -> _root_.scala.Some(lexerState22), // ':'
-      ),
-      elseOn = _root_.scala.Some(lexerState104),
+      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -2),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.dash(text, span),
+            ),
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (-1, -1),
+              build = span => _ => _root_.petaform.parsing.RawASTParser.Terminal.`\n`(span),
+            ),
           ),
           toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
@@ -2351,17 +2617,28 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     )
   
   private lazy val lexerState105: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 105,
-      yields = None,
-    ) {
-      case 115 => _root_.scala.Some(lexerState32) // 's'
-    }
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState105), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState105), // ' '
+        34 -> _root_.scala.Some(lexerState111), // '\"'
+        58 -> _root_.scala.Some(lexerState111), // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState15),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    )
   
   private lazy val lexerState106: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
       id = 106,
-      on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -2370,24 +2647,125 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 34 => _root_.scala.None // '\"'
+      case 10 => _root_.scala.None // '\n'
+      case 32 => _root_.scala.Some(lexerState83) // ' '
+      case 9 => _root_.scala.Some(lexerState83) // '\t'
+      case _ => _root_.scala.Some(lexerState67)
+    }
+  
+  private lazy val lexerState107: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 107,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.escChar(text, span),
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
     )
   
-  private lazy val lexerState107: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState108: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 107,
+      id = 108,
       yields = None,
     ) {
-      case 123 => _root_.scala.Some(lexerState109) // '{'
-      case 36 => _root_.scala.Some(lexerState8) // '$'
-      case _ => _root_.scala.Some(lexerState28)
+      case 123 => _root_.scala.Some(lexerState84) // '{'
+      case 36 => _root_.scala.Some(lexerState21) // '$'
+      case _ => _root_.scala.Some(lexerState19)
     }
   
-  private lazy val lexerState108: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState109: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 109,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 32 => _root_.scala.Some(lexerState109) // ' '
+      case 9 => _root_.scala.Some(lexerState109) // '\t'
+    }
+  
+  private lazy val lexerState110: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 110,
+      yields = None,
+    ) {
+      case 123 => _root_.scala.Some(lexerState23) // '{'
+    }
+  
+  private lazy val lexerState111: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 111,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
+        ),
+      ),
+    ) {
+      case 10 => _root_.scala.None // '\n'
+      case _ => _root_.scala.Some(lexerState111)
+    }
+  
+  private lazy val lexerState112: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 112,
+      on = _root_.scala.collection.immutable.Map(
+        9 -> _root_.scala.Some(lexerState72), // '\t'
+        10 -> _root_.scala.None, // '\n'
+        32 -> _root_.scala.Some(lexerState72), // ' '
+        34 -> _root_.scala.None, // '\"'
+        58 -> _root_.scala.None, // ':'
+      ),
+      elseOn = _root_.scala.Some(lexerState64),
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState56)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState113: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 113,
+      yields = None,
+    ) {
+      case 32 => _root_.scala.Some(lexerState115) // ' '
+    }
+  
+  private lazy val lexerState114: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 114,
+      yields = None,
+    ) {
+      case 116 => _root_.scala.Some(lexerState94) // 't'
+    }
+  
+  private lazy val lexerState115: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 108,
+      id = 115,
       on = _ => _root_.scala.None,
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
@@ -2402,106 +2780,21 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       ),
     )
   
-  private lazy val lexerState109: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 109,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState46)),
-        ),
-      ),
-    )
-  
-  private lazy val lexerState110: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 110,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    ) {
-      case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState110)
-    }
-  
-  private lazy val lexerState111: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 111,
-      on = _ => _root_.scala.None,
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Pop,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState112: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+  private lazy val lexerState116: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
     _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 112,
+      id = 116,
       on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState89), // '\t'
+        9 -> _root_.scala.Some(lexerState58), // '\t'
         10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState89), // ' '
+        32 -> _root_.scala.Some(lexerState58), // ' '
         34 -> _root_.scala.None, // '\"'
-        45 -> _root_.scala.Some(lexerState21), // '-'
-      ),
-      elseOn = _root_.scala.Some(lexerState26),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState113: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromMap[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 113,
-      on = _root_.scala.collection.immutable.Map(
-        9 -> _root_.scala.Some(lexerState77), // '\t'
-        10 -> _root_.scala.None, // '\n'
-        32 -> _root_.scala.Some(lexerState77), // ' '
-        34 -> _root_.scala.None, // '\"'
+        40 -> _root_.scala.None, // '('
+        41 -> _root_.scala.None, // ')'
+        44 -> _root_.scala.None, // ','
         58 -> _root_.scala.None, // ':'
+        125 -> _root_.scala.None, // '}'
       ),
-      elseOn = _root_.scala.Some(lexerState113),
-      yields = Some(
-        _root_.slyce.parse.Lexer.Yields(
-          yields = _root_.scala.collection.immutable.List(
-            _root_.slyce.parse.Lexer.Yields.Yield(
-              span = (0, -1),
-              build = span => text => _root_.petaform.parsing.RawASTParser.Terminal.raw(text, span),
-            ),
-          ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
-        ),
-      ),
-    )
-  
-  private lazy val lexerState114: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
-    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
-      id = 114,
+      elseOn = _root_.scala.Some(lexerState28),
       yields = Some(
         _root_.slyce.parse.Lexer.Yields(
           yields = _root_.scala.collection.immutable.List(
@@ -2510,15 +2803,38 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
             ),
           ),
-          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState67)),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Same,
         ),
       ),
+    )
+  
+  private lazy val lexerState117: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 117,
+      on = _ => _root_.scala.None,
+      yields = Some(
+        _root_.slyce.parse.Lexer.Yields(
+          yields = _root_.scala.collection.immutable.List(
+            _root_.slyce.parse.Lexer.Yields.Yield(
+              span = (0, -1),
+              build = _root_.petaform.parsing.RawASTParser.Terminal.__findRawTerminal,
+            ),
+          ),
+          toMode = _root_.slyce.parse.Lexer.Yields.ToMode.Push(_root_.slyce.core.Lazy(lexerState42)),
+        ),
+      ),
+    )
+  
+  private lazy val lexerState118: _root_.slyce.parse.Lexer.State[_root_.petaform.parsing.RawASTParser.Terminal] =
+    _root_.slyce.parse.Lexer.State.fromPF[_root_.petaform.parsing.RawASTParser.Terminal](
+      id = 118,
+      yields = None,
     ) {
-      case 32 => _root_.scala.Some(lexerState89) // ' '
-      case 9 => _root_.scala.Some(lexerState89) // '\t'
-      case 34 => _root_.scala.None // '\"'
-      case 10 => _root_.scala.None // '\n'
-      case _ => _root_.scala.Some(lexerState26)
+      case 92 => _root_.scala.Some(lexerState52) // '\\'
+      case 10 => _root_.scala.Some(lexerState102) // '\n'
+      case 69 => _root_.scala.Some(lexerState14) // 'E'
+      case 36 => _root_.scala.Some(lexerState98) // '$'
+      case _ => _root_.scala.Some(lexerState76)
     }
   
   override val lexer: _root_.slyce.parse.Lexer[_root_.petaform.parsing.RawASTParser.Terminal] =
@@ -2536,7 +2852,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               toState,
               stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -2544,7 +2860,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               toState,
               stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -2552,24 +2868,24 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               toState,
               stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState161)
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
           }
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3 => grammarState72
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Lines => grammarState104
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head => grammarState29
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Line => grammarState20
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1 => grammarState126
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Lines => grammarState233
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head => grammarState244
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Line => grammarState113
       },
     )
   
@@ -2577,8 +2893,17 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 1,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState50)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4._1(_1, _2, _3), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -2586,6 +2911,50 @@ object RawASTParser extends _root_.slyce.parse.Parser {
   lazy val grammarState2: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 2,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState202)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState98)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState112)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState55)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState103)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState180
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState3: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 3,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState32)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState4: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 4,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState134)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState5: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 5,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -2622,98 +2991,6 @@ object RawASTParser extends _root_.slyce.parse.Parser {
                 stack,
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState3: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 3,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState23)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState4: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 4,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState5: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 5,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -2724,7 +3001,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       id = 6,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState9)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState18)
       },
       onNT = PartialFunction.empty
     )
@@ -2733,8 +3010,24 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 7,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState79)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(_1), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -2743,124 +3036,97 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 8,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState51)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState7)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState162)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState30
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState9: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 9,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState106)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState175)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState154)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState152)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState33)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState72
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
     )
   
   lazy val grammarState10: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 10,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._4(_1), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._4(_1), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState223)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState181)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState57)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState69)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState191)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState194
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
     )
   
   lazy val grammarState11: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 11,
       onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState65)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState53)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState37
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState12: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 12,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head(_1, _2), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head(_1, _2), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState199)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState218)
       },
       onNT = PartialFunction.empty
     )
@@ -2869,97 +3135,100 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 13,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._1(_1), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._1(_1), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState100)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState127
+      },
     )
   
   lazy val grammarState14: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 14,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`+`), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`+`), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._1(_1, _2, _3), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState216)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState93
+      },
     )
   
   lazy val grammarState15: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 15,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._2(_1), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._2(_1), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState215)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState11)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState108)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState13)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState187)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState102
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState20
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
     )
   
   lazy val grammarState16: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 16,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`(`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail._1(_1, _2), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._6(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._6(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -2969,34 +3238,62 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 17,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState31)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Value), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._1(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
           }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Value), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._1(_1), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState99)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState79)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState10)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState178
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState249
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
     )
   
   lazy val grammarState18: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 18,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState5)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -3005,23 +3302,23 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 19,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`null`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._5(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._4(_1), stack)
           }
-        case _root_.scala.Nil =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`null`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._5(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._4(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3031,79 +3328,87 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 20,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._2, stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._2, stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState199)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState218)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail => grammarState12
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState21: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 21,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState96)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState25)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState107
+      },
     )
   
   lazy val grammarState22: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 22,
       onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState242)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState78)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState122)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState173)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState136)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState59)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState180
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
     )
   
   lazy val grammarState23: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 23,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`|`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction(_1, _2), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._4(_1), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`|`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction(_1, _2), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._4(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3113,14 +3418,23 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 24,
       onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._4(_1), stack)
+          }
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n`._1(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._4(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3130,54 +3444,8 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 25,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState111)
       },
       onNT = PartialFunction.empty
     )
@@ -3186,8 +3454,8 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 26,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState100)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState18)
       },
       onNT = PartialFunction.empty
     )
@@ -3196,38 +3464,49 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 27,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._1(_1, _2, _3), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._1(_1, _2, _3), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState215)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState11)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState108)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState13)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState187)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState102
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState177
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
     )
   
   lazy val grammarState28: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 28,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState23)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._3(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._3(_1), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
@@ -3236,88 +3515,89 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 29,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState24)
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n`._2, stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState85)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n` => grammarState49
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState30: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 30,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._1(_1), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
+        case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._1(_1), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState8)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState14
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState31: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 31,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`@const`), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const`._1(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
           }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState95)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState170
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState64
+      },
     )
   
   lazy val grammarState32: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 32,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._2(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
           }
-        case _root_.scala.Nil =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._2(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3327,244 +3607,240 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 33,
       onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState166)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState60)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState246)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState50)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState227)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState141)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState174
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
     )
   
   lazy val grammarState34: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 34,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState35)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState128)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState14
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState35: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 35,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState43)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState76)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState147)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState70)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState34
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState36: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 36,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState54)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._2(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._2(_1), stack)
+          }
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState82
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState37: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 37,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head(_1, _2), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head(_1, _2), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState96)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState139
+      },
     )
   
   lazy val grammarState38: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 38,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.petaform.parsing.RawASTParser.Terminal.`:`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`@required`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._2(_1, _2, _3, _4, _5), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.petaform.parsing.RawASTParser.Terminal.`:`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`@required`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._2(_1, _2, _3, _4, _5), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState106)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState175)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState154)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState152)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState33)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState164
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
     )
   
   lazy val grammarState39: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 39,
       onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState31)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState23)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState99)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState79)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState10)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState180
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
     )
   
   lazy val grammarState40: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 40,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState63)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState245)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState4
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState41: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 41,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState43)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState76)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._1(_1, _2), stack)
+          }
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head => grammarState42
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState85
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState42: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 42,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+        case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines(_1, _2), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState39)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState108
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction => grammarState93
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState43: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 43,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState33)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState123)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState82
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState44: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 44,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._3(_1), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._3(_1), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState8)
       },
       onNT = PartialFunction.empty
     )
@@ -3573,72 +3849,49 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 45,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6._1(_1, _2, _3), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
           }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState115)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState150
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState211
+      },
     )
   
   lazy val grammarState46: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 46,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Value), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._1(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Value), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._1(_1), stack)
           }
       },
       onNT = PartialFunction.empty
@@ -3648,16 +3901,10 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 47,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head(_1, _2), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState167)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState16)
       },
       onNT = PartialFunction.empty
     )
@@ -3666,117 +3913,68 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 48,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState199)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState218)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3 => grammarState72
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Line => grammarState98
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState49: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 49,
       onTerm = {
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Head), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines(_1, _2), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState242)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState122)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState173)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState136)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState59)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState146
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
     )
   
   lazy val grammarState50: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 50,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState41)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState19)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState70)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState15)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState97)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState26)
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._2, stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState135)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Value => grammarState17
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw => grammarState44
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value => grammarState106
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState13
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString => grammarState10
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState32
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState51: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 51,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState91)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState2)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState97)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState82
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail => grammarState41
       },
     )
   
@@ -3784,81 +3982,87 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 52,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`null`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._5(_1), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState105)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState84)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState2)
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`null`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._5(_1), stack)
+          }
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState87
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head => grammarState80
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState53
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6 => grammarState45
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState53: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 53,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState31)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState99)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState79)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState10)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState83
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState249
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
     )
   
   lazy val grammarState54: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 54,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState59)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState125)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState205)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState5)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState210
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4 => grammarState192
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState131
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head => grammarState184
+      },
     )
   
   lazy val grammarState55: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
@@ -3866,17 +4070,19 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       id = 55,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState56)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState29)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState114
+      },
     )
   
   lazy val grammarState56: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 56,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState5)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState32)
       },
       onNT = PartialFunction.empty
     )
@@ -3885,39 +4091,8 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 57,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState66)
       },
       onNT = PartialFunction.empty
     )
@@ -3926,37 +4101,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 58,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.dash), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._4(_1, _2, _3), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.dash), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._4(_1, _2, _3), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState59: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 59,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
@@ -3972,19 +4117,36 @@ object RawASTParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState22)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState232)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState4
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState157
+      },
+    )
+  
+  lazy val grammarState59: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 59,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState223)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState181)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState57)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState69)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState191)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState117
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
       },
     )
   
@@ -3992,52 +4154,18 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 60,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState69)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState21)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState4
-      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState61: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 61,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._1(_1, _2), stack)
-          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState54)
       },
       onNT = PartialFunction.empty
     )
@@ -4046,222 +4174,14 @@ object RawASTParser extends _root_.slyce.parse.Parser {
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 62,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState38)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState63: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 63,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState88)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState64: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 64,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._1(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState65: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 65,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState36)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState55)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState66
-      },
-    )
-  
-  lazy val grammarState66: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 66,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState65)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState14
-      },
-    )
-  
-  lazy val grammarState67: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 67,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._1(_1, _2), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._1(_1, _2), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._1(_1, _2), stack)
-          }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._1(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState68: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 68,
-      onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState69: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 69,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState99)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState70: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 70,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState75)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState83)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState77)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState94
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState68
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1 => grammarState6
-      },
-    )
-  
-  lazy val grammarState71: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 71,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState41)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState143)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`null`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState19)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState52)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState70)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState163)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState15)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState36)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
@@ -4290,7 +4210,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash._1(_1), stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState97)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState228)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
@@ -4300,7 +4220,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._2, stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState26)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState61)
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
@@ -4311,18 +4231,1433 @@ object RawASTParser extends _root_.slyce.parse.Parser {
           }
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Value => grammarState17
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw => grammarState44
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value => grammarState58
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState13
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString => grammarState10
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState32
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Value => grammarState46
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw => grammarState118
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value => grammarState94
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState30
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString => grammarState24
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState73
       },
+    )
+  
+  lazy val grammarState63: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 63,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState145)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState64: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 64,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState176)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState65: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 65,
+      onTerm = {
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n`._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState66: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 66,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState104)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState67: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 67,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState172)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState127
+      },
+    )
+  
+  lazy val grammarState68: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 68,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState69: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 69,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState4)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState236
+      },
+    )
+  
+  lazy val grammarState70: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 70,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState71: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 71,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState195)
+      },
+      onNT = PartialFunction.empty
     )
   
   lazy val grammarState72: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
       id = 72,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`++`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`++`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState73: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 73,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._2(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState74: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 74,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState189)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState75: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 75,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._1(_1, _2, _3), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState76: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 76,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState106)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState175)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState154)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState152)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState33)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState124
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
+    )
+  
+  lazy val grammarState77: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 77,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`@const`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const`._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState78: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 78,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState79: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 79,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState239)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState80: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 80,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._2, stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail => grammarState75
+      },
+    )
+  
+  lazy val grammarState81: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 81,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._4(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._4(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.String), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._4(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState82: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 82,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState115)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState150
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState6
+      },
+    )
+  
+  lazy val grammarState83: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 83,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState226)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState84: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 84,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState247)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState85: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 85,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState96)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState93
+      },
+    )
+  
+  lazy val grammarState86: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 86,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState87: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 87,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState221)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState88: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 88,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState230)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState89: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 89,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState251)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState90: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 90,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState237)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState114
+      },
+    )
+  
+  lazy val grammarState91: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 91,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState92: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 92,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState216)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState139
+      },
+    )
+  
+  lazy val grammarState93: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 93,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState94: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 94,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.dash), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._4(_1, _2, _3), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.dash), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._4(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState95: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 95,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState215)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState11)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState108)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState13)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState187)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState102
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState12
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
+    )
+  
+  lazy val grammarState96: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 96,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState37)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState97: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 97,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState202)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState98)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState112)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState55)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState103)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState198
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState98: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 98,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState169)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState99: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 99,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState130)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState100: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 100,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState109)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState101: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 101,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState176)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState102: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 102,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState103: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 103,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState223)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState181)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState57)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState69)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState191)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState213
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
+    )
+  
+  lazy val grammarState104: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 104,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState105: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 105,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState155)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState106: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 106,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState27)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState171
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState3
+      },
+    )
+  
+  lazy val grammarState107: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 107,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState108: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 108,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState121)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState109: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 109,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState144)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState157
+      },
+    )
+  
+  lazy val grammarState110: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 110,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState22)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState49)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail => grammarState41
+      },
+    )
+  
+  lazy val grammarState111: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 111,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState25)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState86
+      },
+    )
+  
+  lazy val grammarState112: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 112,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState34)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState113: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 113,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState234)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._2, stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail => grammarState190
+      },
+    )
+  
+  lazy val grammarState114: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 114,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState115: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 115,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState215)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState11)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState108)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState13)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState187)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState102
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState48
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
+    )
+  
+  lazy val grammarState116: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 116,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState144)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState78
+      },
+    )
+  
+  lazy val grammarState117: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 117,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState156)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState151)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState118: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 118,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._3(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Value._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState119: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 119,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState40)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState93
+      },
+    )
+  
+  lazy val grammarState120: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 120,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState238)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState121: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 121,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState162)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState122: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 122,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState159)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState123: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 123,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState31)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState99)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState79)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState10)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState248
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState249
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState124: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 124,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState9)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState200)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState125: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 125,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState82)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState201)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState84)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState204)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState76)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState102
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState220
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
+    )
+  
+  lazy val grammarState126: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 126,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -4336,423 +5671,214 @@ object RawASTParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
                 stack,
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._1(_1), stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState71)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState62)
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
                 stack,
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._1(_1), stack)
           }
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash => grammarState21
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash => grammarState105
       },
     )
   
-  lazy val grammarState73: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState127: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 73,
+      id = 127,
       onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
+          }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState103
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction => grammarState102
-      },
-    )
-  
-  lazy val grammarState74: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 74,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState8)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState37
-      },
-    )
-  
-  lazy val grammarState75: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 75,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState51)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState7)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head => grammarState89
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState74
-      },
-    )
-  
-  lazy val grammarState76: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 76,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState18)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState77: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 77,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
           }
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState78: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState128: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 78,
+      id = 128,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState22)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState57
-      },
+      onNT = PartialFunction.empty
     )
   
-  lazy val grammarState79: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState129: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 79,
+      id = 129,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState5)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState241)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState80: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState130: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 80,
+      id = 130,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState52)
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState81: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 81,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState105)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState84)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState2)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState81
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState53
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail => grammarState16
-      },
-    )
-  
-  lazy val grammarState82: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 82,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState83: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 83,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
-          }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState242)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
           }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState122)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState173)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState136)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState59)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
       },
-      onNT = PartialFunction.empty
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState222
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState110
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
     )
   
-  lazy val grammarState84: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState131: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 84,
+      id = 131,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
           }
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState85: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState132: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 85,
+      id = 132,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState35)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState37
-      },
-    )
-  
-  lazy val grammarState86: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 86,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState25)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState167)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState16)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState87: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState133: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 87,
+      id = 133,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState105)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState84)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState2)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState9)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState200)
       },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState81
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState53
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Tail => grammarState47
-      },
+      onNT = PartialFunction.empty
     )
   
-  lazy val grammarState88: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState134: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 88,
+      id = 134,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
@@ -4760,15 +5886,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
@@ -4780,130 +5898,35 @@ object RawASTParser extends _root_.slyce.parse.Parser {
           _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState63)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState57
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState107
       },
     )
   
-  lazy val grammarState89: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState135: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 89,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState3)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState86
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction => grammarState92
-      },
-    )
-  
-  lazy val grammarState90: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 90,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3._2, stack)
-          }
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3 => grammarState67
-      },
-    )
-  
-  lazy val grammarState91: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 91,
+      id = 135,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState40)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState104)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState92: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState136: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 92,
+      id = 136,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState3)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState197)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState64
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction => grammarState92
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState114
       },
     )
   
-  lazy val grammarState93: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState137: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 93,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
-          }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState39)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState64
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction => grammarState93
-      },
-    )
-  
-  lazy val grammarState94: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 94,
+      id = 137,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -4911,35 +5934,418 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               toState,
               stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState75)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState15)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState83)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState77)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState94
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState68
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1 => grammarState61
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState137
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState168
       },
     )
   
-  lazy val grammarState95: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState138: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 95,
+      id = 138,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState101)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState82)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState201)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState84)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState204)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState76)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState212
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
+    )
+  
+  lazy val grammarState139: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 139,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._1(_1, _2, _3), stack)
+          }
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState96: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState140: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 96,
+      id = 140,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState128)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState141: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 141,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState166)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState246)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState50)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState227)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState141)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState132
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
+    )
+  
+  lazy val grammarState142: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 142,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.EofString(_1, _2, _3, _4), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.EofString(_1, _2, _3, _4), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState143: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 143,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState45)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState43)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState44)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState67)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState38)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState102
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState35
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
+    )
+  
+  lazy val grammarState144: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 144,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState116)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState145: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 145,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState63)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState86
+      },
+    )
+  
+  lazy val grammarState146: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 146,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState22)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState49)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail => grammarState183
+      },
+    )
+  
+  lazy val grammarState147: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 147,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState45)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState43)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState44)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState67)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState38)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState212
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
+    )
+  
+  lazy val grammarState148: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 148,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._1(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._1(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState149: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 149,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState150: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 150,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState115)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState150
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState168
+      },
+    )
+  
+  lazy val grammarState151: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 151,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._6(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._6(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._6(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState152: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 152,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState60)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState236
+      },
+    )
+  
+  lazy val grammarState153: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 153,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState104)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState154: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 154,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState153)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState155: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 155,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`:`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -4950,96 +6356,1518 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const`._2, stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`@const`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState31)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState77)
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`@required`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState62)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState74)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const` => grammarState1
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const` => grammarState71
       },
     )
   
-  lazy val grammarState97: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState156: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 97,
+      id = 156,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState223)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState181)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState57)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState69)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState191)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState72
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
+    )
+  
+  lazy val grammarState157: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 157,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._1(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
           }
-        case _root_.scala.Nil =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`.`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._1(_1), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState98: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState158: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 98,
+      id = 158,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: (_: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState48)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _root_.scala.Nil =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._3(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._3(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState159: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 159,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState242)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
           }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState122)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState173)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState136)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState59)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState120
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState110
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState160: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 160,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState161: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 161,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState161)
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
               stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
           }
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList7Tail => grammarState27
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1 => grammarState231
       },
     )
   
-  lazy val grammarState99: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState162: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 99,
+      id = 162,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`+`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              toState,
-              stack,
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
+                stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`.`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._2(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState163: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 163,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState15)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState137
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState88
+      },
+    )
+  
+  lazy val grammarState164: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 164,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState9)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState200)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState165: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 165,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState251)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState166: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 166,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState27)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState171
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState56
+      },
+    )
+  
+  lazy val grammarState167: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 167,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState166)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState246)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState50)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState227)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState141)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState72
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
+    )
+  
+  lazy val grammarState168: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 168,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState169: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 169,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState242)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState122)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState173)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState136)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState59)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState193
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState110
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState170: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 170,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState95)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState170
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState168
+      },
+    )
+  
+  lazy val grammarState171: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 171,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState27)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState171
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState168
+      },
+    )
+  
+  lazy val grammarState172: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 172,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState58)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState173: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 173,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState140)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState174: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 174,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState167)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState16)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState175: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 175,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState207)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState176: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 176,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState177: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 177,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState199)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState218)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState178: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 178,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState226)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState179: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 179,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState125)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState205)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState5)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState210
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4 => grammarState1
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState131
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head => grammarState184
+      },
+    )
+  
+  lazy val grammarState180: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 180,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`++`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`++`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`++`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState181: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 181,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState250)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState182: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 182,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState125)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState205)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState5)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState182
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState131
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState91
+      },
+    )
+  
+  lazy val grammarState183: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 183,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`,`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState184: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 184,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState179)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState185: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 185,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState176)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState186: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 186,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.chars), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState187: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 187,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState106)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState175)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState154)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState152)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState33)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState133
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
+    )
+  
+  lazy val grammarState188: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 188,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState189: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 189,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.petaform.parsing.RawASTParser.Terminal.`:`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`@required`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._2(_1, _2, _3, _4, _5), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_5: _root_.petaform.parsing.RawASTParser.Terminal.`:`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`@required`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._2(_1, _2, _3, _4, _5), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState190: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 190,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head(_1, _2), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Tail), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.Line), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6Head(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState191: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 191,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState166)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState246)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState50)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState227)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState141)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState7
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState229
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState47
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState23
+      },
+    )
+  
+  lazy val grammarState192: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 192,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState142)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState193: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 193,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState238)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState194: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 194,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState156)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState151)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState195: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 195,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState143)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`null`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState52)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState163)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState36)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState228)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState61)
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Value => grammarState46
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw => grammarState118
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_Value => grammarState240
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState30
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.EofString => grammarState24
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState73
+      },
+    )
+  
+  lazy val grammarState196: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 196,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState197: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 197,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState14)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState198: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 198,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState2)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState97)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail => grammarState183
+      },
+    )
+  
+  lazy val grammarState199: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 199,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState215)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState11)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState108)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState13)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState187)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState203)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState212
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState209
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState19
+      },
+    )
+  
+  lazy val grammarState200: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 200,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._6(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`(`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._6(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState201: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 201,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState17)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState202: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 202,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState95)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState170
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState101
+      },
+    )
+  
+  lazy val grammarState203: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 203,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._3(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.raw), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._3(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState204: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 204,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState225)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState127
+      },
+    )
+  
+  lazy val grammarState205: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 205,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.escChar), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart._2(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState206: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 206,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState39)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState214)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail => grammarState183
+      },
+    )
+  
+  lazy val grammarState207: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 207,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState202)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState98)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState112)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState55)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState103)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState165
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState51
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState208: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 208,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState32)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState209: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 209,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._1(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState210: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 210,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState125)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState205)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState5)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState182
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState131
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Tail => grammarState149
+      },
+    )
+  
+  lazy val grammarState211: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 211,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState18)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState212: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 212,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`++`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`++`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue._1(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState213: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 213,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState156)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState151)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState214: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 214,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState31)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState99)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState79)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState90)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState10)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState206
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState215: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 215,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState115)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState150
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState26
+      },
+    )
+  
+  lazy val grammarState216: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 216,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState92)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState217: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 217,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
               toState,
               stack,
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
@@ -5048,77 +7876,148 @@ object RawASTParser extends _root_.slyce.parse.Parser {
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState69)
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState224)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState57
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState86
       },
     )
   
-  lazy val grammarState100: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState218: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 100,
+      id = 218,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              toState,
-              stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6._2, stack)
-          }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState105)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState84)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState2)
-      },
-      onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState87
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList4Head => grammarState80
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState53
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6 => grammarState95
-      },
-    )
-  
-  lazy val grammarState101: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 101,
-      onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.EofString(_1, _2, _3, _4), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
           }
-        case _root_.scala.Nil =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`EOF`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList6), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`\n`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`<<-EOF`), toState) ::
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
                 stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.EofString(_1, _2, _3, _4), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3), stack)
           }
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState102: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState219: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 102,
+      id = 219,
       onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState129)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState157
+      },
+    )
+  
+  lazy val grammarState220: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 220,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState138)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState68)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState221: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 221,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState224)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState107
+      },
+    )
+  
+  lazy val grammarState222: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 222,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState238)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState223: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 223,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
               toState,
@@ -5126,28 +8025,227 @@ object RawASTParser extends _root_.slyce.parse.Parser {
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
           }
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`|`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState28)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState27)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState64
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationFunction => grammarState102
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState171
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState208
       },
     )
   
-  lazy val grammarState103: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState224: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 103,
+      id = 224,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState46)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState217)
       },
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState104: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState225: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 104,
+      id = 225,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState219)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState226: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 226,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`(`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`(`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._5(_1, _2, _3, _4), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState227: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 227,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState87)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head => grammarState236
+      },
+    )
+  
+  lazy val grammarState228: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 228,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._1(_1), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.KeyOrRaw._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState229: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 229,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._1(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._1(_1), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState230: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 230,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`\"`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.String(_1, _2, _3), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState231: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 231,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._1(_1, _2), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._1(_1, _2), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._1(_1, _2), stack)
+          }
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.space), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState232: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 232,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState243)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState233: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 233,
       onTerm = {
         case _root_.scala.Nil =>
           _root_.slyce.parse.Grammar.State.Action.Accept[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -5157,24 +8255,180 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState105: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState234: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 105,
+      id = 234,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState36)
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState55)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.dash) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.space) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState161)
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1._2, stack)
+          }
       },
       onNT = {
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head => grammarState73
-        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState11
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Line => grammarState80
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1 => grammarState126
       },
     )
   
-  lazy val grammarState106: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState235: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 106,
+      id = 235,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState202)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState98)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState112)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState55)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState103)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState252
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState51
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState236: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 236,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource._1(_1, _2), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState237: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 237,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState119)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState238: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 238,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`(`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`(`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`(`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._5(_1, _2, _3, _4), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState239: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 239,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState128)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState240: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 240,
       onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
@@ -5185,7 +8439,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const`), _) ::
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
                 stack,
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._3(_1, _2, _3, _4, _5, _6), stack)
@@ -5199,7 +8453,7 @@ object RawASTParser extends _root_.slyce.parse.Parser {
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_4: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_@const`), _) ::
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_3: _root_.petaform.parsing.RawASTParser.Terminal.key), _) ::
                 _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.Optional_dash), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3), toState) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_1: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList1), toState) ::
                 stack,
             ) =>
               (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Line._3(_1, _2, _3, _4, _5, _6), stack)
@@ -5208,44 +8462,286 @@ object RawASTParser extends _root_.slyce.parse.Parser {
       onNT = PartialFunction.empty
     )
   
-  lazy val grammarState107: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+  lazy val grammarState241: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
     _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 107,
+      id = 241,
       onTerm = {
-        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
           _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
             case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
+              toState,
+              stack,
             ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
           }
-        case _root_.scala.Nil =>
-          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
-            case (
-              _,
-              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`}`), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_2: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList2Head), _) ::
-                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.`${`), toState) ::
-                stack,
-            ) =>
-              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation(_1, _2, _3, _4), stack)
-          }
-      },
-      onNT = PartialFunction.empty
-    )
-  
-  lazy val grammarState108: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
-    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
-      id = 108,
-      onTerm = {
         case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
-          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState107)
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState129)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState78
+      },
+    )
+  
+  lazy val grammarState242: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 242,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`${`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState95)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.escChar) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState196)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.chars) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState186)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.StringPart => grammarState170
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.Interpolation => grammarState160
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList0 => grammarState185
+      },
+    )
+  
+  lazy val grammarState243: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 243,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`}`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState232)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState78
+      },
+    )
+  
+  lazy val grammarState244: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 244,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\n`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState65)
+        case _root_.scala.Nil =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n`._2, stack)
+          }
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.`Optional_\n` => grammarState42
+      },
+    )
+  
+  lazy val grammarState245: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 245,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`.`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState40)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList5Tail => grammarState139
+      },
+    )
+  
+  lazy val grammarState246: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 246,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._2(_1), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState235)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState247: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 247,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState162)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState248: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 248,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState226)
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState249: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 249,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState39)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`,`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState214)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Tail => grammarState41
+      },
+    )
+  
+  lazy val grammarState250: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 250,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`\"`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState202)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              toState,
+              stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head._2, stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.key) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState98)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`ENV`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState112)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`CFG`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState55)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`(`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState103)
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.raw) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState158)
+      },
+      onNT = {
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2 => grammarState188
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationSource => grammarState148
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head => grammarState89
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue => grammarState51
+        case _: _root_.petaform.parsing.RawASTParser.NonTerminal.String => grammarState81
+      },
+    )
+  
+  lazy val grammarState251: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 251,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`++`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`(`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._5(_1, _2, _3, _4), stack)
+          }
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Reduce[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] {
+            case (
+              _,
+              _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_4: _root_.petaform.parsing.RawASTParser.Terminal.`)`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Right(_3: _root_.petaform.parsing.RawASTParser.NonTerminal.AnonList3Head), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_2: _root_.petaform.parsing.RawASTParser.Terminal.`(`), _) ::
+                _root_.slyce.parse.Grammar.StackElement(_root_.scala.Left(_1: _root_.petaform.parsing.RawASTParser.Terminal.key), toState) ::
+                stack,
+            ) =>
+              (toState, _root_.petaform.parsing.RawASTParser.NonTerminal.InterpolationValue2._5(_1, _2, _3, _4), stack)
+          }
+      },
+      onNT = PartialFunction.empty
+    )
+  
+  lazy val grammarState252: _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines] =
+    _root_.slyce.parse.Grammar.State[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](
+      id = 252,
+      onTerm = {
+        case (tok: _root_.petaform.parsing.RawASTParser.Terminal.`)`) :: _ =>
+          _root_.slyce.parse.Grammar.State.Action.Shift[_root_.petaform.parsing.RawASTParser.Terminal, _root_.petaform.parsing.RawASTParser.NonTerminal, _root_.petaform.parsing.RawASTParser.NonTerminal.Lines](grammarState251)
       },
       onNT = PartialFunction.empty
     )

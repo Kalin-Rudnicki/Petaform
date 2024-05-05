@@ -6,9 +6,11 @@ import harness.core.*
 import harness.zio.*
 import petaform.model.*
 import petaform.model.ast.*
+import petaform.parsing.RawASTParser.NonTerminal.{InterpolationValue, InterpolationValue2}
 import petaform.parsing.error.ParseError
 import scala.annotation.tailrec
 import slyce.core.*
+import slyce.parse.Expression
 import zio.*
 
 object ParseRawAST {
@@ -116,10 +118,26 @@ object ParseRawAST {
     }
 
   private def toInterpolation(interp: RawASTParser.NonTerminal.Interpolation): Interpolation =
-    Interpolation(
-      interp._2.toNonEmptyList.map(toInterpolationSource),
-      interp._3.toList.map(_.lift.text),
-    )
+    toInterpolation(interp._2)
+
+  private def toInterpolation(interp: RawASTParser.NonTerminal.InterpolationValue): Interpolation =
+    toInterpolation(interp.toExpr)
+
+  private def toInterpolation(expr: Expression[RawASTParser.NonTerminal.InterpolationValue.Operand, RawASTParser.NonTerminal.InterpolationValue.Operator]): Interpolation =
+    expr match {
+      case Expression.Leaf(operand)                                    => toInterpolation(operand)
+      case Expression.Node(left, _: RawASTParser.Terminal.`++`, right) => Interpolation.Concat(toInterpolation(left), toInterpolation(right))
+    }
+
+  private def toInterpolation(interp: RawASTParser.NonTerminal.InterpolationValue2): Interpolation =
+    interp match {
+      case InterpolationValue2._1(source)          => toInterpolationSource(source)
+      case InterpolationValue2._2(key)             => Interpolation.Raw(key.text)
+      case InterpolationValue2._3(raw)             => Interpolation.Raw(raw.text)
+      case InterpolationValue2._4(str)             => Interpolation.Str(mkString(str._2.toList))
+      case InterpolationValue2._5(key, _, args, _) => Interpolation.GenericFunction(key.text, args.toList.map(toInterpolation))
+      case InterpolationValue2._6(_, child, _)     => toInterpolation(child)
+    }
 
   def mkString(parts: List[RawASTParser.NonTerminal.StringPart]): InterpolatedString = {
     @tailrec

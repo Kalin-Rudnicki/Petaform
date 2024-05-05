@@ -16,69 +16,21 @@ object RawASTToAST {
       config: Option[PetaformAST],
   ): Either[ScopedError, PetaformAST] =
     for {
-      ordering <- topologicalSort(getInterpolations(Nil, ast))
-      init <- initialStage2(Nil, ast, envVars)
-      result <- interpolateAll(ordering, init, envVars, config)
+      ordering <- TopologicalSort(ast)
+      init <- Stage1(ScopePath.empty, ast, envVars)
+      result <- Stage2(ordering, init, envVars, config)
     } yield result
-
-  def convertStringWithoutConfig(
-      interpolation: Interpolation,
-      rScope: List[ASTScope],
-      envVars: EnvVars,
-  ): Either[ScopedError, Option[String]] = {
-    @tailrec
-    def loop(
-        queue: List[Interpolation.Source],
-        rStack: List[String],
-    ): Either[ScopedError, Option[String]] =
-      queue match {
-        case Interpolation.Source.Config(_) :: _ => None.asRight
-        case Interpolation.Source.EnvVar(varName) :: tail =>
-          getEnvVar(rScope, varName, envVars) match {
-            case Right(varValue) => loop(tail, varValue :: rStack)
-            case Left(error)     => error.asLeft
-          }
-        case Nil => rStack.reverse.mkString.some.asRight
-      }
-
-    loop(interpolation.sources.toList, Nil)
-  }
-
-  // TODO (KR) : I think this is missing application of functions
-  def convertStringWithoutConfig(
-      str: InterpolatedString,
-      rScope: List[ASTScope],
-      envVars: EnvVars,
-  ): Either[ScopedError, Option[String]] = {
-    @tailrec
-    def loop(
-        toInterp: List[(Interpolation, String)],
-        rStack: List[String],
-    ): Either[ScopedError, Option[String]] =
-      toInterp match {
-        case (interp, sH) :: tail =>
-          convertStringWithoutConfig(interp, rScope, envVars) match {
-            case Right(Some(value)) => loop(tail, sH :: value :: rStack)
-            case Right(None)        => None.asRight
-            case Left(error)        => error.asLeft
-          }
-        case Nil =>
-          rStack.reverse.mkString.some.asRight
-      }
-
-    loop(str.pairs, str.prefix :: Nil)
-  }
 
   // =====|  |=====
 
   private final case class Dependency(
       pair: Dependency.Pair,
-      dependsOn: Set[List[ASTScope]],
+      dependsOn: Set[ScopePath],
   )
   private object Dependency {
 
     final case class Pair(
-        path: List[ASTScope],
+        path: ScopePath,
         interpolationType: InterpolationType,
     )
 
@@ -93,304 +45,352 @@ object RawASTToAST {
 
   // =====|  |=====
 
-  private object InterpolationHelpers {
+  import Shared.*
 
-    def interpolationToConfigPaths(interp: Interpolation): List[List[ASTScope]] =
-      interp.sources.toList.collect { case Interpolation.Source.Config(paths) => paths.toList }
+  private object Shared {
 
-  }
-
-  private def getInterpolations(scopePath: List[ASTScope], ast: RawPetaformAST): List[Dependency] =
-    ast match {
-      case RawPetaformAST.Raw(_) => Nil
-      case RawPetaformAST.Str(str) =>
-        val deps = str.pairs.map(_._1).flatMap(InterpolationHelpers.interpolationToConfigPaths).toSet
-        if (deps.isEmpty) Nil
-        else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.Str(str)), deps) :: Nil
-      case RawPetaformAST.FlatInterpolation(interpolation) =>
-        val deps = InterpolationHelpers.interpolationToConfigPaths(interpolation).toSet
-        if (deps.isEmpty) Nil
-        else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.FlatInterpolation(interpolation)), deps) :: Nil
-      case RawPetaformAST.Undef => Nil
-      case RawPetaformAST.Null  => Nil
-      case RawPetaformAST.Empty => Nil
-      case RawPetaformAST.Obj(elems) =>
-        elems.flatMap {
-          case (_, RawPetaformAST.Obj.Value.Required)             => Nil
-          case (key, RawPetaformAST.Obj.Value.Provided(_, value)) => getInterpolations(scopePath :+ ASTScope.Key(key), value)
-        }
-      case RawPetaformAST.Arr(elems) =>
-        elems.zipWithIndex.flatMap { case (elem, idx) =>
-          getInterpolations(scopePath :+ ASTScope.Idx(idx), elem)
-        }
-      case RawPetaformAST.EofStr(lines) =>
-        val deps = lines.flatMap(_.pairs.map(_._1)).flatMap(InterpolationHelpers.interpolationToConfigPaths).toSet
-        if (deps.isEmpty) Nil
-        else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.Lines(lines)), deps) :: Nil
-    }
-
-  private def topologicalSort(dependencies: List[Dependency]): Either[ScopedError, List[Dependency.Pair]] = {
-    @tailrec
-    def loop(
-        toSort: Map[List[ASTScope], Set[List[ASTScope]]],
-        rSorted: List[List[ASTScope]],
-    ): Either[ScopedError, List[Dependency.Pair]] =
-      if (toSort.isEmpty) {
-        val depMap = dependencies.map(dep => dep.pair.path -> dep).toMap
-        rSorted.reverse.map(depMap(_).pair).asRight
-      } else {
-        val keysWithoutValues: Set[List[ASTScope]] = toSort.collect { case (k, v) if v.isEmpty => k }.toSet
-        val valuesWithoutKey: Set[List[ASTScope]] = toSort.values.flatten.toSet.filterNot(toSort.contains)
-        val valuesToConsume: Set[List[ASTScope]] = keysWithoutValues | valuesWithoutKey
-
-        if (valuesToConsume.isEmpty) {
-          val unusedString =
-            toSort.toList.map { case (k, v) =>
-              s"\n  - ${ASTScope.format("CFG", k)} -> ${v.toList.map(ASTScope.format("CFG", _)).mkString(" / ")}"
-            }.mkString
-
-          ScopedError(Nil, s"Cyclic interpolation dependencies:$unusedString").asLeft
-        } else
-          loop(
-            toSort.removedAll(valuesToConsume).map { case (key, value) => (key, value &~ valuesToConsume) },
-            keysWithoutValues.toList.sortBy(ASTScope.format("CFG", _)).reverse ::: rSorted,
-          )
+    def getEnvVar(scope: ScopePath, varName: String, envVars: EnvVars): Either[ScopedError, String] =
+      envVars.get(varName) match {
+        case Some(varValue) => varValue.asRight
+        case None           => ScopedError(scope, s"Missing env var '$varName'").asLeft
       }
 
-    loop(
-      dependencies.map { dep => dep.pair.path -> dep.dependsOn }.toMap,
-      Nil,
-    )
+    def concat(scope: ScopePath, left: PetaformAST, right: PetaformAST): Either[ScopedError, PetaformAST] =
+      (left, right) match {
+        // empty
+        case (PetaformAST.Empty, PetaformAST.Empty) => PetaformAST.Empty.asRight
+        // obj
+        case (PetaformAST.Empty, ast: PetaformAST.Obj)       => ast.asRight
+        case (ast: PetaformAST.Obj, PetaformAST.Empty)       => ast.asRight
+        case (left: PetaformAST.Obj, right: PetaformAST.Obj) => PetaformAST.Obj(left.elems ::: right.elems).asRight // TODO (KR) : merge
+        // arr
+        case (PetaformAST.Empty, ast: PetaformAST.Arr)       => ast.asRight
+        case (ast: PetaformAST.Arr, PetaformAST.Empty)       => ast.asRight
+        case (left: PetaformAST.Arr, right: PetaformAST.Arr) => PetaformAST.Arr(left.elems ::: right.elems).asRight
+        // string
+        case (PetaformAST.EofStr(left), PetaformAST.EofStr(right))         => PetaformAST.EofStr(left ::: right).asRight
+        case (PetaformAST.StringLike(left), PetaformAST.StringLike(right)) => PetaformAST.Str(left + right).asRight
+        // error
+        case _ => ScopedError(scope, s"Can not add ${left.getClass.getSimpleName} + ${right.getClass.getSimpleName}").asLeft
+      }
+
+    private val functions: Map[String, Function[?]] =
+      List[Function[?]](
+        Function.make[PetaformAST]("format") { ast => PetaformAST.Str(ast.format).asRight },
+        Function.make[PetaformAST.StringLike]("upper") { _.mapString(_.toUpperCase).asRight },
+        Function.make[PetaformAST.StringLike]("lower") { _.mapString(_.toLowerCase).asRight },
+        Function.make[PetaformAST.StringLike]("unesc") { _.mapString(_.unesc).asRight }, // TODO (KR) : this might be a little weird if used with EofString?
+        Function.make[PetaformAST]("json") { ASTToJson(_).map(PetaformAST.Raw(_)) },
+      ).map(f => f.name -> f).toMap
+
+    def applyFunction(scope: ScopePath, name: String, args: List[PetaformAST]): Either[ScopedError, PetaformAST] =
+      functions.get(name) match {
+        case Some(func) => func(scope, args)
+        case None       => ScopedError(scope, s"Unknown function: $name").asLeft
+      }
+
+    def getStr(scope: ScopePath, ast: PetaformAST): Either[ScopedError, PetaformAST.StringLike] =
+      ast match {
+        case ast: PetaformAST.StringLike => ast.asRight
+        case _                           => ScopedError(scope, s"Expected StringLike, but got ${ast.getClass.getSimpleName}").asLeft
+      }
+
   }
 
-  private def getEnvVar(rScope: List[ASTScope], varName: String, envVars: EnvVars): Either[ScopedError, String] =
-    envVars.get(varName) match {
-      case Some(varValue) => varValue.asRight
-      case None           => ScopedError(rScope, s"Missing env var '$varName'").asLeft
+  private object TopologicalSort {
+
+    def apply(ast: RawPetaformAST): Either[ScopedError, List[Dependency.Pair]] =
+      sort(getDependencies(ScopePath.empty, ast))
+
+    private def configPathsFromInterpolation(interp: Interpolation): List[ScopePath] =
+      interp match {
+        case Interpolation.Source.Config(path)      => ScopePath.inOrder(path.toList) :: Nil
+        case Interpolation.Concat(left, right)      => configPathsFromInterpolation(left) ::: configPathsFromInterpolation(right)
+        case Interpolation.GenericFunction(_, args) => args.flatMap(configPathsFromInterpolation)
+        case Interpolation.Scoped(child)            => configPathsFromInterpolation(child)
+        case Interpolation.Source.EnvVar(_)         => Nil
+        case Interpolation.Raw(value)               => Nil
+        case Interpolation.Str(str)                 => Nil
+      }
+
+    private def getDependencies(scopePath: ScopePath, ast: RawPetaformAST): List[Dependency] =
+      ast match {
+        case RawPetaformAST.Raw(_) => Nil
+        case RawPetaformAST.Str(str) =>
+          val deps = str.pairs.map(_._1).flatMap(configPathsFromInterpolation).toSet
+          if (deps.isEmpty) Nil
+          else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.Str(str)), deps) :: Nil
+        case RawPetaformAST.FlatInterpolation(interpolation) =>
+          val deps = configPathsFromInterpolation(interpolation).toSet
+          if (deps.isEmpty) Nil
+          else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.FlatInterpolation(interpolation)), deps) :: Nil
+        case RawPetaformAST.Undef => Nil
+        case RawPetaformAST.Null  => Nil
+        case RawPetaformAST.Empty => Nil
+        case RawPetaformAST.Obj(elems) =>
+          elems.flatMap {
+            case (_, RawPetaformAST.Obj.Value.Required)             => Nil
+            case (key, RawPetaformAST.Obj.Value.Provided(_, value)) => getDependencies(scopePath :+ ASTScope.Key(key), value)
+          }
+        case RawPetaformAST.Arr(elems) =>
+          elems.zipWithIndex.flatMap { case (elem, idx) =>
+            getDependencies(scopePath :+ ASTScope.Idx(idx), elem)
+          }
+        case RawPetaformAST.EofStr(lines) =>
+          val deps = lines.flatMap(_.pairs.map(_._1)).flatMap(configPathsFromInterpolation).toSet
+          if (deps.isEmpty) Nil
+          else Dependency(Dependency.Pair(scopePath, Dependency.InterpolationType.Lines(lines)), deps) :: Nil
+      }
+
+    private def sort(dependencies: List[Dependency]): Either[ScopedError, List[Dependency.Pair]] = {
+      @tailrec
+      def loop(
+          toSort: Map[ScopePath, Set[ScopePath]],
+          rSorted: List[ScopePath],
+      ): Either[ScopedError, List[Dependency.Pair]] =
+        if (toSort.isEmpty) {
+          val depMap = dependencies.map(dep => dep.pair.path -> dep).toMap
+          rSorted.reverse.map(depMap(_).pair).asRight
+        } else {
+          val keysWithoutValues: Set[ScopePath] = toSort.collect { case (k, v) if v.isEmpty => k }.toSet
+          val valuesWithoutKey: Set[ScopePath] = toSort.values.flatten.toSet.filterNot(toSort.contains)
+          val valuesToConsume: Set[ScopePath] = keysWithoutValues | valuesWithoutKey
+
+          if (valuesToConsume.isEmpty) {
+            val unusedString =
+              toSort.toList.map { case (k, v) =>
+                s"\n  - ${ASTScope.format("CFG", k)} -> ${v.toList.map(ASTScope.format("CFG", _)).mkString(" / ")}"
+              }.mkString
+
+            ScopedError(ScopePath.empty, s"Cyclic interpolation dependencies:$unusedString").asLeft
+          } else
+            loop(
+              toSort.removedAll(valuesToConsume).map { case (key, value) => (key, value &~ valuesToConsume) },
+              keysWithoutValues.toList.sortBy(ASTScope.format("CFG", _)).reverse ::: rSorted,
+            )
+        }
+
+      loop(
+        dependencies.map { dep => dep.pair.path -> dep.dependsOn }.toMap,
+        Nil,
+      )
     }
 
-  private def initialStage2(rScope: List[ASTScope], ast: RawPetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
-    ast match {
-      case RawPetaformAST.Raw(value) => PetaformAST.Raw(value).asRight
-      case RawPetaformAST.Str(str) =>
-        convertStringWithoutConfig(str, rScope, envVars).map {
-          case Some(str) => PetaformAST.Str(str)
-          case None      => PetaformAST.Undef
-        }
-      case RawPetaformAST.FlatInterpolation(interpolation) =>
-        convertStringWithoutConfig(interpolation, rScope, envVars).map {
-          case Some(value) => PetaformAST.Str(value)
-          case None        => PetaformAST.Undef
-        }
-      case RawPetaformAST.Undef => PetaformAST.Undef.asRight
-      case RawPetaformAST.Null  => PetaformAST.Null.asRight
-      case RawPetaformAST.Empty => PetaformAST.Empty.asRight
-      case RawPetaformAST.Obj(elems) =>
-        elems
-          .traverse {
-            case (key, RawPetaformAST.Obj.Value.Required) =>
-              ScopedError((ASTScope.Key(key) :: rScope).reverse, "Value was not provided for @required key").asLeft
-            case (key, RawPetaformAST.Obj.Value.Provided(_, value)) =>
-              initialStage2(ASTScope.Key(key) :: rScope, value, envVars).map((key, _))
-          }
-          .map(PetaformAST.Obj(_))
-      case RawPetaformAST.Arr(elems) =>
-        elems.zipWithIndex
-          .traverse { case (value, idx) =>
-            initialStage2(ASTScope.Idx(idx) :: rScope, value, envVars)
-          }
-          .map(PetaformAST.Arr(_))
-      case RawPetaformAST.EofStr(lines) =>
-        lines.traverse(convertStringWithoutConfig(_, rScope, envVars)).map {
-          _.traverse(identity) match {
-            case Some(lines) => PetaformAST.EofStr(lines)
+  }
+
+  object Stage1 {
+
+    private[RawASTToAST] def apply(scope: ScopePath, ast: RawPetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
+      ast match {
+        case RawPetaformAST.Raw(value) => PetaformAST.Raw(value).asRight
+        case RawPetaformAST.Str(str) =>
+          attemptConvertInterpolatedString(str, scope, envVars).map {
+            case Some(value) => PetaformAST.Str(value)
             case None        => PetaformAST.Undef
           }
-        }
-    }
-
-  @tailrec
-  private def getFromAst2(fromScope: List[ASTScope], rLookupScope: List[ASTScope], lookupScope: List[ASTScope], ast: PetaformAST): Either[ScopedError, PetaformAST] =
-    lookupScope match {
-      case head :: tail =>
-        val newRScope = head :: rLookupScope
-        (head, ast) match {
-          case (ASTScope.Key(key), PetaformAST.Obj(elems)) =>
-            elems.find(_._1 == key) match {
-              case Some((_, value)) => getFromAst2(fromScope, newRScope, tail, value)
-              case None             => ScopedError(fromScope, s"Missing key for interpolation: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
+        case RawPetaformAST.FlatInterpolation(interpolation) =>
+          attemptConvertInterpolation(interpolation, scope, envVars).map(_.getOrElse(PetaformAST.Undef))
+        case RawPetaformAST.Undef => PetaformAST.Undef.asRight
+        case RawPetaformAST.Null  => PetaformAST.Null.asRight
+        case RawPetaformAST.Empty => PetaformAST.Empty.asRight
+        case RawPetaformAST.Obj(elems) =>
+          elems
+            .traverse {
+              case (key, RawPetaformAST.Obj.Value.Required) =>
+                ScopedError(scope :+ ASTScope.Key(key), "Value was not provided for @required key").asLeft
+              case (key, RawPetaformAST.Obj.Value.Provided(_, value)) =>
+                Stage1(scope :+ ASTScope.Key(key), value, envVars).map((key, _))
             }
-          case (ASTScope.Idx(idx), PetaformAST.Arr(elems)) =>
-            if (idx >= elems.size) ScopedError(fromScope, s"Idx out of bounds: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
-            else getFromAst2(fromScope, newRScope, tail, elems(idx))
-          case (_: ASTScope.Key, _) =>
-            ScopedError(newRScope.reverse, s"Expected object, but got ${ast.getClass.getSimpleName}").asLeft
-          case (_: ASTScope.Idx, _) =>
-            ScopedError(newRScope.reverse, s"Expected array, but got ${ast.getClass.getSimpleName}").asLeft
-        }
-      case Nil => ast.asRight
-    }
+            .map(PetaformAST.Obj(_))
+        case RawPetaformAST.Arr(elems) =>
+          elems.zipWithIndex
+            .traverse { case (value, idx) =>
+              Stage1(scope :+ ASTScope.Idx(idx), value, envVars)
+            }
+            .map(PetaformAST.Arr(_))
+        case RawPetaformAST.EofStr(lines) =>
+          lines.traverse(attemptConvertInterpolatedString(_, scope, envVars)).map {
+            _.sequence match {
+              case Some(lines) => PetaformAST.EofStr(lines)
+              case None        => PetaformAST.Undef
+            }
+          }
+      }
 
-  private def interpolateString(
-      depPair: Dependency.Pair,
-      interpString: InterpolatedString,
-      ast: PetaformAST,
-      envVars: EnvVars,
-  ): Either[ScopedError, String] = {
+    def attemptConvertInterpolatedString(
+        str: InterpolatedString,
+        scope: ScopePath,
+        envVars: EnvVars,
+    ): Either[ScopedError, Option[String]] =
+      str.pairs
+        .traverse { case (interp, suffix) => attemptConvertInterpolation(interp, scope, envVars).map((_, suffix)) }
+        .map { _.traverse { case (a, b) => a.map((_, b)) } }
+        .flatMap { // TODO (KR) : some other functions to do this better?
+          case Some(pairs) =>
+            pairs
+              .traverse { case (ast, suffix) => getStr(scope, ast).map(s => List(s.stringValue, suffix)) }
+              .map { lists => (str.prefix :: lists.flatten).mkString.some }
+          case None => None.asRight
+        }
+
+    def attemptConvertInterpolation(
+        interpolation: Interpolation,
+        scope: ScopePath,
+        envVars: EnvVars,
+    ): Either[ScopedError, Option[PetaformAST]] =
+      interpolation match {
+        case Interpolation.Source.EnvVar(varName) => getEnvVar(scope, varName, envVars).map(PetaformAST.Str(_).some)
+        case Interpolation.Source.Config(_)       => None.asRight
+        case Interpolation.Raw(value)             => PetaformAST.Raw(value).some.asRight
+        case Interpolation.Str(str)               => attemptConvertInterpolatedString(str, scope, envVars).map(_.map(PetaformAST.Str(_)))
+        case Interpolation.Scoped(child)          => attemptConvertInterpolation(child, scope, envVars)
+        case Interpolation.Concat(left, right) =>
+          for {
+            leftConverted <- attemptConvertInterpolation(left, scope, envVars)
+            rightConverted <- attemptConvertInterpolation(right, scope, envVars)
+            both = (leftConverted, rightConverted) match {
+              case (Some(left), Some(right)) => (left, right).some
+              case _                         => None
+            }
+            res <- both.traverse(concat(scope, _, _))
+          } yield res
+        case Interpolation.GenericFunction(key, args) =>
+          args
+            .traverse { attemptConvertInterpolation(_, scope, envVars) }
+            .map { _.sequence }
+            .flatMap {
+              case Some(args) => applyFunction(scope, key, args).map(_.some)
+              case None       => None.asRight
+            }
+      }
+
+  }
+
+  private object Stage2 {
+
     @tailrec
-    def loop(
-        pairs: List[(Interpolation, String)],
-        rStack: List[String],
-    ): Either[ScopedError, String] =
-      pairs match {
-        case (iH, sH) :: tail =>
-          interpolate(depPair.path, iH, ast, envVars) match {
-            case Right(value) =>
-              value match {
-                case PetaformAST.Raw(value)    => loop(tail, sH :: value :: rStack)
-                case PetaformAST.Str(str)      => loop(tail, sH :: str :: rStack)
-                case PetaformAST.EofStr(lines) => loop(tail, sH :: lines.mkString("\n") :: rStack)
-                case PetaformAST.Obj(_)        => ScopedError(depPair.path, s"Can not interpolate Object into String").asLeft
-                case PetaformAST.Arr(_)        => ScopedError(depPair.path, s"Can not interpolate Array into String").asLeft
-                case PetaformAST.Undef         => ScopedError(depPair.path, s"Can not interpolate Undef into String").asLeft
-                case PetaformAST.Null          => ScopedError(depPair.path, s"Can not interpolate Null into String").asLeft
-                case PetaformAST.Empty         => ScopedError(depPair.path, s"Can not interpolate Empty into String").asLeft
-              }
+    def apply(
+        ordering: List[Dependency.Pair],
+        ast: PetaformAST,
+        envVars: EnvVars,
+        config: Option[PetaformAST],
+    ): Either[ScopedError, PetaformAST] =
+      ordering match {
+        case head :: tail =>
+          resolveDependency(head, config.getOrElse(ast), envVars).flatMap(replaceValue(head.path, ScopePath.empty, head.path, _, ast)) match {
+            case Right(ast)  => Stage2(tail, ast, envVars, config)
             case Left(error) => error.asLeft
           }
         case Nil =>
-          rStack.reverse.mkString.asRight
+          ast.asRight
       }
 
-    loop(interpString.pairs, interpString.prefix :: Nil)
-  }
-
-  private def getStr(fromScope: List[ASTScope], ast: PetaformAST): Either[ScopedError, PetaformAST.StringLike] =
-    ast match {
-      case ast: PetaformAST.StringLike => ast.asRight
-      case _                           => ScopedError(fromScope, s"Expected StringLike, but got ${ast.getClass.getSimpleName}").asLeft
-    }
-
-  private implicit class StringLikeOps(stringLike: PetaformAST.StringLike) {
-
-    def mapStr(f: String => String): PetaformAST.StringLike =
-      stringLike match {
-        case PetaformAST.Raw(value)    => PetaformAST.Raw(f(value))
-        case PetaformAST.Str(str)      => PetaformAST.Str(f(str))
-        case PetaformAST.EofStr(lines) => PetaformAST.EofStr(lines.map(f))
-      }
-
-  }
-
-  @tailrec
-  private def applyFunctions(fromScope: List[ASTScope], ast: PetaformAST, functions: List[String]): Either[ScopedError, PetaformAST] =
-    functions match {
-      case head :: tail =>
-        (head match {
-          // TODO (KR) : do we need different handling of `EofStr`?
-          case "format" => PetaformAST.Str(FormatAST(ast)).asRight
-          case "upper"  => getStr(fromScope, ast).map(_.mapStr(_.toUpperCase))
-          case "lower"  => getStr(fromScope, ast).map(_.mapStr(_.toLowerCase))
-          case "unesc"  => getStr(fromScope, ast).map(_.mapStr(_.unesc))
-          case "json"   => ASTToJson(ast).map(PetaformAST.Raw(_))
-          case _        => ScopedError(fromScope, s"Invalid function '$head'").asLeft
-        }) match {
-          case Right(newAst) => applyFunctions(fromScope, newAst, tail)
-          case Left(error)   => error.asLeft
-        }
-      case Nil => ast.asRight
-    }
-
-  private def add(fromScope: List[ASTScope], left: PetaformAST, right: PetaformAST): Either[ScopedError, PetaformAST] =
-    (left, right) match {
-      // empty
-      case (PetaformAST.Empty, PetaformAST.Empty) => PetaformAST.Empty.asRight
-      // obj
-      case (PetaformAST.Empty, ast: PetaformAST.Obj)       => ast.asRight
-      case (ast: PetaformAST.Obj, PetaformAST.Empty)       => ast.asRight
-      case (left: PetaformAST.Obj, right: PetaformAST.Obj) => PetaformAST.Obj(left.elems ::: right.elems).asRight // TODO (KR) : safe?
-      // arr
-      case (PetaformAST.Empty, ast: PetaformAST.Arr)       => ast.asRight
-      case (ast: PetaformAST.Arr, PetaformAST.Empty)       => ast.asRight
-      case (left: PetaformAST.Arr, right: PetaformAST.Arr) => PetaformAST.Arr(left.elems ::: right.elems).asRight
-      // string
-      // TODO (KR) :
-      // error
-      case _ => ScopedError(fromScope, s"Can not add ${left.getClass.getSimpleName} + ${right.getClass.getSimpleName}").asLeft
-    }
-
-  private def interpolate(fromScope: List[ASTScope], interp: Interpolation, ast: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
-    for {
-      raws <- interp.sources.traverse {
-        case Interpolation.Source.EnvVar(varName)      => getEnvVar(fromScope, varName, envVars).map(PetaformAST.Str(_))
-        case Interpolation.Source.Config(__configPath) => getFromAst2(fromScope, Nil, __configPath.toList, ast)
-      }
-      afterAdds <- raws.tail.foldLeft(raws.head.asRight[ScopedError]) { case (acc, ast) => acc.flatMap(add(fromScope, _, ast)) }
-      afterFunctions <- applyFunctions(fromScope, afterAdds, interp.functions)
-    } yield afterFunctions
-
-  private def interpolate(pair: Dependency.Pair, ast: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
-    pair.interpolationType match {
-      case Dependency.InterpolationType.Str(interpString) =>
-        interpolateString(pair, interpString, ast, envVars).map(PetaformAST.Str(_))
-      case Dependency.InterpolationType.FlatInterpolation(interp) =>
-        interpolate(pair.path, interp, ast, envVars)
-      case Dependency.InterpolationType.Lines(lines) =>
-        lines.traverse(interpolateString(pair, _, ast, envVars)).map(PetaformAST.EofStr(_))
-    }
-
-  private def replaceValue(
-      fromScope: List[ASTScope],
-      rLookupScope: List[ASTScope],
-      lookupScope: List[ASTScope],
-      calculatedValue: PetaformAST,
-      ast: PetaformAST,
-  ): Either[ScopedError, PetaformAST] =
-    lookupScope match {
-      case head :: tail =>
-        val newRScope = head :: rLookupScope
-        (head, ast) match {
-          case (ASTScope.Key(key), PetaformAST.Obj(elems)) =>
-            elems.indexWhere(_._1 == key) match {
-              case -1 => ScopedError(fromScope, s"Missing key for interpolation: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
-              case idx =>
-                replaceValue(fromScope, newRScope, tail, calculatedValue, elems(idx)._2).map { replaced =>
-                  PetaformAST.Obj(elems.updated(idx, (key, replaced)))
-                }
-            }
-          case (ASTScope.Idx(idx), PetaformAST.Arr(elems)) =>
-            if (idx >= elems.size) ScopedError(fromScope, s"Idx out of bounds: ${ASTScope.format("CFG", newRScope.reverse)}").asLeft
-            else
-              replaceValue(fromScope, newRScope, tail, calculatedValue, elems(idx)).map { replaced =>
-                PetaformAST.Arr(elems.updated(idx, replaced))
+    @tailrec
+    private def getFromAst(scope: ScopePath, seenScope: ScopePath, lookupScope: ScopePath, referenceAST: PetaformAST): Either[ScopedError, PetaformAST] =
+      lookupScope match {
+        case ScopePath(head, tail) =>
+          val newSeenScope = seenScope :+ head
+          (head, referenceAST) match {
+            case (ASTScope.Key(key), PetaformAST.Obj(elems)) =>
+              elems.find(_._1 == key) match {
+                case Some((_, value)) => getFromAst(scope, newSeenScope, tail, value)
+                case None             => ScopedError(scope, s"Missing key for interpolation: ${ASTScope.format("CFG", newSeenScope)}").asLeft
               }
-          case (_: ASTScope.Key, _) =>
-            ScopedError(newRScope.reverse, s"Expected object, but got ${ast.getClass.getSimpleName}").asLeft
-          case (_: ASTScope.Idx, _) =>
-            ScopedError(newRScope.reverse, s"Expected array, but got ${ast.getClass.getSimpleName}").asLeft
-        }
-      case Nil =>
-        ast match {
-          case PetaformAST.Undef => calculatedValue.asRight
-          case _                 => ScopedError(fromScope, s"(this should never happen) Expected to replace Undef, but got ${ast.getClass.getSimpleName}").asLeft
-        }
-    }
+            case (ASTScope.Idx(idx), PetaformAST.Arr(elems)) =>
+              if (idx >= elems.size) ScopedError(scope, s"Idx out of bounds: ${ASTScope.format("CFG", newSeenScope)}").asLeft
+              else getFromAst(scope, newSeenScope, tail, elems(idx))
+            case (_: ASTScope.Key, _) =>
+              ScopedError(newSeenScope, s"Expected object, but got ${referenceAST.getClass.getSimpleName}").asLeft
+            case (_: ASTScope.Idx, _) =>
+              ScopedError(newSeenScope, s"Expected array, but got ${referenceAST.getClass.getSimpleName}").asLeft
+          }
+        case _ => referenceAST.asRight
+      }
 
-  @tailrec
-  private def interpolateAll(
-      ordering: List[Dependency.Pair],
-      ast: PetaformAST,
-      envVars: EnvVars,
-      config: Option[PetaformAST],
-  ): Either[ScopedError, PetaformAST] =
-    ordering match {
-      case head :: tail =>
-        interpolate(head, config.getOrElse(ast), envVars).flatMap(replaceValue(head.path, Nil, head.path, _, ast)) match {
-          case Right(ast)  => interpolateAll(tail, ast, envVars, config)
-          case Left(error) => error.asLeft
+    private def convertInterpolatedString(
+        str: InterpolatedString,
+        scope: ScopePath,
+        envVars: EnvVars,
+        referenceAST: PetaformAST,
+    ): Either[ScopedError, String] =
+      str.pairs
+        .traverse { case (interp, suffix) => convertInterpolation(interp, scope, envVars, referenceAST).map((_, suffix)) }
+        .flatMap {
+          _.traverse { case (ast, suffix) => getStr(scope, ast).map(s => List(s.stringValue, suffix)) }
+            .map { lists => (str.prefix :: lists.flatten).mkString }
         }
-      case Nil =>
-        ast.asRight
-    }
+
+    private def replaceValue(
+        scope: ScopePath,
+        seenScope: ScopePath,
+        lookupScope: ScopePath,
+        calculatedValue: PetaformAST,
+        referenceAST: PetaformAST,
+    ): Either[ScopedError, PetaformAST] =
+      lookupScope match {
+        case ScopePath(head, tail) =>
+          val newSeenScope = seenScope :+ head
+          (head, referenceAST) match {
+            case (ASTScope.Key(key), PetaformAST.Obj(elems)) =>
+              elems.indexWhere(_._1 == key) match {
+                case -1 => ScopedError(scope, s"Missing key for interpolation: ${ASTScope.format("CFG", newSeenScope)}").asLeft
+                case idx =>
+                  replaceValue(scope, newSeenScope, tail, calculatedValue, elems(idx)._2).map { replaced =>
+                    PetaformAST.Obj(elems.updated(idx, (key, replaced)))
+                  }
+              }
+            case (ASTScope.Idx(idx), PetaformAST.Arr(elems)) =>
+              if (idx >= elems.size) ScopedError(scope, s"Idx out of bounds: ${ASTScope.format("CFG", newSeenScope)}").asLeft
+              else
+                replaceValue(scope, newSeenScope, tail, calculatedValue, elems(idx)).map { replaced =>
+                  PetaformAST.Arr(elems.updated(idx, replaced))
+                }
+            case (_: ASTScope.Key, _) =>
+              ScopedError(newSeenScope, s"Expected object, but got ${referenceAST.getClass.getSimpleName}").asLeft
+            case (_: ASTScope.Idx, _) =>
+              ScopedError(newSeenScope, s"Expected array, but got ${referenceAST.getClass.getSimpleName}").asLeft
+          }
+        case _ =>
+          referenceAST match {
+            case PetaformAST.Undef => calculatedValue.asRight
+            case _                 => ScopedError(scope, s"(this should never happen) Expected to replace Undef, but got ${referenceAST.getClass.getSimpleName}").asLeft
+          }
+      }
+
+    private def convertInterpolation(
+        interpolation: Interpolation,
+        scope: ScopePath,
+        envVars: EnvVars,
+        referenceAST: PetaformAST,
+    ): Either[ScopedError, PetaformAST] =
+      interpolation match {
+        case Interpolation.Source.EnvVar(varName) => getEnvVar(scope, varName, envVars).map(PetaformAST.Str(_))
+        case Interpolation.Source.Config(cfgPath) => getFromAst(scope, ScopePath.empty, ScopePath.inOrder(cfgPath.toList), referenceAST)
+        case Interpolation.Raw(value)             => PetaformAST.Raw(value).asRight
+        case Interpolation.Str(str)               => convertInterpolatedString(str, scope, envVars, referenceAST).map(PetaformAST.Str(_))
+        case Interpolation.Scoped(child)          => convertInterpolation(child, scope, envVars, referenceAST)
+        case Interpolation.Concat(left, right) =>
+          for {
+            leftConverted <- convertInterpolation(left, scope, envVars, referenceAST)
+            rightConverted <- convertInterpolation(left, scope, envVars, referenceAST)
+            res <- concat(scope, leftConverted, rightConverted)
+          } yield res
+        case Interpolation.GenericFunction(key, args) =>
+          args
+            .traverse { convertInterpolation(_, scope, envVars, referenceAST) }
+            .flatMap { applyFunction(scope, key, _) }
+      }
+
+    private def resolveDependency(pair: Dependency.Pair, referenceAST: PetaformAST, envVars: EnvVars): Either[ScopedError, PetaformAST] =
+      pair.interpolationType match {
+        case Dependency.InterpolationType.Str(str) =>
+          convertInterpolatedString(str, pair.path, envVars, referenceAST).map(PetaformAST.Str(_))
+        case Dependency.InterpolationType.FlatInterpolation(interpolation) =>
+          convertInterpolation(interpolation, pair.path, envVars, referenceAST)
+        case Dependency.InterpolationType.Lines(lines) =>
+          lines.traverse(convertInterpolatedString(_, pair.path, envVars, referenceAST)).map(PetaformAST.EofStr(_))
+      }
+
+  }
 
 }
