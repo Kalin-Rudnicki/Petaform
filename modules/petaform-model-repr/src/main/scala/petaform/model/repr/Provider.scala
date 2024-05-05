@@ -8,5 +8,5 @@ final case class Provider(
     config: PetaformAST.Obj,
 )
 object Provider {
-  implicit val astCodec: ASTCodec[Provider] = ASTCodec.derived
+  implicit val astCodec: ASTCodec[Provider] = ASTCodec.derive
 }

@@ -12,7 +12,7 @@ object ASTCodecSpec extends DefaultHarnessSpec {
       key2: Option[Int],
   )
   private object ExProduct {
-    implicit val astCodec: ASTCodec[ExProduct] = ASTCodec.derived
+    implicit val astCodec: ASTCodec[ExProduct] = ASTCodec.derive
   }
 
   private sealed trait ExSum
@@ -22,7 +22,7 @@ object ASTCodecSpec extends DefaultHarnessSpec {
     final case class Case2(key2: Option[Int]) extends ExSum
     final case class Case3(product: ExProduct) extends ExSum
 
-    implicit val astCodec: ASTCodec[ExSum] = ASTCodec.derived
+    implicit val astCodec: ASTCodec[ExSum] = ASTCodec.derive
 
   }
 

@@ -1,6 +1,6 @@
 package petaform.model.typeclass
 
-import shapeless3.deriving.*
+import harness.deriving.{K0, *}
 
 final case class ASTCodec[A](
     encoder: ASTEncoder[A],
@@ -14,17 +14,27 @@ final case class ASTCodec[A](
     ASTCodec[B](encoder.contramap[B](from), decoder.mapOrFail[B](to))
 
 }
-object ASTCodec {
+object ASTCodec extends K0.Derivable[ASTCodec] {
 
   implicit def apply[A](implicit codec: ASTCodec[A]): ASTCodec[A] = codec
 
   def from[A: ASTEncoder: ASTDecoder]: ASTCodec[A] =
     ASTCodec(ASTEncoder[A], ASTDecoder[A])
 
-  inline def derived[A](using gen: K0.Generic[A]): ASTCodec[A] =
-    ASTCodec(
-      ASTEncoder.derived[A],
-      ASTDecoder.derived[A],
-    )
+  override implicit inline def genProduct[A](implicit m: K0.ProductGeneric[A]): Derived[ASTCodec[A]] =
+    Derived {
+      ASTCodec(
+        ASTEncoder.genProduct[A].derived,
+        ASTDecoder.genProduct[A].derived,
+      )
+    }
+
+  override implicit inline def genSum[A](implicit m: K0.SumGeneric[A]): Derived[ASTCodec[A]] =
+    Derived {
+      ASTCodec(
+        ASTEncoder.genSum[A].derived,
+        ASTDecoder.genSum[A].derived,
+      )
+    }
 
 }

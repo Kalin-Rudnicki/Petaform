@@ -1,8 +1,8 @@
 package petaform.model.typeclass
 
 import harness.core.*
+import harness.deriving.*
 import petaform.model.ast.*
-import shapeless3.deriving.*
 
 trait ASTEncoder[A] { self =>
 
@@ -51,32 +51,24 @@ trait ASTEncoderLowPriority extends ASTEncoderLowPriority2 {
 
 }
 
-trait ASTEncoderLowPriority2 {
+trait ASTEncoderLowPriority2 extends K0.Derivable[ASTEncoder] {
 
-  given astProductEncoderGen[A](using inst: => K0.ProductInstances[ASTEncoder, A], labels: => Labelling[A]): ASTEncoder[A] =
-    a =>
-      PetaformAST.Obj(
-        labels.elemLabels.toList
-          .zip(
-            inst.foldRight(a)(List.empty[Option[PetaformAST]]) {
-              [t] => (enc: ASTEncoder[t], tt: t, list: List[Option[PetaformAST]]) => Option.when(!enc.omitKey(tt))(enc.encode(tt)) :: list
-            },
-          )
-          .collect { case (key, Some(ast)) => key -> ast },
-      )
+  override implicit inline def genProduct[A](implicit m: K0.ProductGeneric[A]): Derived[ASTEncoder[A]] = {
+    val labels = Labelling.of[A]
+    val instances = K0.ProductInstances.of[A, ASTEncoder]
 
-  given astCoproductEncoderGen[A](using inst: => K0.CoproductInstances[ASTEncoder, A], labels: => Labelling[A]): ASTEncoder[A] = { a =>
-    val idx: Int = inst.mirror.ordinal(a.asInstanceOf)
-
-    PetaformAST.Obj(
-      (
-        labels.elemLabels(idx),
-        inst.inject(idx) { [t] => (enc: ASTEncoder[t]) => enc.encode(a.asInstanceOf) },
-      ) :: Nil,
-    )
+    Derived { a =>
+      PetaformAST.Obj(instances.withInstance(a).map.withLabels(labels) { [t] => (l: String, i: ASTEncoder[t], t: t) => Option.when(!i.omitKey(t)) { l -> i.encode(t) } }.flatten)
+    }
   }
 
-  inline def derived[A](using gen: K0.Generic[A]): ASTEncoder[A] =
-    gen.derive(astProductEncoderGen[A], astCoproductEncoderGen[A])
+  override implicit inline def genSum[A](implicit m: K0.SumGeneric[A]): Derived[ASTEncoder[A]] = {
+    val labels = Labelling.of[A]
+    val instances = K0.SumInstances.of[A, ASTEncoder]
+
+    Derived { a =>
+      instances.withInstance(a).use.withLabels(labels) { [t <: A] => (l: String, i: ASTEncoder[t], t: t) => PetaformAST.Obj(l -> i.encode(t)) }
+    }
+  }
 
 }

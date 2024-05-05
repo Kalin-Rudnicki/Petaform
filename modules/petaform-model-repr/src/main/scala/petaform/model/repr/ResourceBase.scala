@@ -7,5 +7,5 @@ final case class ResourceBase(
     name: String,
 )
 object ResourceBase {
-  implicit val astCodec: ASTCodec[ResourceBase] = ASTCodec.derived
+  implicit val astCodec: ASTCodec[ResourceBase] = ASTCodec.derive
 }

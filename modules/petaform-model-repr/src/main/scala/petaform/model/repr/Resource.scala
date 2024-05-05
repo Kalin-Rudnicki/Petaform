@@ -10,5 +10,5 @@ final case class Resource(
     build: Option[List[CommandAndArgs]],
 )
 object Resource {
-  implicit val astCodec: ASTCodec[Resource] = ASTCodec.derived
+  implicit val astCodec: ASTCodec[Resource] = ASTCodec.derive
 }

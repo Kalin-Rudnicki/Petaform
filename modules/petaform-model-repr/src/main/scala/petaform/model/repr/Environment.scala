@@ -7,5 +7,5 @@ final case class Environment(
     resources: Map[String, String],
 )
 object Environment {
-  implicit val astCodec: ASTCodec[Environment] = ASTCodec.derived
+  implicit val astCodec: ASTCodec[Environment] = ASTCodec.derive
 }

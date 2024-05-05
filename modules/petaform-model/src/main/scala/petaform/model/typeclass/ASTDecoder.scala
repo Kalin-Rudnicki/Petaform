@@ -4,9 +4,9 @@ import cats.syntax.either.*
 import cats.syntax.option.*
 import cats.syntax.traverse.*
 import harness.core.*
+import harness.deriving.{K0, *}
 import petaform.model.*
 import petaform.model.ast.*
-import shapeless3.deriving.*
 
 trait ASTDecoder[A] { self =>
 
@@ -89,57 +89,59 @@ trait ASTDecoderLowPriority extends ASTDecoderLowPriority2 {
 
 }
 
-trait ASTDecoderLowPriority2 {
+trait ASTDecoderLowPriority2 extends K0.Derivable[ASTDecoder] {
 
-  given astProductDecoderGen[A](using inst: => K0.ProductInstances[ASTDecoder, A], labels: => Labelling[A]): ASTDecoder[A] = {
-    case (rPath, PetaformAST.Obj(elems)) =>
-      inst.unfold(0.asRight[ScopedError]) {
-        [t] =>
-          (acc: Either[ScopedError, Int], dec: ASTDecoder[t]) =>
-            acc match {
-              case Right(idx) =>
-                val label = labels.elemLabels(idx)
-                val newRPath = ASTScope.Key(label) :: rPath
-                elems.find(_._1 == label) match {
-                  case Some(value) =>
-                    dec.decodeInternal(newRPath, value._2) match {
-                      case Right(value) => ((idx + 1).asRight, value.some)
-                      case Left(error)  => (error.asLeft, None)
-                    }
-                  case None =>
-                    dec.ifMissing match {
-                      case Some(value) => ((idx + 1).asRight, value.some)
-                      case None        => (ScopedError(newRPath.reverse, s"<${labels.label}> Missing required value, provided keys: ${elems.map(_._1).sorted.mkString("[", ", ", "]")}").asLeft, None)
-                    }
+  override implicit inline def genProduct[A](implicit m: K0.ProductGeneric[A]): Derived[ASTDecoder[A]] = {
+    val labels = Labelling.of[A]
+    val instances = K0.ProductInstances.of[A, ASTDecoder]
+
+    Derived {
+      new ASTDecoder[A] {
+        override def decodeInternal(rPath: List[ASTScope], ast: PetaformAST): Either[ScopedError, A] =
+          ast match {
+            case PetaformAST.Obj(elems) =>
+              instances.withoutInstance.mapInstantiateEither.withLabels(labels) {
+                [t] => { (l: String, i: ASTDecoder[t]) =>
+                  val newRPath = ASTScope.Key(l) :: rPath
+
+                  elems.find(_._1 == l) match {
+                    case Some((_, value)) =>
+                      i.decodeInternal(newRPath, value)
+                    case None =>
+                      i.ifMissing.toRight { ScopedError(newRPath.reverse, s"<${labels.label}> Missing required value, provided keys: ${elems.map(_._1).sorted.mkString("[", ", ", "]")}") }
+                  }
                 }
-              case Left(error) =>
-                (error.asLeft, None)
+              }
+            case _ =>
+              ScopedError(rPath.reverse, s"Expected <${labels.label}> Object, but got ${ast.getClass.getSimpleName}").asLeft
           }
-      } match {
-        case (Right(_), Some(res)) => res.asRight
-        case (Left(error), None)   => error.asLeft
-        case _                     => ??? // not possible
       }
-    case (rPath, ast) =>
-      ScopedError(rPath.reverse, s"Expected <${labels.label}> Object, but got ${ast.getClass.getSimpleName}").asLeft
+    }
   }
 
-  given astCoproductDecoderGen[A](using inst: => K0.CoproductInstances[ASTDecoder, A], labels: => Labelling[A]): ASTDecoder[A] = {
-    case (rPath, PetaformAST.Obj(elems)) =>
-      elems match {
-        case (key, value) :: Nil =>
-          val newRPath = ASTScope.Key(key) :: rPath
-          labels.elemLabels.indexOf(key) match {
-            case -1  => ScopedError(newRPath.reverse, s"Invalid key, expected one of: ${labels.elemLabels.mkString(", ")}").asLeft
-            case idx => inst.is(idx).asInstanceOf[ASTDecoder[A]].decodeInternal(newRPath, value)
-          }
-        case _ => ScopedError(rPath.reverse, s"Expected single element Object, but had size ${elems.size}").asLeft
-      }
-    case (rPath, ast) =>
-      ScopedError(rPath.reverse, s"Expected Object, but got ${ast.getClass.getSimpleName}").asLeft
-  }
+  override implicit inline def genSum[A](implicit m: K0.SumGeneric[A]): Derived[ASTDecoder[A]] = {
+    val labels = Labelling.of[A]
+    val instances = K0.SumInstances.of[A, ASTDecoder]
 
-  inline def derived[A](using gen: K0.Generic[A]): ASTDecoder[A] =
-    gen.derive(astProductDecoderGen[A], astCoproductDecoderGen[A])
+    Derived {
+      new ASTDecoder[A] {
+        override def decodeInternal(rPath: List[ASTScope], ast: PetaformAST): Either[ScopedError, A] =
+          ast match {
+            case PetaformAST.Obj((key, value) :: Nil) =>
+              val newRPath = ASTScope.Key(key) :: rPath
+              instances.instanceFromLabels(labels, key) match {
+                case Some(i) =>
+                  i.decodeInternal(newRPath, value)
+                case None =>
+                  ScopedError(newRPath.reverse, s"Invalid key, expected one of: ${labels.elemLabels.mkString(", ")}").asLeft
+              }
+            case PetaformAST.Obj(elems) =>
+              ScopedError(rPath.reverse, s"Expected single element Object, but had size ${elems.size} with keys: ${elems.map(_._1.unesc).mkString(", ")}").asLeft
+            case _ =>
+              ScopedError(rPath.reverse, s"Expected <${labels.label}> Object, but got ${ast.getClass.getSimpleName}").asLeft
+          }
+      }
+    }
+  }
 
 }

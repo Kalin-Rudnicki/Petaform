@@ -9,5 +9,5 @@ final case class ResourceVariant(
     outputs: Option[Map[String, PetaformAST.Obj]],
 )
 object ResourceVariant {
-  implicit val astCodec: ASTCodec[ResourceVariant] = ASTCodec.derived
+  implicit val astCodec: ASTCodec[ResourceVariant] = ASTCodec.derive
 }

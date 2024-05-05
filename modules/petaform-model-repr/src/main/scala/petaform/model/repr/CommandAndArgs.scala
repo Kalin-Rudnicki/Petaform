@@ -7,5 +7,5 @@ final case class CommandAndArgs(
     args: Option[List[String]],
 )
 object CommandAndArgs {
-  implicit val astCodec: ASTCodec[Environment] = ASTCodec.derived
+  implicit val astCodec: ASTCodec[CommandAndArgs] = ASTCodec.derive
 }

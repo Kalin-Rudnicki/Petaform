@@ -7,5 +7,5 @@ final case class ProviderBase(
     version: String,
 )
 object ProviderBase {
-  implicit val astCodec: ASTCodec[ProviderBase] = ASTCodec.derived
+  implicit val astCodec: ASTCodec[ProviderBase] = ASTCodec.derive
 }
