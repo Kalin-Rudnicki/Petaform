@@ -19,16 +19,13 @@ WORKDIR /app
 
 COPY example/jars/petaform-example--main--$BUILD__DOCKER_TAG.jar petaform-example.jar
 
-CMD [\"java\", \"-jar\", \"petaform-example.jar\", \"-C=env:HARNESS_CFG\", \"--\", \"log-entry\"]
+CMD [\"java\", \"-jar\", \"petaform-example.jar\", \"-C=env:APP_CONFIG\", \"--\", \"log-entry\"]
 """
 
 BUILD__DOCKERFILE_TEMPFILE=$(mktemp --tmpdir=.)
 echo "$BUILD__DOCKERFILE_SCRIPT" >> $BUILD__DOCKERFILE_TEMPFILE
 
 export WEB_SERVER_VERSION="$BUILD__DOCKER_TAG"
-
-sbt \
-  petaform-example-project/assembly
 
 docker build --file "$BUILD__DOCKERFILE_TEMPFILE" -t "$BUILD__DOCKER_APP_NAME:$BUILD__DOCKER_TAG" .
 
