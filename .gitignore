@@ -15,3 +15,8 @@ project/project/project/metals.sbt
 petaform/.internal
 petaform/config/**/secrets.conf
 petaform/config/**/*-secrets.conf
+
+example/jars/
+example/petaform/.internal
+example/petaform/config/**/secrets.conf
+example/petaform/config/**/*-secrets.conf

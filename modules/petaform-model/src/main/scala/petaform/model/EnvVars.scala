@@ -8,8 +8,7 @@ final case class EnvVars(
   val map: Map[String, String] = fromSystem ++ additional
 
   def get(key: String): Option[String] = map.get(key)
-
   def add(key: String, value: String): EnvVars = EnvVars(fromSystem, additional + (key -> value))
+  def addAll(vars: Map[String, String]): EnvVars = EnvVars(fromSystem, additional ++ vars)
 
 }
- 

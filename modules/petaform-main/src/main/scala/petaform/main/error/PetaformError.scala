@@ -2,6 +2,7 @@ package petaform.main.error
 
 import cats.data.NonEmptyList
 import harness.core.*
+import harness.zio.error.SysError
 import petaform.model.ScopedError
 import petaform.parsing.error.ParseError
 import slyce.core.{Marked, Source}
@@ -14,6 +15,7 @@ sealed trait PetaformError extends Throwable {
     case PetaformError.NoSuchEnvironment(environment)              => s"No such environment: $environment"
     case PetaformError.NoSuchConfigGroup(environment, configGroup) => s"No such config-group: $environment -> $configGroup"
     case PetaformError.Generic(cause)                              => cause.safeGetMessage
+    case PetaformError.SysCommandError(cause)                      => s"Error running command system command: ${cause.safeGetMessage}"
   }
 
 }
@@ -28,6 +30,8 @@ object PetaformError {
   final case class NoSuchConfigGroup(environment: String, configGroup: String) extends PetaformError
 
   final case class Generic(cause: Throwable) extends PetaformError
+
+  final case class SysCommandError(cause: SysError) extends PetaformError
 
   def fromParseError(error: ParseError): PetaformError =
     error match {

@@ -72,3 +72,7 @@ trait ASTEncoderLowPriority2 extends K0.Derivable[ASTEncoder] {
   }
 
 }
+
+implicit class PetaformEncoderOps[A](a: A) {
+  def toPetaformAST(implicit enc: ASTEncoder[A]): PetaformAST = enc.encode(a)
+}

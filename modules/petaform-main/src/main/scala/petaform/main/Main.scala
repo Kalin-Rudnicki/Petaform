@@ -1,5 +1,7 @@
 package petaform.main
 
+import cats.data.NonEmptyList
+import cats.syntax.list.*
 import cats.syntax.option.*
 import harness.cli.*
 import harness.core.*
@@ -90,6 +92,37 @@ object Main extends ExecutableApp {
   }
 
   // =====|  |=====
+
+  extension (cmd: CommandAndArgs) {
+    private def runCmd(envVars: EnvVars, hint: String): ZIO[Logger, PetaformError.SysCommandError, Unit] = {
+      val sysCmd = Sys.Command(cmd.cmd, cmd.args)
+      val env = envVars.additional ++ cmd.env.getOrElse(Map.empty)
+      Logger.log.debug(s"Running system command ($hint): ${sysCmd.show}\n  ENV:${env.toList.sortBy(_._1.toUpperCase).map { case (k, v) => s"\n    $k: $v" }.mkString}") *>
+        Sys.execute0.runComplex(env)(sysCmd).mapError(PetaformError.SysCommandError(_))
+    }
+  }
+
+  extension (app: App) {
+    private def runApp(envVars: EnvVars): ZIO[Logger, PetaformError.SysCommandError, Unit] =
+      for {
+        _ <- app.build.getOrElse(Nil).toNel match {
+          case Some(buildCommands) =>
+            Logger.log.info(s"Building app '${app.name}'") *>
+              ZIO.foreachDiscard(buildCommands.toList) { _.runCmd(envVars, s"build '${app.name}'") }
+          case None =>
+            Logger.log.detailed(s"Nothing to build for app '${app.name}'")
+        }
+        _ <- Logger.log.info(s"Running app '${app.name}'")
+        _ <- app.run.runCmd(envVars, s"run '${app.name}'")
+      } yield ()
+  }
+
+  private def runApps(apps: NonEmptyList[App], envVars: EnvVars): ZIO[Logger, PetaformError.SysCommandError, Unit] =
+    Logger.log.info("Running Apps") *>
+      ZIO
+        .foreachPar(apps.toList) { _.runApp(envVars).fork }
+        .withParallelism(10)
+        .flatMap { fibers => Logger.log.important("Awaiting completion of all apps") *> Fiber.joinAll(fibers) }
 
   private def getForEnvironment[A](environment: Option[String], map: Map[String, A]): IO[PetaformError.NoSuchEnvironment, List[A]] =
     environment match {
@@ -183,13 +216,13 @@ object Main extends ExecutableApp {
               } yield c
 
             ZIO.foldLeft(buildCommands)(built.envVars) {
-              case (envVars, CommandAndArgs("export", args)) =>
+              case (envVars, CommandAndArgs("export", args, _)) =>
                 args match {
                   case Some(List(key, value)) => Logger.log.detailed(s"Adding env var: $key=${value.unesc}").as(envVars.add(key, value))
                   case _                      => ZIO.fail(PetaformError.Generic(new RuntimeException("Invalid args for `export`, expected 2, key & value")))
                 }
-              case (envVars, CommandAndArgs(cmd, args)) =>
-                Sys.execute0.runComplex(envVars.additional)(Sys.Command(cmd, args)).mapBoth(PetaformError.Generic(_), _ => envVars)
+              case (envVars, CommandAndArgs(cmd, args, env)) =>
+                Sys.execute0.runComplex(envVars.addAll(env.getOrElse(Map.empty)).additional)(Sys.Command(cmd, args)).mapBoth(PetaformError.Generic(_), _ => envVars)
             }
           }
         } yield ()
@@ -218,7 +251,17 @@ object Main extends ExecutableApp {
           paths <- PetaformPaths.fromPetaformPathString(cfg.petaformDir)
           envs <- getEnvs(cfg, paths)
           _ <- ZIO.foreachDiscard(envs) { env =>
-            runTerraformCommand(paths, env)("plan")
+            for {
+              _ <- runTerraformCommand(paths, env)("plan")
+              apps = env.resourceGroups.resourceGroups.values.toList.flatMap { skm => skm.value.apps.flatMap(_.toNel).map(skm.key -> _) }
+              _ <- ZIO.when(apps.nonEmpty) {
+                Logger.log.info("Apps:") *>
+                  ZIO.foreachDiscard(apps) { case (key, apps) =>
+                    Logger.log.info(s"--- $key ---") *>
+                      Logger.log.info(apps.toList.toPetaformAST.format)
+                  }
+              }
+            } yield ()
           }
         } yield ()
       }
@@ -232,7 +275,12 @@ object Main extends ExecutableApp {
           paths <- PetaformPaths.fromPetaformPathString(cfg.petaformDir)
           envs <- getEnvs(cfg, paths)
           _ <- ZIO.foreachDiscard(envs) { env =>
-            runTerraformCommand(paths, env)("apply", Option.when(autoApprove)("-auto-approve").toList*)
+            for {
+              _ <- runTerraformCommand(paths, env)("apply", Option.when(autoApprove)("-auto-approve").toList*)
+              _ <- Logger.log.info("Terraform apply complete")
+              apps = env.resourceGroups.resourceGroups.values.toList.flatMap { _.value.apps.getOrElse(Nil) }
+              _ <- ZIO.foreachDiscard(apps.toNel) { runApps(_, env.envVars) }
+            } yield ()
           }
         } yield ()
       }

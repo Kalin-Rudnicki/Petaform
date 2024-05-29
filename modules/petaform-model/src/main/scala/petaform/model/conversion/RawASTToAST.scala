@@ -79,8 +79,14 @@ object RawASTToAST {
         Function.make[PetaformAST]("format") { ast => PetaformAST.Str(ast.format).asRight },
         Function.make[PetaformAST.StringLike]("upper") { _.mapString(_.toUpperCase).asRight },
         Function.make[PetaformAST.StringLike]("lower") { _.mapString(_.toLowerCase).asRight },
-        Function.make[PetaformAST.StringLike]("unesc") { _.mapString(_.unesc).asRight }, // TODO (KR) : this might be a little weird if used with EofString?
         Function.make[PetaformAST]("json") { ASTToJson(_).map(PetaformAST.Raw(_)) },
+        // Not particularly suitable for EOF strings...
+        Function.make[PetaformAST.StringLike]("dashToSnake") { _.mapString(_.dashToSnake).asRight },
+        Function.make[PetaformAST.StringLike]("snakeToDash") { _.mapString(_.snakeToDash).asRight },
+        Function.make[PetaformAST.StringLike]("snakeToLowerCamel") { _.mapString(_.snakeToLowerCamel).asRight },
+        Function.make[PetaformAST.StringLike]("snakeToUpperCamel") { _.mapString(_.snakeToUpperCamel).asRight },
+        Function.make[PetaformAST.StringLike]("camelToSnake") { _.mapString(_.camelToSnake).asRight },
+        Function.make[PetaformAST.StringLike]("unesc") { _.mapString(_.unesc).asRight },
       ).map(f => f.name -> f).toMap
 
     def applyFunction(scope: ScopePath, name: String, args: List[PetaformAST]): Either[ScopedError, PetaformAST] =

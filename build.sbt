@@ -46,11 +46,14 @@ lazy val `petaform-root` =
       publish / skip := true,
     )
     .aggregate(
+      // petaform
       `petaform-model`,
       `petaform-model-repr`,
       `petaform-model-terraform`,
       `petaform-parsing`,
       `petaform-main`,
+      // example
+      `petaform-example--main`,
     )
 
 lazy val `petaform-model` =
@@ -120,4 +123,137 @@ lazy val `petaform-main` =
     .dependsOn(
       `petaform-model-terraform` % testAndCompile,
       `petaform-parsing` % testAndCompile,
+    )
+
+// =====| Example |=====
+
+// --- Log Entry ---
+
+lazy val `petaform-example--log-entry` =
+  project
+    .in(file("example/modules/log-entry"))
+    .aggregate(
+      `petaform-example--log-entry--domain-model`,
+      `petaform-example--log-entry--db-model`,
+      `petaform-example--log-entry--domain`,
+      `petaform-example--log-entry--domain-live`,
+      `petaform-example--log-entry--main`,
+    )
+    .settings(
+      publish / skip := true,
+    )
+
+lazy val `petaform-example--log-entry--domain-model` =
+  project
+    .in(file("example/modules/log-entry/domain-model"))
+    .settings(
+      name := "petaform-example--log-entry--domain-model",
+      publishSettings,
+      miscSettings,
+      testSettings,
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % Versions.harness,
+        MyOrg %% "harness-pk" % Versions.harness,
+      ),
+      Test / fork := true,
+      publish / skip := true,
+    )
+
+lazy val `petaform-example--log-entry--db-model` =
+  project
+    .in(file("example/modules/log-entry/db-model"))
+    .settings(
+      name := "petaform-example--log-entry--db-model",
+      publishSettings,
+      miscSettings,
+      testSettings,
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-sql" % Versions.harness,
+      ),
+      Test / fork := true,
+      publish / skip := true,
+    )
+    .dependsOn(
+      `petaform-example--log-entry--domain-model`,
+    )
+
+lazy val `petaform-example--log-entry--domain` =
+  project
+    .in(file("example/modules/log-entry/domain"))
+    .settings(
+      name := "petaform-example--log-entry--domain",
+      publishSettings,
+      miscSettings,
+      testSettings,
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % Versions.harness,
+      ),
+      Test / fork := true,
+      publish / skip := true,
+    )
+    .dependsOn(
+      `petaform-example--log-entry--domain-model`,
+    )
+
+lazy val `petaform-example--log-entry--domain-live` =
+  project
+    .in(file("example/modules/log-entry/domain-live"))
+    .settings(
+      name := "petaform-example--log-entry--domain-live",
+      publishSettings,
+      miscSettings,
+      testSettings,
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % Versions.harness,
+      ),
+      Test / fork := true,
+      publish / skip := true,
+    )
+    .dependsOn(
+      `petaform-example--log-entry--domain`,
+      `petaform-example--log-entry--db-model`,
+    )
+
+lazy val `petaform-example--log-entry--main` =
+  project
+    .in(file("example/modules/log-entry/main"))
+    .settings(
+      name := "petaform-example--log-entry--main",
+      publishSettings,
+      miscSettings,
+      testSettings,
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % Versions.harness,
+      ),
+      Test / fork := true,
+      publish / skip := true,
+    )
+    .dependsOn(
+      `petaform-example--log-entry--domain-live`,
+    )
+
+// --- Main ---
+
+lazy val `petaform-example--main` =
+  project
+    .in(file("example/modules/main"))
+    .settings(
+      name := "petaform-example--main",
+      publishSettings,
+      miscSettings,
+      testSettings,
+      assemblyJarName := {
+        val versionEnvVar = "APP_VERSION"
+        val appVersion = scala.sys.env.getOrElse(versionEnvVar, throw new RuntimeException(s"Assembly requires '$versionEnvVar' env var"))
+        s"../../../../jars/${name.value}--$appVersion.jar"
+      },
+      libraryDependencies ++= Seq(
+        MyOrg %% "harness-zio" % Versions.harness,
+      ),
+      // Compile / fork := true,
+      Test / fork := true,
+      publish / skip := true,
+    )
+    .dependsOn(
+      `petaform-example--log-entry--main`,
     )

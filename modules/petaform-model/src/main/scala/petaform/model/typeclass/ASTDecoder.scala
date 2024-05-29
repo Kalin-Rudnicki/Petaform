@@ -28,9 +28,15 @@ object ASTDecoder extends ASTDecoderLowPriority {
 
   def apply[A](implicit dec: ASTDecoder[A]): ASTDecoder[A] = dec
 
-  implicit def ast[A <: PetaformAST](implicit ct: ClassTag[A]): ASTDecoder[A] = {
-    case (_, ct(a)) => a.asRight
-    case (scope, a) => ScopedError(scope, s"Invalid sub-type of PetaformAST, expected ${ct.runtimeClass.getSimpleName}, got ${a.getClass.getSimpleName}").asLeft
+  implicit val objectAST: ASTDecoder[PetaformAST.Obj] = {
+    case (_, obj: PetaformAST.Obj) => obj.asRight
+    case (_, PetaformAST.Empty)    => PetaformAST.Obj().asRight
+    case (scope, a)                => ScopedError(scope, s"Invalid sub-type of PetaformAST, expected Object, got ${a.getClass.getSimpleName}").asLeft
+  }
+  implicit val arrayAST: ASTDecoder[PetaformAST.Arr] = {
+    case (_, arr: PetaformAST.Arr) => arr.asRight
+    case (_, PetaformAST.Empty)    => PetaformAST.Arr().asRight
+    case (scope, a)                => ScopedError(scope, s"Invalid sub-type of PetaformAST, expected Object, got ${a.getClass.getSimpleName}").asLeft
   }
 
   implicit def map[K: StringDecoder, V: ASTDecoder]: ASTDecoder[Map[K, V]] = {
@@ -83,6 +89,11 @@ object ASTDecoder extends ASTDecoderLowPriority {
 trait ASTDecoderLowPriority extends ASTDecoderLowPriority2 {
 
   implicit def fromCodec[A: ASTCodec]: ASTDecoder[A] = ASTCodec[A].decoder
+
+  implicit def ast[A <: PetaformAST](implicit ct: ClassTag[A]): ASTDecoder[A] = {
+    case (_, ct(a)) => a.asRight
+    case (scope, a) => ScopedError(scope, s"Invalid sub-type of PetaformAST, expected ${ct.runtimeClass.getSimpleName}, got ${a.getClass.getSimpleName}").asLeft
+  }
 
 }
 
